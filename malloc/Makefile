@@ -1,7 +1,6 @@
-NAME = ft_ls
+NAME = ft_malloc
 
-SRC = main.c\
-	utils/utils.c\
+SRC = main.c
 
 OBJ = $(SRC:.c=.o)
 

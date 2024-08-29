@@ -2,6 +2,10 @@ NAME = ft_ls
 
 SRC = main.c\
 	utils/utils.c\
+	utils/linkedlist_utils.c\
+	utils/parse.c\
+	utils/sort.c\
+	utils/helper.c\
 
 OBJ = $(SRC:.c=.o)
 

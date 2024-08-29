@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:55 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/08/09 17:45:56 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/08/29 16:32:29 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,19 @@ int	ft_strcmp(const char *s1, const char *s2)
 			return (1);
 		else if (str1[i] < str2[i])
 			return (-1);
+		i++;
+	}
+	return 0;
+}
+
+int	ft_strchr(const char *s, const char c)
+{
+	size_t	i=0;
+	
+	while (s[i] != '\0')
+	{
+		if (s[i] == c)
+			return 1;
 		i++;
 	}
 	return 0;
@@ -183,4 +196,83 @@ char	*ft_strjoin(char *s1, char *s2, char *s3)
 	}
 	tab[i] = '\0';
 	return (tab);
+}
+
+char	*ft_strchrjoin(char *s1, char *s2, char delim)
+{
+	int		i;
+	int		j;
+	char	*tab;
+
+	// if (s1 == 0 || s2 == 0)
+	// 	return (0);
+	tab = malloc (sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 2));
+	if (!tab)
+		return (0);
+	
+	i = 0;
+	while (s1[i])
+	{
+		tab[i] = s1[i];
+		i++;
+	}
+	j = 0;
+	while (s2[j])
+	{
+		tab[i] = s2[j];
+		i++;
+		j++;
+	}
+	
+	tab[i] = delim;
+	i++;
+	
+	tab[i] = '\0';
+	return (tab);
+}
+
+void	*ft_calloc(size_t count, size_t size)
+{
+	unsigned int	i;
+	char			*t;
+
+	i = 0;
+	t = malloc(count * size);
+	if (t == NULL)
+		return (0);
+	while (i < (size * count))
+	{
+		t[i] = '\0';
+		i++;
+	}
+	return (t);
+}
+
+int	ft_tolower(int c)
+{
+	if (c >= 65 && c <= 90)
+		c += 32;
+	return (c);
+}
+
+int	ft_strcat(char *dst, char *src)
+{
+	unsigned int	src_len;
+	unsigned int	dest_len;
+	unsigned int	i;
+
+	dest_len = 0;
+	src_len = 0;
+	dest_len = ft_strlen(dst);
+	src_len = ft_strlen(src);
+	
+	i = 0;
+	while (src[i])
+	{
+		dst[dest_len + i] = src[i];
+		i++;
+	}
+	dst[dest_len + i] = '\0';
+	
+	return (src_len + dest_len);
 }

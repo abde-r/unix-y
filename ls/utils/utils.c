@@ -6,13 +6,13 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:55 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/08/29 16:32:29 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/01 12:38:42 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ls.h"
 
-size_t ft_strlen(char *s) {
+size_t ft_strlen(const char *s) {
     size_t  i=0;
 
     while (s[i])
@@ -50,6 +50,24 @@ int	ft_strchr(const char *s, const char c)
 		i++;
 	}
 	return 0;
+}
+
+char	*ft_strdup(const char *s1)
+{
+	int		i;
+	char	*p;
+
+	p = malloc(sizeof(char) * (ft_strlen(s1) + 1));
+	if (p == NULL)
+		return (NULL);
+	i = 0;
+	while (s1[i])
+	{
+		p[i] = s1[i];
+		i++;
+	}
+	p[i] = '\0';
+	return (p);
 }
 
 int is_directory(char *path) {
@@ -255,7 +273,7 @@ int	ft_tolower(int c)
 	return (c);
 }
 
-int	ft_strcat(char *dst, char *src)
+int	ft_strcat(char *dst, const char *src)
 {
 	unsigned int	src_len;
 	unsigned int	dest_len;

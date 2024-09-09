@@ -6,23 +6,158 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:38:25 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/05 12:46:59 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/09 12:47:43 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ls.h"
 
+char	*print_permissions(mode_t mode, const char *path) {
 
+    char *s = ft_calloc(999, 1);
+
+    s = ft_strjoin(s, (S_ISDIR(mode)) ? "d" : "-", "");
+    s = ft_strjoin(s, (mode & S_IRUSR) ? "r" : "-", "");
+    s = ft_strjoin(s, (mode & S_IWUSR) ? "w" : "-", "");
+    s = ft_strjoin(s, (mode & S_IXUSR) ? "x" : "-", "");
+    s = ft_strjoin(s, (mode & S_IRGRP) ? "r" : "-", "");
+    s = ft_strjoin(s, (mode & S_IWGRP) ? "w" : "-", "");
+    s = ft_strjoin(s, (mode & S_IXGRP) ? "x" : "-", "");
+    s = ft_strjoin(s, (mode & S_IROTH) ? "r" : "-", "");
+    s = ft_strjoin(s, (mode & S_IWOTH) ? "w" : "-", "");
+    s = ft_strjoin(s, (mode & S_IXOTH) ? "x" : "-", "");
+    
+    if (has_acl(path))
+		s = ft_strjoin(s, "x", "");
+	else if (has_extended_attributes(path))
+		s = ft_strjoin(s, "@", "");
+	else
+		s = ft_strjoin(s, " ", "");
+
+	return s;
+}
+
+char	*print_file_info(char *filename, const struct stat *file_stat, int _hide_owner, int _hide_group_info_, const char *path) {
+    
+	struct stat statbuf;
+    char fullpath[1024];
+    snprintf(fullpath, sizeof(fullpath), "%s/%s", ".", filename);
+    
+    if (stat(fullpath, &statbuf) == -1) {
+        perror("stat");
+        exit(1);
+    }
+    char *s = ft_calloc(999, 1);
+
+    // Get file permissions
+    s = ft_strjoin(s, print_permissions(file_stat->st_mode, path), " ");
+
+    // Print number of hard links
+    // printf(" %ld", file_stat->st_nlink);
+	char *st_link = malloc(999);
+	snprintf(st_link, 999, "%lu", file_stat->st_nlink);
+    s = ft_strjoin(s, st_link, " ");
+
+    if (_hide_owner == 1) { // Print the owner name (exclude group info)
+		struct passwd *pwd = getpwuid(statbuf.st_uid);
+		// printf("%s ", pwd->pw_name);
+		s = ft_strjoin(s, pwd->pw_name, " ");
+	}
+
+
+    if (_hide_group_info_ == 1) { // Get group information
+		struct group *grp = getgrgid(file_stat->st_gid);
+		// printf(" %s", grp->gr_name);
+		s = ft_strjoin(s, grp->gr_name, " ");
+	}
+
+
+    // Print file size
+    // printf(" %ld", file_stat->st_size);
+	char *st_size = malloc(999);
+	snprintf(st_size, 999, "%ld",file_stat->st_size);
+    s = ft_strjoin(s, st_size, " ");
+
+    // Print last modification time
+    char time_str[80];
+    strftime(time_str, sizeof(time_str), "%b %d %H:%M", localtime(&(file_stat->st_mtime)));
+    // printf(" %s", time_str);
+    s = ft_strjoin(s, time_str, " ");
+    
+
+    // Print file name
+    // printf(" %s\n", filename);
+    s = ft_strjoin(s, filename, "\0");
+
+	return s;
+}
+
+
+
+// char* generate_final_res(t_list* head, char delim) {
+//     char* result = malloc(1);
+//     result[0] = '\0';  // Initialize empty result string
+
+//     while (head != NULL) {
+//         struct stat file_stat;
+//         lstat(head->content, &file_stat);  // Get file metadata
+
+//         const char* color = get_file_color(head->content);  // Get color based on file type
+//         char* file_info_with_color = malloc(strlen(head->content) + strlen(color) + strlen(COLOR_RESET) + 1);
+        
+//         // Format file name with color
+//         sprintf(file_info_with_color, "%s%s%s", color, head->content, COLOR_RESET);
+
+//         // Join the file info with the result
+//         result = realloc(result, strlen(result) + strlen(file_info_with_color) + 2);  // Allocate extra space
+//         strcat(result, file_info_with_color);  // Append the colored file info
+
+//         if (head->next != NULL) {
+//             // Add the delimiter between nodes
+//             size_t len = strlen(result);
+//             result[len] = delim;
+//             result[len + 1] = '\0';
+//         }
+
+//         free(file_info_with_color);  // Free the temporary color string
+
+//         head = head->next;  // Move to the next node
+//     }
+
+//     return result;  // Return the final result string
+// }
 
 char	*generate_final_res(t_list *head, char delim) {
 
     char *t = ft_calloc(ft_lstcontentsize(head), 1);
 
 	while (head != NULL) {
+        struct stat file_stat;
+        lstat(head->content, &file_stat);
+        
 		if (head->next != NULL)
 			t = ft_strchrjoin(t, head->content, delim);
+			// t = print_file_info(head->content, lstat(head->content));
 		else
 			t = ft_strchrjoin(t, head->content, '\0');
+		head = head->next;
+	}
+
+	return t;
+}
+
+char	*generate_final_lres(t_list *head, char delim, int _hide_owner, int _hide_group_info_, const char *path) {
+
+	struct stat buff;
+    char *t = ft_calloc(999, 1);
+
+	while (head != NULL) {
+        
+		lstat(head->content, &buff);
+		if (head->next != NULL)
+			t = ft_strchrjoin(t, print_file_info(head->content, &buff, _hide_owner, _hide_group_info_, path), delim);
+		else
+			t = ft_strchrjoin(t, print_file_info(head->content, &buff, _hide_owner, _hide_group_info_, path), '\0');
 		head = head->next;
 	}
 
@@ -215,53 +350,7 @@ void remove_R_hiddens(t_list *head) {
 }
 
 
-void ls_R(t_list** head, char* path) {
-    DIR* dp = opendir(path);
-    if (dp == NULL) {
-        perror("opendir");
-        return;
-    }
 
-    struct dirent* entry;
-    struct stat statbuf;
-
-    // Create the root directory node with name "."
-    t_list* root = create_node(path);
-    insert_node(head, ".");
-
-    // Read the contents of the directory
-    while ((entry = readdir(dp)) != NULL) {
-        // Skip "." and ".."
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
-            continue;
-        }
-
-        // Construct the full path
-        char full_path[999];
-        snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
-
-        // Insert the entry (file or directory) into the root's subdirectory list
-        insert_node(&(root->subdirectory), entry->d_name);
-
-        // Check if it's a directory
-        if (stat(full_path, &statbuf) == 0 && S_ISDIR(statbuf.st_mode)) {
-            t_list* subdir = NULL;
-            ls_R(&subdir, full_path); // Recursively list the subdirectory
-
-            // Find the node we just inserted and attach the subdirectory list
-            t_list* current = root->subdirectory;
-            while (current->next) {
-                current = current->next;
-            }
-            current->subdirectory = subdir;
-        }
-    }
-
-    // Insert the root directory node into the list
-    *head = root;
-
-    closedir(dp);
-}
 
 // void lssss_R(t_list **head, const char *path, int depth) {
 //     DIR *dir = opendir(path);
@@ -304,23 +393,7 @@ void ls_R(t_list** head, char* path) {
 //     closedir(dir);
 // }
 
-void    ls(t_list   **head, const char *path) {
-    
-	struct dirent *entry;
-    DIR *dp = opendir(path);
 
-    if (dp == NULL) {
-        perror("opendir");
-        return;
-    }
-
-    while ((entry = readdir(dp))) {
-        insert_node(head, entry->d_name);
-    }
-
-    closedir(dp);
-	sort_list(head);
-}
 
 void print_list(t_list* node) {
 
@@ -351,293 +424,247 @@ void print_list(t_list* node) {
     }
 }
 
-void ls_d(const char *path) {
-    struct dirent *entry;
-    struct stat statbuf;
-    DIR *dp = opendir(path);
+// int is_direc`
 
-    if (dp == NULL) {
-        perror("opendir");
-        return;
-    }
 
-    while ((entry = readdir(dp)) != NULL) {
-        char full_path[1024];
-        snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
 
-        // Get file status
-        if (lstat(full_path, &statbuf) == -1) {
-            perror("stat");
-            continue;
-        }
+// void ls_f(const char *path) {
+//     struct dirent *entry;
+//     struct stat statbuf;
+//     DIR *dp = opendir(path);
 
-        // Print directories and files themselves, not their contents
-        if (S_ISDIR(statbuf.st_mode)) {
-            printf("%s/\n", entry->d_name);  // Print directory name
-        } else {
-            printf("%s\n", entry->d_name);   // Print file name
-        }
-    }
+//     if (dp == NULL) {
+//         perror("opendir");
+//         return;
+//     }
 
-    closedir(dp);
-}
+//     while ((entry = readdir(dp)) != NULL) {
+//         char full_path[1024];
+//         snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
 
-void ls_f(const char *path) {
-    struct dirent *entry;
-    struct stat statbuf;
-    DIR *dp = opendir(path);
+//         // Get file status
+//         if (lstat(full_path, &statbuf) == -1) {
+//             perror("stat");
+//             continue;
+//         }
 
-    if (dp == NULL) {
-        perror("opendir");
-        return;
-    }
+//         // Print the entry name
+//         printf("%s", entry->d_name);
 
-    while ((entry = readdir(dp)) != NULL) {
-        char full_path[1024];
-        snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
+//         // If it's a directory, append '/'
+//         if (S_ISDIR(statbuf.st_mode)) {
+//             printf("/");
+//         }
 
-        // Get file status
-        if (lstat(full_path, &statbuf) == -1) {
-            perror("stat");
-            continue;
-        }
+//         printf("  "); // Space between entries
+//     }
 
-        // Print the entry name
-        printf("%s", entry->d_name);
+//     printf("\n");
+//     closedir(dp);
+// }
 
-        // If it's a directory, append '/'
-        if (S_ISDIR(statbuf.st_mode)) {
-            printf("/");
-        }
+// #include <stdio.h>
+// #include <sys/stat.h>
+// #include <sys/types.h>
+// #include <dirent.h>
+// #include <pwd.h>
+// #include <grp.h>
+// #include <time.h>
+// #include <unistd.h>
+// #include <string.h>
 
-        printf("  "); // Space between entries
-    }
-
-    printf("\n");
-    closedir(dp);
-}
-
-#include <stdio.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <dirent.h>
-#include <pwd.h>
-#include <grp.h>
-#include <time.h>
-#include <unistd.h>
-#include <string.h>
-
-void print_permissions(mode_t mode) {
-    printf((S_ISDIR(mode)) ? "d" : "-");
-    printf((mode & S_IRUSR) ? "r" : "-");
-    printf((mode & S_IWUSR) ? "w" : "-");
-    printf((mode & S_IXUSR) ? "x" : "-");
-    printf((mode & S_IRGRP) ? "r" : "-");
-    printf((mode & S_IWGRP) ? "w" : "-");
-    printf((mode & S_IXGRP) ? "x" : "-");
-    printf((mode & S_IROTH) ? "r" : "-");
-    printf((mode & S_IWOTH) ? "w" : "-");
-    printf((mode & S_IXOTH) ? "x" : "-");
-}
+// void print_permissions(mode_t mode) {
+//     printf((S_ISDIR(mode)) ? "d" : "-");
+//     printf((mode & S_IRUSR) ? "r" : "-");
+//     printf((mode & S_IWUSR) ? "w" : "-");
+//     printf((mode & S_IXUSR) ? "x" : "-");
+//     printf((mode & S_IRGRP) ? "r" : "-");
+//     printf((mode & S_IWGRP) ? "w" : "-");
+//     printf((mode & S_IXGRP) ? "x" : "-");
+//     printf((mode & S_IROTH) ? "r" : "-");
+//     printf((mode & S_IWOTH) ? "w" : "-");
+//     printf((mode & S_IXOTH) ? "x" : "-");
+// }
 
 // Function to print the file details without the owner
-void print_file_info(const char *filename, const struct stat *file_stat) {
-    // Print file permissions
-    print_permissions(file_stat->st_mode);
 
-    // Print number of hard links
-    printf(" %ld", file_stat->st_nlink);
-
-    // Get group information
-    struct group *grp = getgrgid(file_stat->st_gid);
-    printf(" %s", grp->gr_name);
-
-    // Print file size
-    printf(" %ld", file_stat->st_size);
-
-    // Print last modification time
-    char time_str[80];
-    strftime(time_str, sizeof(time_str), "%b %d %H:%M", localtime(&(file_stat->st_mtime)));
-    printf(" %s", time_str);
-
-    // Print file name
-    printf(" %s\n", filename);
-}
 
 // Function to list directory contents in `ls -g` format
-void ls_g(const char *path) {
-    DIR *dir = opendir(path);
-    if (!dir) {
-        perror("opendir");
-        return;
-    }
+// void ls_g(const char *path) {
+//     DIR *dir = opendir(path);
+//     if (!dir) {
+//         perror("opendir");
+//         return;
+//     }
 
-    struct dirent *entry;
-    struct stat file_stat;
-    char fullpath[1024];
+//     struct dirent *entry;
+//     struct stat file_stat;
+//     char fullpath[1024];
 
-    while ((entry = readdir(dir)) != NULL) {
-        // Skip "." and ".."
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
-            continue;
-        }
+//     while ((entry = readdir(dir)) != NULL) {
+//         // Skip "." and ".."
+//         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+//             continue;
+//         }
 
-        // Build the full path to the file
-        snprintf(fullpath, sizeof(fullpath), "%s/%s", path, entry->d_name);
+//         // Build the full path to the file
+//         snprintf(fullpath, sizeof(fullpath), "%s/%s", path, entry->d_name);
 
-        // Get file metadata
-        if (lstat(fullpath, &file_stat) == -1) {
-            perror("lstat");
-            continue;
-        }
+//         // Get file metadata
+//         if (lstat(fullpath, &file_stat) == -1) {
+//             perror("lstat");
+//             continue;
+//         }
 
-        // Print file details in `ls -g` format
-        print_file_info(entry->d_name, &file_stat);
-    }
+//         // Print file details in `ls -g` format
+//         print_file_info(entry->d_name, &file_stat);
+//     }
 
-    closedir(dir);
-}
+//     closedir(dir);
+// }
 
 
-#define MAX_FILES 1000
+// #define MAX_FILES 1000
 
-// Structure to hold file information
-typedef struct {
-    char name[256];
-    time_t access_time;
-} FileInfo;
+// // Structure to hold file information
+// typedef struct {
+//     char name[256];
+//     time_t access_time;
+// } FileInfo;
 
-int compare(const void *a, const void *b) {
-    FileInfo *fileA = (FileInfo *)a;
-    FileInfo *fileB = (FileInfo *)b;
-    return (fileA->access_time - fileB->access_time);
-}
+// int compare(const void *a, const void *b) {
+//     FileInfo *fileA = (FileInfo *)a;
+//     FileInfo *fileB = (FileInfo *)b;
+//     return (fileA->access_time - fileB->access_time);
+// }
 
 // Function to list files and sort by access time
-void ls_u(const char *path) {
-    DIR *dir;
-    struct dirent *entry;
-    struct stat file_stat;
-    FileInfo files[MAX_FILES];
-    int count = 0;
+// void ls_u(const char *path) {
+//     DIR *dir;
+//     struct dirent *entry;
+//     struct stat file_stat;
+//     FileInfo files[MAX_FILES];
+//     int count = 0;
 
-    // Open the directory
-    dir = opendir(path);
-    if (!dir) {
-        perror("opendir");
-        return;
-    }
+//     // Open the directory
+//     dir = opendir(path);
+//     if (!dir) {
+//         perror("opendir");
+//         return;
+//     }
 
-    // Iterate over directory entries
-    while ((entry = readdir(dir)) != NULL) {
-        // Skip "." and ".." entries
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
-            continue;
-        }
+//     // Iterate over directory entries
+//     while ((entry = readdir(dir)) != NULL) {
+//         // Skip "." and ".." entries
+//         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+//             continue;
+//         }
 
-        // Construct full path to the file
-        char full_path[512];
-        snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
+//         // Construct full path to the file
+//         char full_path[512];
+//         snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
 
-        // Get file metadata
-        if (stat(full_path, &file_stat) == -1) {
-            perror("stat");
-            continue;
-        }
+//         // Get file metadata
+//         if (stat(full_path, &file_stat) == -1) {
+//             perror("stat");
+//             continue;
+//         }
 
-        // Store file name and access time
-        strncpy(files[count].name, entry->d_name, sizeof(files[count].name));
-        files[count].access_time = file_stat.st_atime; // Last access time
-        count++;
-    }
+//         // Store file name and access time
+//         strncpy(files[count].name, entry->d_name, sizeof(files[count].name));
+//         files[count].access_time = file_stat.st_atime; // Last access time
+//         count++;
+//     }
 
-    // Sort files by access time
-    qsort(files, count, sizeof(FileInfo), compare);
+//     // Sort files by access time
+//     qsort(files, count, sizeof(FileInfo), compare);
 
-    // Display sorted files
-    for (int i = 0; i < count; i++) {
-        printf("%s\n", files[i].name);
-    }
+//     // Display sorted files
+//     for (int i = 0; i < count; i++) {
+//         printf("%s\n", files[i].name);
+//     }
 
-    // Close the directory
-    closedir(dir);
-}
+//     // Close the directory
+//     closedir(dir);
+// }
 
 
-void print_file_infoo(const char *path, const char *filename) {
-    struct stat statbuf;
-    char fullpath[1024];
-    snprintf(fullpath, sizeof(fullpath), "%s/%s", path, filename);
+// void print_file_infoo(const char *path, const char *filename) {
+//     struct stat statbuf;
+//     char fullpath[1024];
+//     snprintf(fullpath, sizeof(fullpath), "%s/%s", path, filename);
     
-    if (stat(fullpath, &statbuf) == -1) {
-        perror("stat");
-        return;
-    }
+//     if (stat(fullpath, &statbuf) == -1) {
+//         perror("stat");
+//         return;
+//     }
 
-    // Print file type and permissions
-    printf((S_ISDIR(statbuf.st_mode)) ? "d" : "-");
-    printf((statbuf.st_mode & S_IRUSR) ? "r" : "-");
-    printf((statbuf.st_mode & S_IWUSR) ? "w" : "-");
-    printf((statbuf.st_mode & S_IXUSR) ? "x" : "-");
-    printf((statbuf.st_mode & S_IRGRP) ? "r" : "-");
-    printf((statbuf.st_mode & S_IWGRP) ? "w" : "-");
-    printf((statbuf.st_mode & S_IXGRP) ? "x" : "-");
-    printf((statbuf.st_mode & S_IROTH) ? "r" : "-");
-    printf((statbuf.st_mode & S_IWOTH) ? "w" : "-");
-    printf((statbuf.st_mode & S_IXOTH) ? "x" : "-");
+//     // Print file type and permissions
+//     printf((S_ISDIR(statbuf.st_mode)) ? "d" : "-");
+//     printf((statbuf.st_mode & S_IRUSR) ? "r" : "-");
+//     printf((statbuf.st_mode & S_IWUSR) ? "w" : "-");
+//     printf((statbuf.st_mode & S_IXUSR) ? "x" : "-");
+//     printf((statbuf.st_mode & S_IRGRP) ? "r" : "-");
+//     printf((statbuf.st_mode & S_IWGRP) ? "w" : "-");
+//     printf((statbuf.st_mode & S_IXGRP) ? "x" : "-");
+//     printf((statbuf.st_mode & S_IROTH) ? "r" : "-");
+//     printf((statbuf.st_mode & S_IWOTH) ? "w" : "-");
+//     printf((statbuf.st_mode & S_IXOTH) ? "x" : "-");
     
-    // Print the number of links
-    printf(" %ld ", statbuf.st_nlink);
+//     // Print the number of links
+//     printf(" %ld ", statbuf.st_nlink);
 
-    // Print the owner name (exclude group info)
-    struct passwd *pwd = getpwuid(statbuf.st_uid);
-    printf("%s ", pwd->pw_name);
+//     // Print the owner name (exclude group info)
+//     struct passwd *pwd = getpwuid(statbuf.st_uid);
+//     printf("%s ", pwd->pw_name);
 
-    // Print the file size
-    printf("%ld ", statbuf.st_size);
+//     // Print the file size
+//     printf("%ld ", statbuf.st_size);
 
-    // Print the last modification time
-    char timebuf[64];
-    struct tm *tm_info = localtime(&statbuf.st_mtime);
-    strftime(timebuf, sizeof(timebuf), "%b %d %H:%M", tm_info);
-    printf("%s ", timebuf);
+//     // Print the last modification time
+//     char timebuf[64];
+//     struct tm *tm_info = localtime(&statbuf.st_mtime);
+//     strftime(timebuf, sizeof(timebuf), "%b %d %H:%M", tm_info);
+//     printf("%s ", timebuf);
 
-    // Print the file name
-    printf("%s\n", filename);
-}
+//     // Print the file name
+//     printf("%s\n", filename);
+// }
 
-void ls_o(const char *path) {
-    DIR *dir;
-    struct dirent *entry;
+// void ls_o(const char *path) {
+//     DIR *dir;
+//     struct dirent *entry;
 
-    if ((dir = opendir(path)) == NULL) {
-        perror("opendir");
-        return;
-    }
+//     if ((dir = opendir(path)) == NULL) {
+//         perror("opendir");
+//         return;
+//     }
 
-    while ((entry = readdir(dir)) != NULL) {
-        // Skip "." and ".."
-        if (entry->d_name[0] == '.' && 
-            (entry->d_name[1] == '\0' || (entry->d_name[1] == '.' && entry->d_name[2] == '\0'))) {
-            continue;
-        }
+//     while ((entry = readdir(dir)) != NULL) {
+//         // Skip "." and ".."
+//         if (entry->d_name[0] == '.' && 
+//             (entry->d_name[1] == '\0' || (entry->d_name[1] == '.' && entry->d_name[2] == '\0'))) {
+//             continue;
+//         }
 
-        // Print the file information
-        print_file_infoo(path, entry->d_name);
-    }
+//         // Print the file information
+//         print_file_infoo(path, entry->d_name);
+//     }
 
-    closedir(dir);
-}
+//     closedir(dir);
+// }
 
-char	*opts_executer(t_list **head, const char *opts) {
+char	*opts_executer(t_list **head, const char *opts, const char *path) {
     
 	char *t = ft_calloc(999, 1);
-    // 1- R
-    // 2- a
-    // 3- t
-    // 4- r
-    // 5- l
+    // 1- d
+    // 2- R
+    // 3- a
+    // 4- t
+    // 5- r
+    // 6- l
     
+	
     if (ft_strchr(opts, 'R')) { // if -R exists
         if (!ft_strchr(opts, 'a')) { // remove hidden files and dirs => anything start with a dot
             t_list *h = *head;
@@ -658,28 +685,37 @@ char	*opts_executer(t_list **head, const char *opts) {
         // printf("t -%s-\n", t);
     }
     else if (!ft_strchr(opts, 'R')) { // else if -R doesn't exist
-        if (!ft_strchr(opts, 'a')) // remove hidden files and dirs => anything start with a dot
+        if (!ft_strchr(opts, 'a') && !ft_strchr(opts, 'f')) // remove hidden files and dirs => anything start with a dot
             remove_hiddens(head);
-        if (ft_strchr(opts, 'd')) // Print directories and files themselves, not their contents
-            ls_d("utils");
-        if (ft_strchr(opts, 'f')) // No sorting and includes hidden files
-            ls_f(".");
-        if (ft_strchr(opts, 'g')) // Hide the owner of the file
-            ls_g(".");
+        
+        if (!ft_strchr(opts, 'f')) // No sorting and includes hidden files
+        	sort_list(head);
+        
+        // if (ft_strchr(opts, 'g')) // Hide the owner of the file
+        //     ls_g(".");
         if (ft_strchr(opts, 't')) // sort by time
             sort_by_time(head);
         if (ft_strchr(opts, 'r')) // reverse the order
             reverse_order(head);
         if (ft_strchr(opts, 'u')) // Sort by last access time
-            ls_u("./utils");
-        if (ft_strchr(opts, 'o')) // Hide the group name
-            ls_o(".");
+            // ls_u(".");
+            sort_by_access_time(head);
+
+        // if (ft_strchr(opts, 'o')) // Hide the group name
+        //     ls_o(".");
         
         // printf("res gen %s\n", generate_final_res(output, '\n'));
         
-        if (ft_strchr(opts, 'l')) // generate a string joined by new line
-            t = generate_final_res(*head, '\n');
-        else if (!ft_strchr(opts, 'l')) // generate a string joined by space
+        if (ft_strchr(opts, 'l') || ft_strchr(opts, 'g') || ft_strchr(opts, 'o')) { // generate a string joined by new line
+			int _hide_owner;
+			int	_hide_group_info_;
+
+			_hide_owner = ft_strchr(opts, 'g') ? 0 : 1; // Hide the owner of the file
+			_hide_group_info_ = ft_strchr(opts, 'o') ?  0 : 1; // Hide the group name
+	        
+			t = generate_final_lres(*head, '\n', _hide_owner, _hide_group_info_, path);
+		}
+        else if (!ft_strchr(opts, 'l') && !ft_strchr(opts, 'g') && !ft_strchr(opts, 'o')) // generate a string joined by space
             t = generate_final_res(*head, ' ');
     }
     

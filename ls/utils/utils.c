@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:55 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/01 12:38:42 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/07 19:54:41 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 size_t ft_strlen(const char *s) {
     size_t  i=0;
 
-    while (s[i])
+    while (s[i] != '\0')
         i++;
     return i;
 }
@@ -70,7 +70,7 @@ char	*ft_strdup(const char *s1)
 	return (p);
 }
 
-int is_directory(char *path) {
+int is_directory(const char *path) {
     struct stat statbuf;
     if (stat(path, &statbuf) != 0)
         return 0;

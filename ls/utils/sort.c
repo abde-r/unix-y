@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:34:46 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/08/29 16:35:35 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/06 10:33:43 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,33 @@ void	sort_by_time(t_list **output) {
             lstat(ptr1->next->content, &buff2);
 
             if (buff1.st_mtime < buff2.st_mtime) {
+                swap_nodes(ptr1, ptr1->next);
+                swapped = 1;
+            }
+            ptr1 = ptr1->next;
+        }
+        lptr = ptr1;
+    }
+}
+
+void	sort_by_access_time(t_list **output) {
+
+    // printf("you even here?\n");
+    int swapped;
+    t_list* ptr1;
+    t_list* lptr = NULL;
+
+	swapped = 1;
+    while (swapped) {
+        swapped = 0;
+        ptr1 = *output;
+
+        while (ptr1->next != lptr) {
+            struct stat buff1, buff2;
+            lstat(ptr1->content, &buff1);
+            lstat(ptr1->next->content, &buff2);
+
+            if (buff1.st_atime < buff2.st_atime) {
                 swap_nodes(ptr1, ptr1->next);
                 swapped = 1;
             }

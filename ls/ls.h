@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:23 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/09 13:28:07 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/11 20:06:42 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,19 @@ char	*opts_parser(char **av, char **path);
 
 //--- sort
 void	sort_list(t_list **head);
+int		compare_case_sensitive(const char *a, const char *b);
 void	sort_by_time(t_list **output);
 void	reverse_order(t_list **output);
 void	sort_by_access_time(t_list **output);
+void	sort_recursive_list(t_list **head);
+void	reverse_sort_recursive_list(t_list **head);
+void	sort_recursive_by_time(t_list **output, const char *path);
+void	sort_recursive_by_access_time(t_list **head, const char *parent_path);
 
 
 //--- helper
 void	ls(t_list   **head, const char *path);
-void	ls_R(t_list **head, char *path);
+void	ls_R(t_list **head, const char *path);
 char	*ls_d(const char *path);
 char	*opts_executer(t_list **head, const char *opts, const char *path);
 
@@ -59,6 +64,13 @@ char	*opts_executer(t_list **head, const char *opts, const char *path);
 t_list	*create_node(const char *content);
 void	insert_node(t_list **head, const char   *content);
 
+
+//--- listing info
+char	*generate_result(t_list *head, char delim);
+char	*generate_listing_result(t_list *head, char delim, int _hide_owner, int _hide_group_info_, const char *path);
+char	*generate_recursive_result(t_list *head, char delim);
+char	*print_file_info(char *filename, const struct stat *file_stat, int _hide_owner, int _hide_group_info_, const char *path);
+void	print_recursive_list(t_list *head, int depth);
 
 //--- utils
 size_t	ft_strlen(const char *s);

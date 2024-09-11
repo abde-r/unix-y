@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:49:56 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/09 12:56:04 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/10 15:23:06 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ size_t calculate_max_len(char **items, int count) {
     size_t max_len = 0;
     for (int i = 0; i < count; i++) {
         size_t len = ft_strlen(items[i]);
-		printf("s -%s- len %zu max len %zu\n", items[i], ft_strlen(items[i]), max_len);
+		// printf("s -%s- len %zu max len %zu\n", items[i], ft_strlen(items[i]), max_len);
         if (len > max_len) {
             max_len = len;
         }

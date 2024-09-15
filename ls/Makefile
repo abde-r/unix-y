@@ -6,7 +6,7 @@
 #    By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/30 09:45:24 by ael-asri          #+#    #+#              #
-#    Updated: 2024/09/11 12:37:31 by ael-asri         ###   ########.fr        #
+#    Updated: 2024/09/15 12:39:43 by ael-asri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,9 @@ SRC = main.c\
 	utils/helper.c\
 	utils/acl_xattr.c\
 	utils/formatting_display.c\
+	utils/formatting_recursive_display.c\
 	utils/coloring_display.c\
+	utils/coloring_recursive_display.c\
 	utils/listing_info.c\
 
 OBJ = $(SRC:.c=.o)

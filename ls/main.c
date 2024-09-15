@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:32 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/11 19:23:33 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/15 14:03:10 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ int main(int ac, char **av) {
     char	*opts;
     char	*path = ft_calloc(999, 1);
 	char *final_res = ft_calloc(999, 1);
+    // char *cl = ft_calloc(999, 1);
+    // char *clr = ft_calloc(999, 1);
     (void)ac;
 	
     // parse & error checking
@@ -81,15 +83,46 @@ int main(int ac, char **av) {
 
 		final_res = opts_executer(&head, opts, path);
 		// printf(".:\n");
-	    print_recursive_list(head, 0);
-		exit(1);
+	    // print_recursive_list(head, 0);
+		// exit(1);
 	}
 
-	// printf("-%s-\n", final_res);
-	if (!ft_strchr(opts, 'l')) // -l doesn't exist
-		printf("%s", manage_columns(final_res));
-	else
-		printf("%s", manage_colors(head, final_res));
+    if (ft_strchr(opts, 'R')) {
+        if (!ft_strchr(opts, 'l')) { // -l doesn't exist
+            char *sf = ft_calloc(999, 1);
+            char **items = ft_split(final_res, '\n');
+            
+            sf = ft_strjoin(".:\n", sf, manage_recursive_columns(items[0], path));
+            sf = ft_strjoin(sf, "\n","");
+            for (int i=1;i<5;i++) {
+                if (!(i%2)) {
+                    if (ft_strlen(items[i]) > 0)
+                        sf = ft_strjoin(sf, manage_recursive_columns(items[i], path), "\n");
+                    else
+                        sf = ft_strjoin(sf, "\n", "\n");
+                }
+                else {
+                    sf = ft_strjoin(sf, items[i], "\n");
+                    // printf("--- %s\n", items[i]);
+                }
+            }
+            printf("%s", sf);
+        }
+        else {
+			// printf("we weew%s\n", final_res);
+			printf("%s", manage_recursive_colors(head, final_res, path));
+		}
+
+	    // print_recursive_list(head, 0);
+		// exit(1);
+
+    }
+    else {
+        if (!ft_strchr(opts, 'l')) // -l doesn't exist
+            printf("%s", manage_columns(final_res));
+        else
+            printf("%s", manage_colors(head, final_res));
+    }
 
 	return (0);
 }

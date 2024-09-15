@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:13:50 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/11 11:50:52 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/15 12:53:48 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,14 @@ char	*print_permissions(mode_t mode, const char *path) {
 }
 
 char	*print_file_info(char *filename, const struct stat *file_stat, int _hide_owner, int _hide_group_info_, const char *path) {
-    
+
 	struct stat statbuf;
     char fullpath[1024];
-    snprintf(fullpath, sizeof(fullpath), "%s/%s", ".", filename);
+    snprintf(fullpath, sizeof(fullpath), "%s/%s", path, filename);
     
     if (stat(fullpath, &statbuf) == -1) {
         perror("stat");
+        // return "";
         exit(1);
     }
     char *s = ft_calloc(999, 1);
@@ -54,7 +55,7 @@ char	*print_file_info(char *filename, const struct stat *file_stat, int _hide_ow
 
     // Print number of hard links
     // printf(" %ld", file_stat->st_nlink);
-	char *st_link = malloc(999);
+	char *st_link = ft_calloc(999, 1);
 	snprintf(st_link, 999, "%lu", file_stat->st_nlink);
     s = ft_strjoin(s, st_link, " ");
 
@@ -66,15 +67,16 @@ char	*print_file_info(char *filename, const struct stat *file_stat, int _hide_ow
 
 
     if (_hide_group_info_ == 1) { // Get group information
-		struct group *grp = getgrgid(file_stat->st_gid);
-		// printf(" %s", grp->gr_name);
-		s = ft_strjoin(s, grp->gr_name, " ");
-	}
 
+		struct group *grp = getgrgid(file_stat->st_gid);
+        if (grp)
+            s = ft_strjoin(s, grp->gr_name, " ");
+	}
+    
 
     // Print file size
     // printf(" %ld", file_stat->st_size);
-	char *st_size = malloc(999);
+	char *st_size = ft_calloc(999, 1);
 	snprintf(st_size, 999, "%ld",file_stat->st_size);
     s = ft_strjoin(s, st_size, " ");
 
@@ -152,20 +154,95 @@ char	*generate_recursive_result(t_list *head, char delim) {
     current = head;
 
     while (current != NULL) {
-        if (current->subdirectory != NULL) {  // If it's a directory with subdirectories
-            // Generate content for the subdirectory
-            char *subdir_res = generate_recursive_result(current->subdirectory, delim);
+        if (is_directory(current->content)) {
+            if (current->subdirectory != NULL) {  // If it's a directory with subdirectories
+                // Generate content for the subdirectory
+                char *subdir_res = generate_recursive_result(current->subdirectory, delim);
 
-            // Append the directory name and its content
-            temp = ft_strjoin(current->content, ":\n", "");
-            // printf("TEMPPPPPP %s\n", temp);
-            result = ft_strchrjoin(result, temp, '\0');
-            free(temp);
-            result = ft_strchrjoin(result, subdir_res, '\0');
-            free(subdir_res);
+                // Append the directory name and its content
+                temp = ft_strjoin("\n./", current->content, ":\n");
+                // printf("TEMPPPPPP %s\n", temp);
+                result = ft_strchrjoin(result, temp, '\0');
+                free(temp);
+                result = ft_strchrjoin(result, subdir_res, '\0');
+                free(subdir_res);
+            }
+            else {
+                // char *subdir_res = generate_recursive_result(current->subdirectory, delim);
+
+                // Append the directory name and its content
+                temp = ft_strjoin("\n./", current->content, ":\n");
+                // printf("TEMPPPPPP %s\n", temp);
+                result = ft_strchrjoin(result, temp, '\0');
+                free(temp);
+                // result = ft_strchrjoin(result, "", '\0');
+                // free(subdir_res);
+            }
         }
         current = current->next;
     }
 
     return result;
+}
+
+char *generate_recursive_listing_result(t_list *head, char delim, int _hide_owner, int _hide_group_info, const char *path) {
+
+	struct stat buff;
+    
+    if (head == NULL) return NULL;
+
+    // Allocate memory for the result string
+    char *result = ft_calloc(9999, 1);  
+    char *temp;
+
+    // List all files and directories in the current directory
+    t_list *current = head;
+    char *t = current->content;
+    while (current != NULL) {
+        if (current->subdirectory == NULL || ft_strcmp(t, current->content)) {  // If it's a file or a simple directory without subdirectories
+            // char *full_path = ft_calloc(4096, 1);
+            // snprintf(full_path, 4096, "%s/%s", path, current->content);
+            // printf("w - %s: %s\n", current->content, path);
+            temp = ft_strchrjoin(result, print_file_info(current->content, &buff, _hide_owner, _hide_group_info, path), delim);
+            free(result);  // Free the old result before reassigning
+            result = temp;
+        }
+        current = current->next;
+    }
+
+    // Now process each subdirectory
+    current = head;
+
+    while (current != NULL) {
+        if (is_directory(current->content)) {
+            if (current->subdirectory != NULL) {  // If it's a directory with subdirectories
+                // Generate content for the subdirectory
+                // char *full_path = ft_calloc(4096, 1);
+                // snprintf(full_path, 4096, "%s/%s", path, current->content);
+                // printf("NEW PATH: %s\n", path);
+                char *subdir_res = generate_recursive_listing_result(current->subdirectory, delim, _hide_owner, _hide_group_info, current->content);
+
+                // Append the directory name and its content
+                // printf("v - %s: %s\n", current->content, print_file_info(current->content, &buff, _hide_owner, _hide_group_info, full_path));
+                // printf("fullpath %s | %s\n", full_path, path);
+                temp = ft_strjoin("\n", print_file_info(current->content, &buff, _hide_owner, _hide_group_info, path), "");
+                // printf("TEMPPPPPP %s\n", temp);
+                result = ft_strjoin(result, temp, ":\n");
+                free(temp);
+                result = ft_strchrjoin(result, subdir_res, '\0');
+                free(subdir_res);
+            }
+            else {
+                temp = ft_strjoin("\n", print_file_info(current->content, &buff, _hide_owner, _hide_group_info, path), "");
+                // printf("TEMPPPPPP %s\n", temp);
+                result = ft_strjoin(result, temp, ":\n");
+                result = ft_strchrjoin(result, "\n", '\0');
+            }
+        }
+        current = current->next;
+    }
+
+    // printf("result:\n%s\n", result);
+    return result;
+    
 }

@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:38:25 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/11 20:07:12 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/15 14:02:22 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,8 @@ char	*opts_executer(t_list **head, const char *opts, const char *path) {
         if (!ft_strchr(opts, 'a') && !ft_strchr(opts, 'f')) // remove hidden files and dirs => anything start with a dot
 			remove_recursive_hiddens(head);
 
-        // if (!ft_strchr(opts, 'f')) // No sorting and includes hidden files
-		// 	sort_recursive_list(head);
+        if (!ft_strchr(opts, 'f')) // No sorting and includes hidden files
+			sort_recursive_list(head);
 
         if (ft_strchr(opts, 't')) // sort by time
 			sort_recursive_by_time(head, path);
@@ -99,6 +99,23 @@ char	*opts_executer(t_list **head, const char *opts, const char *path) {
         if (ft_strchr(opts, 'u')) // Sort by last access time
 			sort_recursive_by_access_time(head, path);
 		
+        if (ft_strchr(opts, 'l') || ft_strchr(opts, 'g') || ft_strchr(opts, 'o')) { // generate a string joined by new line
+			int _hide_owner;
+			int	_hide_group_info_;
+
+			_hide_owner = ft_strchr(opts, 'g') ? 0 : 1; // Hide the owner of the file
+			_hide_group_info_ = ft_strchr(opts, 'o') ?  0 : 1; // Hide the group name
+	        
+			t = generate_recursive_listing_result(*head, '\n', _hide_owner, _hide_group_info_, path);
+            // printf("y %s\n", t);
+            // t = generate_recursive_result(*head, '\n');
+            // printf("o\n");
+
+		}
+        else if (!ft_strchr(opts, 'l') && !ft_strchr(opts, 'g') && !ft_strchr(opts, 'o')) // generate a string joined by space
+            // t = generate_result(*head, ' ');
+            t = generate_recursive_result(*head, ' ');
+
 
         // if (ft_strchr(opts, 't')) // sort by time
         //     sort_by_time(head);
@@ -110,10 +127,10 @@ char	*opts_executer(t_list **head, const char *opts, const char *path) {
         // if (ft_strchr(opts, 'l')) // generate a string joined by new line
         //     t = generate_recursive_result(*head, '\n');
         // else if (!ft_strchr(opts, 'l')) // generate a string joined by space
-        t = generate_recursive_result(*head, ' ');
         
-        // printf("hola mista\n");
-        // printf("t -%s-\n", t);
+        // printf("why not sorted\n");
+        // printf("%s", t);
+        // exit(1);
     }
     else if (!ft_strchr(opts, 'R')) { // else if -R doesn't exist
         if (!ft_strchr(opts, 'a') && !ft_strchr(opts, 'f')) // remove hidden files and dirs => anything start with a dot

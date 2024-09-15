@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:23 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/11 20:06:42 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/15 12:42:47 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	sort_recursive_list(t_list **head);
 void	reverse_sort_recursive_list(t_list **head);
 void	sort_recursive_by_time(t_list **output, const char *path);
 void	sort_recursive_by_access_time(t_list **head, const char *parent_path);
-
+char	*generate_recursive_listing_result(t_list *head, char delim, int _hide_owner, int _hide_group_info, const char *path);
 
 //--- helper
 void	ls(t_list   **head, const char *path);
@@ -91,11 +91,15 @@ int		ft_lstcontentsize(t_list *lst);
 
 
 //--- Bonus
-int	has_extended_attributes(const char *path);
-int has_acl(const char *path);
+int		has_extended_attributes(const char *path);
+int		has_acl(const char *path);
 char	*manage_columns(char *joined_string);
 char	*manage_colors(t_list *head, char *joined_string);
-const char*	get_file_color(const char* path);
-
+const	char*	get_file_color(const char* path);
+char	*manage_recursive_columns(char *joined_string, char *path);
+char	*print_in_columns(char **items, int count, int max_len);
+size_t	calculate_max_len(char **items, int count);
+char	*list_directory(const char *dir_path);
+char	*manage_recursive_colors(t_list *head, char *joined_string, char *current_path);
 // NOT WORKING CASES
 // ./ft_ls -laRrt accures a segfault

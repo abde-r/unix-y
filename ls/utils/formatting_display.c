@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:49:56 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/10 15:23:06 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/14 13:54:04 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,13 +65,14 @@ char *print_in_columns(char **items, int count, int max_len) {
         }
         strcat(s, "\n");  // Append a newline at the end of each row
     }
-
+    
     return s;  // Return the final string
 }
 
 // Function to manage columns
 char	*manage_columns(char *joined_string) {
     int count=0;
+    
     char **items = ft_split(joined_string, ' ');
 	while (items[count]) {
 		count++;
@@ -87,6 +88,6 @@ char	*manage_columns(char *joined_string) {
         free(items[i]);
     }
     free(items);
-	
+
 	return s;
 }

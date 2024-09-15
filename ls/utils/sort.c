@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:34:46 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/11 19:37:38 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/12 11:32:53 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	sort_by_time(t_list **output) {
             lstat(ptr1->content, &buff1);
             lstat(ptr1->next->content, &buff2);
 
-            printf("ddd %s: %ld --- %s: %ld\n", ptr1->content, buff1.st_mtime, ptr1->next->content, buff2.st_mtime);
+            // printf("ddd %s: %ld --- %s: %ld\n", ptr1->content, buff1.st_mtime, ptr1->next->content, buff2.st_mtime);
             if (buff1.st_mtime < buff2.st_mtime) {
                 swap_nodes(ptr1, ptr1->next);
                 swapped = 1;

@@ -6,20 +6,62 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 12:40:43 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/15 14:30:32 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/16 20:01:59 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ls.h"
 
-char *manage_recursive_colors(t_list *head, char *joined_string, char *current_path) {
-    int count = 0;
-    char *s = malloc(4096);  // Allocate memory for the final string
-    if (s == NULL) {
-        perror("malloc");
-        return NULL;
+int get_dir_total(const char *path) {
+    DIR *dir;
+    struct dirent *entry;
+    struct stat file_stat;
+    int total_blocks = 0;
+    char filepath[1024];  // Buffer to hold the full file path
+
+    // Open the directory
+    if ((dir = opendir(path)) == NULL) {
+        perror("opendir");
+        return 0;
     }
-    s[0] = '\0';  // Initialize the string as empty
+
+    // Read each entry in the directory
+    while ((entry = readdir(dir)) != NULL) {
+        // Skip "." and ".." directories
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+
+        // Build the full path to the file
+        snprintf(filepath, sizeof(filepath), "%s/%s", path, entry->d_name);
+
+        // Get the file stats
+        if (stat(filepath, &file_stat) == -1) {
+            perror("stat");
+            continue;
+        }
+
+        // Add the number of blocks to the total
+        total_blocks += file_stat.st_blocks;
+    }
+
+    // Each block is 512 bytes, so print the total blocks
+    // printf("total %d\n", total_blocks / 2);  // Divide by 2 to get 1KB blocks (as per ls behavior)
+
+    // Close the directory
+    closedir(dir);
+    return total_blocks/2;
+}
+
+char *manage_recursive_colors(char *joined_string) {
+
+    int count = 0;
+    char *s = ft_calloc(9999, 1);  // Allocate memory for the final string
+    // if (s == NULL) {
+    //     perror("malloc");
+    //     return NULL;
+    // }
+    // s[0] = '\0';  // Initialize the string as empty
 
     // Split the joined_string by newlines into `items`
     char **items = ft_split(joined_string, '\n');
@@ -32,50 +74,57 @@ char *manage_recursive_colors(t_list *head, char *joined_string, char *current_p
         return s;
     }
 
-    int i = 0;
-    char temp[1024];  // Temporary buffer for formatted output
-
-    // Iterate through the linked list and apply color only to the file/dir name
-    while (head != NULL && i < count) {
-        const char *color = get_file_color(head->content);  // Get the color for the file/dir name
-
-        // Combine the current path with the file/dir name
-        char *full_path = ft_strjoin(current_path, head->content, "");
-
-        // Check if the item is a directory
-        if (is_directory(full_path)) {
-            // Format the directory with color
-            snprintf(temp, sizeof(temp), "%s%s%s%s\n", COLOR_RESET, ft_substr(items[i], 0, ft_strlen(items[i]) - ft_strlen(head->content)), color, head->content);
-
-            // Append the formatted directory to `s`
-            strcat(s, temp);
-
-            // Recursively list and color the contents of the subdirectory
-            char *subdir_items = list_directory(full_path);  // List subdirectory contents
-            if (is_directory(head->content)) {
-                printf("we weeeee");
-                // Process subdirectory contents recursively
-                char *subdir_output = manage_recursive_colors(head, subdir_items, ft_strjoin(full_path, "/", ""));
-
-                // Append subdirectory results to `s`
-                s = realloc(s, strlen(s) + strlen(subdir_output) + 1);  // Reallocate to fit new output
-                strcat(s, subdir_output);
-
-                // Clean up subdir items and output
-                free(subdir_items);
-                free(subdir_output);
+    int in_directory=0;
+    char *current_dir = ft_strdup(".");
+    char temp[999];
+    for (int i = 0; i < count; i++) {
+        char *line = items[i];
+        
+        // Check if it's a directory header (ends with a colon)
+        if (line[strlen(line) - 1] == ':') {
+            // Print directory name (skip the first directory)
+            if (in_directory) {
+                // printf("\n");
+                ft_strcat(s, "\n");
             }
-        } else {
-            // Format the file with color
-            snprintf(temp, sizeof(temp), "%s%s%s%s\n", COLOR_RESET, ft_substr(items[i], 0, ft_strlen(items[i]) - ft_strlen(head->content)), color, head->content);
-            strcat(s, temp);  // Append formatted file to `s`
-        }
+            
+            // Update current directory and print header
+            strncpy(current_dir, line, strlen(line) - 1);
+            current_dir[strlen(line) - 1] = '\0';  // Remove the colon
+            // printf("\n%s:\n", current_dir);
+            ft_strcat(s, "\n./");
+            char **dir = ft_split(current_dir, ' ');
+            ft_strcat(s, dir[ft_arrlen(dir)-1]);
+            ft_strcat(s, ":\n");
+            ft_strcat(s, ft_strjoin("total ", ft_itoa(get_dir_total(dir[ft_arrlen(dir)-1])), "\n"));
+            // ft_strcat(s, "\n");
+            // printf("TOTAL --> %d\n", get_dir_total(dir[ft_arrlen(dir)-1]));
 
-        // printf("sss %s\n", s);
-        // Move to the next node in the linked list
-        head = head->next;
-        i++;
-        free(full_path);  // Free the full path memory after use
+            // s = ft_strjoin("\n", current_dir, ":\n");
+            
+            // Reset the flag to indicate we're inside a directory
+            in_directory = 1;
+            continue;
+        }
+        
+        // If it's a file, print the file information
+        // if (!ft_strcmp(current_dir, ".")) {
+            // printf("line %s\n", line);
+            char **t = ft_split(line, ' ');
+            // int j=0;
+            // while (t[j] != NULL) {
+            //     j++;
+            // }
+            const char *color = get_file_color(t[ft_arrlen(t)-1]);  // Get the color for the file/dir name
+            // printf("%s%s%s%s\n", COLOR_RESET, color, line, COLOR_RESET);
+            snprintf(temp, sizeof(temp), "%s%s%s%s%s", COLOR_RESET, ft_substr(line, 0, ft_strlen(line) -ft_strlen(t[ft_arrlen(t)-1])), color, t[ft_arrlen(t)-1], COLOR_RESET);
+
+            ft_strcat(s, temp);
+        // }
+        // else
+        //     // printf("%s\n", line);
+        //     ft_strcat(s, line);
+        ft_strcat(s, "\n");
     }
 
     // Free the allocated memory for `items`

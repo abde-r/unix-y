@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:32 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/15 14:03:10 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/16 20:01:25 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,28 +89,50 @@ int main(int ac, char **av) {
 
     if (ft_strchr(opts, 'R')) {
         if (!ft_strchr(opts, 'l')) { // -l doesn't exist
-            char *sf = ft_calloc(999, 1);
-            char **items = ft_split(final_res, '\n');
+
+            // char *sf = ft_calloc(999, 1);
+            // // char **items = split_string(final_res, ":");
+            // char **items = ft_split(final_res, ':');
+            // // char **data = ft_calloc(9999, 1);
             
-            sf = ft_strjoin(".:\n", sf, manage_recursive_columns(items[0], path));
-            sf = ft_strjoin(sf, "\n","");
-            for (int i=1;i<5;i++) {
-                if (!(i%2)) {
-                    if (ft_strlen(items[i]) > 0)
-                        sf = ft_strjoin(sf, manage_recursive_columns(items[i], path), "\n");
-                    else
-                        sf = ft_strjoin(sf, "\n", "\n");
-                }
-                else {
-                    sf = ft_strjoin(sf, items[i], "\n");
-                    // printf("--- %s\n", items[i]);
-                }
-            }
-            printf("%s", sf);
+            // // for (size_t i=0;i<ft_arrlen(items);i++) {
+            // //     char **item = split_string(items[i], "\n");
+            // //     // printf("1 %s 2 %s\n", item[0], item[1]);
+                
+            // //     if (item[1])
+            // //         data[i] =  ft_strdup(item[1]);
+            // //     else
+            // //         data[i] =  ft_strdup("");
+            // //     // printf("hgana %s\n", data[i]);
+                    
+            // // }
+            // // data[i] =  ft_strdup("\n");
+
+            
+            // sf = ft_strjoin(".:\n", sf, manage_recursive_columns(items[0], path));
+            // sf = ft_strjoin(sf, "\n", "");
+            // // int x=0;
+            // for (size_t i=1;i<ft_arrlen(items);i++) {
+            //     // printf("          %s\n", items[i]); 
+            //     if ((i%2)) {
+            //         if (ft_strlen(items[i]) > 0)
+            //             sf = ft_strjoin(sf, manage_recursive_columns(items[i], path), "");
+            //         else
+            //             sf = ft_strjoin(sf, "\n", "");
+            //     }
+            //     else {
+            //         // printf("yoooooooo %s\n", data[i]);
+            //         // sf = ft_strjoin(sf, data[i], "\n");
+            //         sf = ft_strjoin(sf, manage_recursive_columns(items[i], path), "");
+
+            //         // printf("--- %s\n", items[i]);
+            //     }
+            // }
+            printf("%s", manage_recursive_columns(final_res));
         }
-        else {
+        else { // -l exists
 			// printf("we weew%s\n", final_res);
-			printf("%s", manage_recursive_colors(head, final_res, path));
+			printf("%s", manage_recursive_colors(final_res));
 		}
 
 	    // print_recursive_list(head, 0);

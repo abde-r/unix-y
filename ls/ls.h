@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:23 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/15 12:42:47 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/16 19:52:57 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,13 +74,14 @@ void	print_recursive_list(t_list *head, int depth);
 
 //--- utils
 size_t	ft_strlen(const char *s);
+size_t	ft_arrlen(char **s);
 int		ft_strcmp();
 int		ft_strchr(const char *s, const char c);
 int		is_directory(const char *path);
-char	**ft_split(char *s, char c);
+char	**ft_split(const char *s, char c);
 char	*ft_strjoin(char *s1, char *s2, char *s3);
 char	*ft_strchrjoin(char *s1, char *s2, char delim);
-char	*ft_substr(char *s, unsigned int start, size_t	len);
+char	*ft_substr(const char *s, unsigned int start, size_t	len);
 char	*ft_strdup(const char *s1);
 // void	ft_lstadd(t_list **lst, char *content);
 void	swap_nodes(t_list* a, t_list* b);
@@ -88,7 +89,8 @@ void	*ft_calloc(size_t count, size_t size);
 int		ft_tolower(int c);
 int		ft_strcat(char *dst, const char *src);
 int		ft_lstcontentsize(t_list *lst);
-
+char	**split_string(const char *str, const char *delim);
+char	*ft_itoa(int n);
 
 //--- Bonus
 int		has_extended_attributes(const char *path);
@@ -96,10 +98,10 @@ int		has_acl(const char *path);
 char	*manage_columns(char *joined_string);
 char	*manage_colors(t_list *head, char *joined_string);
 const	char*	get_file_color(const char* path);
-char	*manage_recursive_columns(char *joined_string, char *path);
+char	*manage_recursive_columns(const char *joined_string);
 char	*print_in_columns(char **items, int count, int max_len);
 size_t	calculate_max_len(char **items, int count);
 char	*list_directory(const char *dir_path);
-char	*manage_recursive_colors(t_list *head, char *joined_string, char *current_path);
+char	*manage_recursive_colors(char *joined_string);
 // NOT WORKING CASES
 // ./ft_ls -laRrt accures a segfault

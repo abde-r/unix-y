@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 15:13:51 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/15 10:39:10 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/16 19:51:40 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,38 +76,57 @@ void free_split_string(char **split_array) {
     free(split_array);
 }
 
-char *manage_recursive_columns(char *joined_string, char *path) {
+int is_directory_header(const char *line) {
+    size_t len = strlen(line);
+    return (len > 0 && line[len - 1] == ':');
+}
 
-    // printf("ha li wsal ---%s---\n", joined_string);
-    int count = 0;
-    (void)path;
-    char **items = ft_split(joined_string, ' '); // Assuming this splits the input
-    while (items[count]) {
-        count++;
-    }
-    if (count == 0)
-        return "";
+// Helper function to skip '.' and '..' entries
+int is_current_or_parent_directory(const char *name) {
+    return (strcmp(name, "./.:") == 0 || strcmp(name, "./..:") == 0);
+}
 
-    // printf("----joined string %s----\n", joined_string);
-    int max_len = calculate_max_len(items, count);  // Calculate max length of items
-    char *s = print_in_columns(items, count, max_len);  // Print the items in columns
+char *manage_recursive_columns(const char *joined_string) {
 
-    // Handle subdirectories
-    for (int i = 0; i < count; i++) {
-        if (is_directory(items[i])) {  // Check if the item is a directory
-            // printf("\n%s:\n", items[i]);  // Print the directory name
-            char *subdir_items = list_directory(items[i]);  // List the subdir contents
-            manage_recursive_columns(subdir_items, path);  // Recursive call to handle subdir items
-            free(subdir_items);  // Clean up after listing the subdirectory
+    char *s = ft_calloc(9999, 1);  // Duplicate the input to avoid modifying the original string
+
+    // char *line = strtok(data, "\n");  // Start by splitting the string by newlines
+    int in_directory = 0;  // Flag to track if we're inside a directory
+
+    char **items = ft_split(joined_string, '\n');
+    int i=0;
+    while (items[i] != NULL) {
+        // If the line is a directory header (ends with a colon)
+        if (is_directory_header(items[i])) {
+            // Print the directory name (skip first empty line before the first directory)
+            if (in_directory) {
+                // printf("\n");
+                ft_strcat(s, "\n");
+            }
+
+            // Print the directory name, skipping '.' and '..' directories inside subdirectories
+            if (!is_current_or_parent_directory(items[i])) {
+                // printf("%s\n", items[i]);
+                ft_strcat(s, items[i]);
+                ft_strcat(s, "\n");
+            }
+
+            // Mark that we are inside a directory
+            in_directory = 1;
+        } else {
+            // If it's a file entry, print it but skip '.' and '..'
+            if (!is_current_or_parent_directory(items[i])) {
+                // printf("%s\n", items[i]);
+                ft_strcat(s, manage_columns(items[i]));
+                ft_strcat(s, "\n");
+            }
         }
+
+        // Get the next line
+        // line = strtok(NULL, "\n");
+        i++;
     }
 
-    // Free allocated memory
-    for (int i = 0; i < count; i++) {
-        free(items[i]);
-    }
-    free(items);
-
-    // printf("wa s %s\n", s);
+    // free(data);
     return s;
 }

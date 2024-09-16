@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 10:04:43 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/11 11:34:53 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/16 12:37:59 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,8 @@ void ls_R(t_list **head, const char *path) {
     }
 
     // Add current directory to the list
-    insert_node(head, path);
-
+    // if (ft_strcmp(path, "."))
+    //     insert_node(head, path);
     while ((entry = readdir(dp)) != NULL) {
         char full_path[1024];
         snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
@@ -113,17 +113,20 @@ void ls_R(t_list **head, const char *path) {
         }
 
         // If it's a directory, recursively handle subdirectories
-        if (S_ISDIR(statbuf.st_mode)) {
-            t_list *subdir_head = NULL;
-            ls_R(&subdir_head, full_path);
+        // printf("path %s\n", path);
+        
+            
+            if (S_ISDIR(statbuf.st_mode)) {
+                t_list *subdir_head = NULL;
+                ls_R(&subdir_head, full_path);
 
-            // Find the last node of the current directory and attach subdirectories
-            t_list *current = *head;
-            while (current->next != NULL) {
-                current = current->next;
+                // Find the last node of the current directory and attach subdirectories
+                t_list *current = *head;
+                while (current->next != NULL) {
+                    current = current->next;
+                }
+                current->subdirectory = subdir_head;
             }
-            current->subdirectory = subdir_head;
-        }
     }
 
     closedir(dp);

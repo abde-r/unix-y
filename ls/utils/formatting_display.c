@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:49:56 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/14 13:54:04 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/16 19:42:37 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ char *print_in_columns(char **items, int count, int max_len) {
         strcat(s, "\n");  // Append a newline at the end of each row
     }
     
+    // printf("ha li mchaaa %s\n", s);
     return s;  // Return the final string
 }
 

@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 12:38:08 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/11 20:09:21 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/16 22:52:50 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,78 +120,6 @@ void reverse_sort_recursive_list(t_list **head) {
         current = current->next;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// int w333(const char *a, const char *b) {
-    
-//     struct stat buff1, buff2;
-//     lstat(a, &buff1);
-//     lstat(b, &buff2);
-
-//     if (buff1.st_mtime < buff2.st_mtime) {
-//         return 1;
-//     }
-//     return 0;
-// }
-
-// void sort_recursive_by_time(t_list **head) {
-//     if (*head == NULL) return;  // If the list is empty, do nothing
-
-//     t_list *current, *next;
-//     int swapped;
-
-//     // First, sort the current list using bubble sort
-//     do {
-//         swapped = 0;
-//         current = *head;
-
-//         while (current->next != NULL) {
-//             next = current->next;
-
-//             // Use the custom comparison function
-//             if (w333(current->content, next->content) > 0) {
-//                 // Swap the entire node (content and subdirectory)
-//                 char *temp_content = current->content;
-//                 t_list *temp_subdir = current->subdirectory;
-
-//                 current->content = next->content;
-//                 current->subdirectory = next->subdirectory;
-
-//                 next->content = temp_content;
-//                 next->subdirectory = temp_subdir;
-
-//                 swapped = 1;
-//             }
-
-//             current = current->next;
-//         }
-//     } while (swapped);
-
-//     // Then, recursively sort each subdirectory's linked list
-//     current = *head;
-//     while (current != NULL) {
-//         if (current->subdirectory != NULL) {
-//         // if (is_directory(current->content)) {
-//             sort_recursive_by_time(&current->subdirectory);  // Recursively sort the subdirectory list
-//         }
-//         current = current->next;
-//     }
-// }
-
-
 
 void _swap_nodes(t_list *a, t_list *b) {
     char *temp_content = a->content;

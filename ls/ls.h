@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:23 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/16 19:52:57 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/17 12:19:19 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	insert_node(t_list **head, const char   *content);
 char	*generate_result(t_list *head, char delim);
 char	*generate_listing_result(t_list *head, char delim, int _hide_owner, int _hide_group_info_, const char *path);
 char	*generate_recursive_result(t_list *head, char delim);
-char	*print_file_info(char *filename, const struct stat *file_stat, int _hide_owner, int _hide_group_info_, const char *path);
+char	*print_file_info(char *filename, int _hide_owner, int _hide_group_info_, const char *path);
 void	print_recursive_list(t_list *head, int depth);
 
 //--- utils
@@ -103,5 +103,7 @@ char	*print_in_columns(char **items, int count, int max_len);
 size_t	calculate_max_len(char **items, int count);
 char	*list_directory(const char *dir_path);
 char	*manage_recursive_colors(char *joined_string);
+
+
 // NOT WORKING CASES
 // ./ft_ls -laRrt accures a segfault

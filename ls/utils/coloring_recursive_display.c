@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 12:40:43 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/16 20:01:59 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/16 20:24:25 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int get_dir_total(const char *path) {
     // Read each entry in the directory
     while ((entry = readdir(dir)) != NULL) {
         // Skip "." and ".." directories
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+        if (ft_strcmp(entry->d_name, ".") == 0 || ft_strcmp(entry->d_name, "..") == 0) {
             continue;
         }
 
@@ -92,11 +92,13 @@ char *manage_recursive_colors(char *joined_string) {
             strncpy(current_dir, line, strlen(line) - 1);
             current_dir[strlen(line) - 1] = '\0';  // Remove the colon
             // printf("\n%s:\n", current_dir);
-            ft_strcat(s, "\n./");
             char **dir = ft_split(current_dir, ' ');
-            ft_strcat(s, dir[ft_arrlen(dir)-1]);
-            ft_strcat(s, ":\n");
-            ft_strcat(s, ft_strjoin("total ", ft_itoa(get_dir_total(dir[ft_arrlen(dir)-1])), "\n"));
+            if (ft_strcmp(dir[ft_arrlen(dir)-1], ".") && ft_strcmp(dir[ft_arrlen(dir)-1], "..")) {
+                ft_strcat(s, "\n./");
+                ft_strcat(s, dir[ft_arrlen(dir)-1]);
+                ft_strcat(s, ":\n");
+                ft_strcat(s, ft_strjoin("total ", ft_itoa(get_dir_total(dir[ft_arrlen(dir)-1])), "\n"));
+            }
             // ft_strcat(s, "\n");
             // printf("TOTAL --> %d\n", get_dir_total(dir[ft_arrlen(dir)-1]));
 

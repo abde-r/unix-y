@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:13:50 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/15 12:53:48 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/17 12:38:05 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,49 +14,58 @@
 
 char	*print_permissions(mode_t mode, const char *path) {
 
-    char *s = ft_calloc(999, 1);
+    char *s = ft_calloc(9999, 1);
 
-    s = ft_strjoin(s, (S_ISDIR(mode)) ? "d" : "-", "");
-    s = ft_strjoin(s, (mode & S_IRUSR) ? "r" : "-", "");
-    s = ft_strjoin(s, (mode & S_IWUSR) ? "w" : "-", "");
-    s = ft_strjoin(s, (mode & S_IXUSR) ? "x" : "-", "");
-    s = ft_strjoin(s, (mode & S_IRGRP) ? "r" : "-", "");
-    s = ft_strjoin(s, (mode & S_IWGRP) ? "w" : "-", "");
-    s = ft_strjoin(s, (mode & S_IXGRP) ? "x" : "-", "");
-    s = ft_strjoin(s, (mode & S_IROTH) ? "r" : "-", "");
-    s = ft_strjoin(s, (mode & S_IWOTH) ? "w" : "-", "");
-    s = ft_strjoin(s, (mode & S_IXOTH) ? "x" : "-", "");
+    ft_strcat(s, (S_ISDIR(mode)) ? "d" : "-");
+    ft_strcat(s, (mode & S_IRUSR) ? "r" : "-");
+    ft_strcat(s, (mode & S_IWUSR) ? "w" : "-");
+    ft_strcat(s, (mode & S_IXUSR) ? "x" : "-");
+    ft_strcat(s, (mode & S_IRGRP) ? "r" : "-");
+    ft_strcat(s, (mode & S_IWGRP) ? "w" : "-");
+    ft_strcat(s, (mode & S_IXGRP) ? "x" : "-");
+    ft_strcat(s, (mode & S_IROTH) ? "r" : "-");
+    ft_strcat(s, (mode & S_IWOTH) ? "w" : "-");
+    ft_strcat(s, (mode & S_IXOTH) ? "x" : "-");
     
     if (has_acl(path))
-		s = ft_strjoin(s, "x", "");
+		ft_strcat(s, "x");
 	else if (has_extended_attributes(path))
-		s = ft_strjoin(s, "@", "");
+		ft_strcat(s, "@");
 	else
-		s = ft_strjoin(s, " ", "");
+		ft_strcat(s, " ");
 
 	return s;
 }
 
-char	*print_file_info(char *filename, const struct stat *file_stat, int _hide_owner, int _hide_group_info_, const char *path) {
+char	*print_file_info(char *filename, int _hide_owner, int _hide_group_info_, const char *path) {
 
 	struct stat statbuf;
-    char fullpath[1024];
-    snprintf(fullpath, sizeof(fullpath), "%s/%s", path, filename);
+    char fullpath[9999];
+    if (!ft_strcmp(path, "."))
+        snprintf(fullpath, sizeof(fullpath), "%s", filename);
+    else
+        snprintf(fullpath, sizeof(fullpath), "./%s/%s", path, filename);
+    
+    // printf("fllpth %s\n", fullpath);
+    // (void)file_stat;
     
     if (stat(fullpath, &statbuf) == -1) {
+        // printf("OHH NOO\n");
         perror("stat");
         // return "";
         exit(1);
     }
-    char *s = ft_calloc(999, 1);
+    char *s = ft_calloc(9999, 1);
 
     // Get file permissions
-    s = ft_strjoin(s, print_permissions(file_stat->st_mode, path), " ");
+    ft_strcat(s, print_permissions(statbuf.st_mode, fullpath));
+    ft_strcat(s, " ");
+    // printf("PERMISSIONSS: %s %s\n", fullpath, print_permissions(statbuf.st_mode, fullpath));
 
     // Print number of hard links
     // printf(" %ld", file_stat->st_nlink);
-	char *st_link = ft_calloc(999, 1);
-	snprintf(st_link, 999, "%lu", file_stat->st_nlink);
+	char *st_link = ft_calloc(9999, 1);
+	snprintf(st_link, 9999, "%lu", statbuf.st_nlink);
     s = ft_strjoin(s, st_link, " ");
 
     if (_hide_owner == 1) { // Print the owner name (exclude group info)
@@ -67,8 +76,7 @@ char	*print_file_info(char *filename, const struct stat *file_stat, int _hide_ow
 
 
     if (_hide_group_info_ == 1) { // Get group information
-
-		struct group *grp = getgrgid(file_stat->st_gid);
+		struct group *grp = getgrgid(statbuf.st_gid);
         if (grp)
             s = ft_strjoin(s, grp->gr_name, " ");
 	}
@@ -76,13 +84,13 @@ char	*print_file_info(char *filename, const struct stat *file_stat, int _hide_ow
 
     // Print file size
     // printf(" %ld", file_stat->st_size);
-	char *st_size = ft_calloc(999, 1);
-	snprintf(st_size, 999, "%ld",file_stat->st_size);
+	char *st_size = ft_calloc(9999, 1);
+	snprintf(st_size, 9999, "%ld",statbuf.st_size);
     s = ft_strjoin(s, st_size, " ");
 
     // Print last modification time
     char time_str[80];
-    strftime(time_str, sizeof(time_str), "%b %d %H:%M", localtime(&(file_stat->st_mtime)));
+    strftime(time_str, sizeof(time_str), "%b %d %H:%M", localtime(&(statbuf.st_mtime)));
     // printf(" %s", time_str);
     s = ft_strjoin(s, time_str, " ");
     
@@ -116,15 +124,15 @@ char	*generate_result(t_list *head, char delim) {
 char	*generate_listing_result(t_list *head, char delim, int _hide_owner, int _hide_group_info_, const char *path) {
 
 	struct stat buff;
-    char *t = ft_calloc(999, 1);
+    char *t = ft_calloc(9999, 1);
 
 	while (head != NULL) {
         
 		lstat(head->content, &buff);
 		if (head->next != NULL)
-			t = ft_strchrjoin(t, print_file_info(head->content, &buff, _hide_owner, _hide_group_info_, path), delim);
+			t = ft_strchrjoin(t, print_file_info(head->content, _hide_owner, _hide_group_info_, path), delim);
 		else
-			t = ft_strchrjoin(t, print_file_info(head->content, &buff, _hide_owner, _hide_group_info_, path), '\0');
+			t = ft_strchrjoin(t, print_file_info(head->content, _hide_owner, _hide_group_info_, path), '\0');
 		head = head->next;
 	}
 
@@ -135,7 +143,7 @@ char	*generate_recursive_result(t_list *head, char delim) {
     if (head == NULL) return NULL;
 
     // Allocate memory for the result string
-    char *result = ft_calloc(999, 1);  
+    char *result = ft_calloc(9999, 1);  
     char *temp;
 
     // List all files and directories in the current directory
@@ -197,16 +205,20 @@ char *generate_recursive_listing_result(t_list *head, char delim, int _hide_owne
 
     // List all files and directories in the current directory
     t_list *current = head;
-    char *t = current->content;
+    // char *t = current->content;
     while (current != NULL) {
-        if (current->subdirectory == NULL || ft_strcmp(t, current->content)) {  // If it's a file or a simple directory without subdirectories
-            // char *full_path = ft_calloc(4096, 1);
-            // snprintf(full_path, 4096, "%s/%s", path, current->content);
-            // printf("w - %s: %s\n", current->content, path);
-            temp = ft_strchrjoin(result, print_file_info(current->content, &buff, _hide_owner, _hide_group_info, path), delim);
+        // if (current->subdirectory == NULL || ft_strcmp(t, current->content)) {  // If it's a file or a simple directory without subdirectories
+            char *full_path = ft_calloc(9999, 1);
+            // if (ft_strcmp(path, "."))
+            //     snprintf(full_path, 4096, "%s/%s", path, current->content);
+            // else
+            snprintf(full_path, 4096, "%s", path);
+            // printf("w - %s\n", full_path);
+            lstat(full_path, &buff);
+            temp = ft_strchrjoin(result, print_file_info(current->content, _hide_owner, _hide_group_info, full_path), delim);
             free(result);  // Free the old result before reassigning
             result = temp;
-        }
+        // }
         current = current->next;
     }
 
@@ -215,17 +227,19 @@ char *generate_recursive_listing_result(t_list *head, char delim, int _hide_owne
 
     while (current != NULL) {
         if (is_directory(current->content)) {
+		    
+            char *full_path = ft_calloc(9999, 1);
+            snprintf(full_path, 9999, "%s/%s", path, current->content);
+            lstat(full_path, &buff);
             if (current->subdirectory != NULL) {  // If it's a directory with subdirectories
                 // Generate content for the subdirectory
-                // char *full_path = ft_calloc(4096, 1);
-                // snprintf(full_path, 4096, "%s/%s", path, current->content);
                 // printf("NEW PATH: %s\n", path);
                 char *subdir_res = generate_recursive_listing_result(current->subdirectory, delim, _hide_owner, _hide_group_info, current->content);
 
                 // Append the directory name and its content
                 // printf("v - %s: %s\n", current->content, print_file_info(current->content, &buff, _hide_owner, _hide_group_info, full_path));
                 // printf("fullpath %s | %s\n", full_path, path);
-                temp = ft_strjoin("\n", print_file_info(current->content, &buff, _hide_owner, _hide_group_info, path), "");
+                temp = ft_strjoin("\n", print_file_info(current->content, _hide_owner, _hide_group_info, path), "");
                 // printf("TEMPPPPPP %s\n", temp);
                 result = ft_strjoin(result, temp, ":\n");
                 free(temp);
@@ -233,7 +247,9 @@ char *generate_recursive_listing_result(t_list *head, char delim, int _hide_owne
                 free(subdir_res);
             }
             else {
-                temp = ft_strjoin("\n", print_file_info(current->content, &buff, _hide_owner, _hide_group_info, path), "");
+                // char *full_path = ft_calloc(9999, 1);
+                // snprintf(full_path, 9999, "%s/%s", path, current->content);
+                temp = ft_strjoin("\n", print_file_info(current->content, _hide_owner, _hide_group_info, path), "");
                 // printf("TEMPPPPPP %s\n", temp);
                 result = ft_strjoin(result, temp, ":\n");
                 result = ft_strchrjoin(result, "\n", '\0');

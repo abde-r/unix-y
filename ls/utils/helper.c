@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:38:25 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/17 11:03:41 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/20 10:10:29 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ void	remove_hiddens(t_list **head) {
 	t_list* current = *head;
     t_list* prev = NULL;
 
-    // Iterate over the linked list
     while (current != NULL) {
         if (current->content[0] == '.') {
             if (prev == NULL) {
@@ -44,12 +43,11 @@ void remove_recursive_hiddens(t_list **head) {
     t_list *prev = NULL;
 
     while (current != NULL) {
-        // First, handle the subdirectory recursively
+        // handle subdirectory recursively
         if (current->subdirectory != NULL) {
             remove_recursive_hiddens(&(current->subdirectory));
         }
 
-        // Then, check if the current node should be removed
         if (current->content[0] == '.') {
             if (prev == NULL) {
                 // This node is the head of the list
@@ -73,14 +71,7 @@ void remove_recursive_hiddens(t_list **head) {
 
 char	*opts_executer(t_list **head, const char *opts, const char *path) {
     
-	char *t = ft_calloc(999, 1);
-    // 1- d
-    // 2- R
-    // 3- a
-    // 4- t
-    // 5- r
-    // 6- l
-    
+	char *t = ft_calloc(9999, 1);
 	
     if (ft_strchr(opts, 'R')) { // if -R exists
 
@@ -106,8 +97,6 @@ char	*opts_executer(t_list **head, const char *opts, const char *path) {
 			_hide_group_info_ = ft_strchr(opts, 'o') ?  0 : 1; // Hide the group name
 	        
 			t = generate_recursive_listing_result(*head, '\n', _hide_owner, _hide_group_info_, path);
-            // printf("t %s\n", path);
-            // exit(1);
 		}
         else if (!ft_strchr(opts, 'l') && !ft_strchr(opts, 'g') && !ft_strchr(opts, 'o')) // generate a string joined by space
             t = generate_recursive_result(*head, ' ');

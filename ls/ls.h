@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:23 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/17 12:19:19 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/20 09:49:07 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int		ft_strcmp();
 int		ft_strchr(const char *s, const char c);
 int		is_directory(const char *path);
 char	**ft_split(const char *s, char c);
-char	*ft_strjoin(char *s1, char *s2, char *s3);
+char	*ft_strjoin(const char *s1, const char *s2, const char *s3);
 char	*ft_strchrjoin(char *s1, char *s2, char delim);
 char	*ft_substr(const char *s, unsigned int start, size_t	len);
 char	*ft_strdup(const char *s1);

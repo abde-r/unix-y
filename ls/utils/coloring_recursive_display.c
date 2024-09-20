@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 12:40:43 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/16 20:24:25 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/20 11:11:09 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ char *manage_recursive_colors(char *joined_string) {
 
     int in_directory=0;
     char *current_dir = ft_strdup(".");
-    char temp[999];
+    char temp[9999];
     for (int i = 0; i < count; i++) {
         char *line = items[i];
         

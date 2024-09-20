@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:55 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/16 19:52:48 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/20 11:14:18 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,7 @@ char	**ft_split(const char *s, char c)
 	return (chek_and_fill(t, s, c));
 }
 
-char	*ft_strjoin(char *s1, char *s2, char *s3)
+char	*ft_strjoin(const char *s1, const char *s2, const char *s3)
 {
 	int		i;
 	int		j;

@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:13:50 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/17 12:38:05 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/20 11:32:45 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,25 +40,19 @@ char	*print_permissions(mode_t mode, const char *path) {
 char	*print_file_info(char *filename, int _hide_owner, int _hide_group_info_, const char *path) {
 
 	struct stat statbuf;
-    char fullpath[9999];
-    if (!ft_strcmp(path, "."))
-        snprintf(fullpath, sizeof(fullpath), "%s", filename);
-    else
-        snprintf(fullpath, sizeof(fullpath), "./%s/%s", path, filename);
+    char *s = ft_calloc(9999, 1);
+    char *full_path = ft_calloc(9999, 1);
     
-    // printf("fllpth %s\n", fullpath);
-    // (void)file_stat;
+    ft_strcat(full_path, ft_strjoin(path, "/", filename));
+    // printf("pathtogo %s\n", full_path);
     
-    if (stat(fullpath, &statbuf) == -1) {
-        // printf("OHH NOO\n");
+    if (stat(full_path, &statbuf) == -1) {
         perror("stat");
-        // return "";
         exit(1);
     }
-    char *s = ft_calloc(9999, 1);
 
     // Get file permissions
-    ft_strcat(s, print_permissions(statbuf.st_mode, fullpath));
+    ft_strcat(s, print_permissions(statbuf.st_mode, full_path));
     ft_strcat(s, " ");
     // printf("PERMISSIONSS: %s %s\n", fullpath, print_permissions(statbuf.st_mode, fullpath));
 
@@ -89,14 +83,13 @@ char	*print_file_info(char *filename, int _hide_owner, int _hide_group_info_, co
     s = ft_strjoin(s, st_size, " ");
 
     // Print last modification time
-    char time_str[80];
+    char time_str[999];
     strftime(time_str, sizeof(time_str), "%b %d %H:%M", localtime(&(statbuf.st_mtime)));
     // printf(" %s", time_str);
     s = ft_strjoin(s, time_str, " ");
     
 
     // Print file name
-    // printf(" %s\n", filename);
     s = ft_strjoin(s, filename, "\0");
 
 	return s;
@@ -112,7 +105,6 @@ char	*generate_result(t_list *head, char delim) {
         
 		if (head->next != NULL)
 			t = ft_strchrjoin(t, head->content, delim);
-			// t = print_file_info(head->content, lstat(head->content));
 		else
 			t = ft_strchrjoin(t, head->content, '\0');
 		head = head->next;
@@ -129,6 +121,10 @@ char	*generate_listing_result(t_list *head, char delim, int _hide_owner, int _hi
 	while (head != NULL) {
         
 		lstat(head->content, &buff);
+        // printf("hattt %s\n", path);
+        // char *fullpath = ft_calloc(9999, 1);
+        // ft_strcat(fullpath, ft_strjoin(path, "/", head->content));
+        // printf("fullpath %s\n", fullpath);
 		if (head->next != NULL)
 			t = ft_strchrjoin(t, print_file_info(head->content, _hide_owner, _hide_group_info_, path), delim);
 		else
@@ -201,6 +197,7 @@ char *generate_recursive_listing_result(t_list *head, char delim, int _hide_owne
 
     // Allocate memory for the result string
     char *result = ft_calloc(9999, 1);  
+    char *full_path = ft_calloc(1, 1);
     char *temp;
 
     // List all files and directories in the current directory
@@ -208,14 +205,15 @@ char *generate_recursive_listing_result(t_list *head, char delim, int _hide_owne
     // char *t = current->content;
     while (current != NULL) {
         // if (current->subdirectory == NULL || ft_strcmp(t, current->content)) {  // If it's a file or a simple directory without subdirectories
-            char *full_path = ft_calloc(9999, 1);
             // if (ft_strcmp(path, "."))
             //     snprintf(full_path, 4096, "%s/%s", path, current->content);
             // else
-            snprintf(full_path, 4096, "%s", path);
-            // printf("w - %s\n", full_path);
+            // snprintf(full_path, 9999, "%s", path);
+            full_path = ft_strdup(ft_strjoin(path, "/", current->content));
+
+            // printf("pathtogo %s\n", full_path);
             lstat(full_path, &buff);
-            temp = ft_strchrjoin(result, print_file_info(current->content, _hide_owner, _hide_group_info, full_path), delim);
+            temp = ft_strchrjoin(result, print_file_info(current->content, _hide_owner, _hide_group_info, path), delim);
             free(result);  // Free the old result before reassigning
             result = temp;
         // }

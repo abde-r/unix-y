@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:53:33 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/15 14:23:33 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/20 09:54:05 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ const char* get_file_color(const char* path) {
 char *manage_colors(t_list *head, char *joined_string) {
 
     int count = 0;
-    char *s = malloc(999);  // Allocate memory for the final string
+    char *s = malloc(9999);  // Allocate memory for the final string
     if (s == NULL) {
         perror("malloc");
         return NULL;

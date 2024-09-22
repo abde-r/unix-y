@@ -6,15 +6,15 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:33:40 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/06 15:55:27 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/20 12:08:54 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ls.h"
 
-char	*opts_parser(char **av, char **path) {
+char	*opts_parser(int ac, char **av, char **path) {
     
-    
+    (void)ac;
     int i=0;
     int count = 0;
     int j=0;

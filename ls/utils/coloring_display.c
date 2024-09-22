@@ -6,30 +6,26 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:53:33 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/20 09:54:05 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/20 12:30:19 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ls.h"
 
-const char* get_file_color(const char* path) {
-    struct stat file_stat;
+char	*get_file_color(const	char	*path)
+{
+	struct stat	file_stat;
 
-    if (lstat(path, &file_stat) == -1) {
-        // printf("path %s\n", path);
-        // perror("lstat");
-        return COLOR_RESET;  // Return reset color if error
-    }
-
-    if (S_ISDIR(file_stat.st_mode)) {
-        return COLOR_DIR;  // Directory -> Blue
-    } else if (S_ISLNK(file_stat.st_mode)) {
-        return COLOR_LINK;  // Symbolic Link -> Cyan
-    } else if (file_stat.st_mode & S_IXUSR) {
-        return COLOR_EXEC;  // Executable -> Green
-    } else {
-        return COLOR_RESET;  // No color for regular files
-    }
+	if (lstat(path, &file_stat) == -1)
+		return (COLOR_RESET);// Return reset color if error
+	if (S_ISDIR(file_stat.st_mode))
+		return (COLOR_DIR);// Directory -> Blue
+	else if (S_ISLNK(file_stat.st_mode))
+		return (COLOR_LINK);// Symbolic Link -> Cyan
+	else if (file_stat.st_mode & S_IXUSR)
+		return (COLOR_EXEC);// Executable -> Green
+	else
+		return (COLOR_RESET);// No color for regular files
 }
 
 char *manage_colors(t_list *head, char *joined_string) {

@@ -6,47 +6,74 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:33:40 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/20 12:08:54 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/23 20:29:43 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ls.h"
 
-char	*opts_parser(int ac, char **av, char **path) {
-    
-    (void)ac;
-    int i=0;
-    int count = 0;
-    int j=0;
-    int index = 0;
-    
-    while (av[i])
-		count+=(ft_strlen(av[i++])-1);
+void	print_error(char	*s)
+{
+	perror(s);
+	exit(0);
+}
 
-	char *s = ft_calloc(count+1, 1);
+void	syntax_checker(char c)
+{
+	if (c != 'l' && c != 'R' && c != 'a' && c != 'r' && c != 't'\
+	&& c != 'u' && c != 'f' && c != 'g' && c != 'd' && c != 'o')
+		print_error("invalid option format");
+}
+
+void	len_checker(char	*s)
+{
+	if (ft_strlen(s) < 2)
+		print_error("invalid option");
+}
+
+char	*parser(char	**av, char	*s, char	**path)
+{
+	int		i;
+	int		j;
+	int		index;
+
 	i = 1;
-	while (av[i] != NULL) {
-        if (av[i][0] == '-') {
-            if (ft_strlen(av[i]) < 2) {
-                perror("invalid format");
-                exit(1);
-            }
+	index = 0;
+	while (av[i] != NULL)
+	{
+		if (av[i][0] == '-')
+		{
+			len_checker(av[i]);
+			j = 1;
+			while (av[i][j] != '\0')
+			{
+				syntax_checker(av[i][j]);
+				if (!ft_strchr(s, av[i][j]))
+					ft_strcat(s, ft_strdup(&av[i][j]));
+				j++;
+			}
+		}
+		else
+			*path = av[i];
+		i++;
+	}
+	return (s);
+}
 
-            j = 0;
-            while (av[i][j] != '\0') {
-                if (!ft_strchr(s, av[i][j]))
-                    s[index++] = av[i][j];
-                j++;
-            }
-            
-        }
-        else {
-            *path = av[i];
-        }
-        i++;
-    }
+char	*opts_parser(int ac, char	**av, char	**path)
+{
+	char	*s;
+	int		i;
+	int		count;
 
-    if (!ft_strlen(*path))
-        *path = ".";
-    return s;
+	(void)ac;
+	i = 0;
+	count = 0;
+	while (av[i])
+		count += (ft_strlen(av[i++]) - 1);
+	s = ft_calloc(count + 1, 1);
+	s = parser(av, s, path);
+	if (!ft_strlen(*path))
+		*path = ".";
+	return (s);
 }

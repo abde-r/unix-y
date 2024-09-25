@@ -6,115 +6,124 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:34:46 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/16 22:52:38 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/23 19:16:09 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ls.h"
 
-int compare_case_sensitive(const char *a, const char *b) {
-    while (*a && *b) {
-        char lower_a = ft_tolower(*a);
-        char lower_b = ft_tolower(*b);
+int	swap_nodes(t_list	*a, t_list	*b)
+{
+	char	*temp_content;
+	t_list	*temp_subdir;
 
-        if (lower_a != lower_b) {
-            return lower_a - lower_b;
-        }
-
-        a++;
-        b++;
-    }
-    return *a - *b;
+	temp_content = a->content;
+	temp_subdir = a->subdirectory;
+	a->content = b->content;
+	a->subdirectory = b->subdirectory;
+	b->content = temp_content;
+	b->subdirectory = temp_subdir;
+	return (1);
 }
 
-void sort_list(t_list **head) {
-    if (*head == NULL) return; // If the list is empty, do nothing
+int	compare_case_sensitive(const char	*a, const char	*b)
+{
+	char	lower_a;
+	char	lower_b;
 
-    t_list *current, *next;
-    char *temp;
-    int swapped;
-
-    do {
-        swapped = 0;
-        current = *head;
-
-        while (current->next != NULL) {
-            next = current->next;
-            // Use the custom comparison function
-            if (compare_case_sensitive(current->content, next->content) > 0) {
-                // Swap contents if they are out of order
-                temp = current->content;
-                current->content = next->content;
-                next->content = temp;
-                swapped = 1;
-            }
-            current = current->next;
-        }
-    } while (swapped);
+	while (*a && *b)
+	{
+		lower_a = ft_tolower(*a);
+		lower_b = ft_tolower(*b);
+		if (lower_a != lower_b)
+			return (lower_a - lower_b);
+		a++;
+		b++;
+	}
+	return (*a - *b);
 }
 
-void	sort_by_time(t_list **output) {
-
-    int swapped;
-    t_list* ptr1;
-    t_list* lptr = NULL;
+void	sort_list(t_list	**head)
+{
+	t_list	*current;
+	t_list	*next;
+	char	*temp;
+	int		swapped;
 
 	swapped = 1;
-    while (swapped) {
-        swapped = 0;
-        ptr1 = *output;
-
-        while (ptr1->next != lptr) {
-            struct stat buff1, buff2;
-            lstat(ptr1->content, &buff1);
-            lstat(ptr1->next->content, &buff2);
-
-            if (buff1.st_mtime < buff2.st_mtime) {
-                swap_nodes(ptr1, ptr1->next);
-                swapped = 1;
-            }
-            ptr1 = ptr1->next;
-        }
-        lptr = ptr1;
-    }
+	while (swapped)
+	{
+		swapped = 0;
+		current = *head;
+		while (current->next != NULL)
+		{
+			next = current->next;
+			if (compare_case_sensitive(current->content, next->content) > 0)
+			{
+				temp = current->content;
+				current->content = next->content;
+				next->content = temp;
+				swapped = 1;
+			}
+			current = current->next;
+		}
+	}
 }
 
-void	sort_by_access_time(t_list **output) {
+void	sort_by_time(t_list	**output, const char	*path)
+{
+	int			swapped;
+	t_list		*ptr1;
+	t_list		*lptr;
+	struct stat	buff1;
+	struct stat	buff2;
 
-    int swapped;
-    t_list* ptr1;
-    t_list* lptr = NULL;
-
+	lptr = NULL;
 	swapped = 1;
-    while (swapped) {
-        swapped = 0;
-        ptr1 = *output;
-
-        while (ptr1->next != lptr) {
-            struct stat buff1, buff2;
-            lstat(ptr1->content, &buff1);
-            lstat(ptr1->next->content, &buff2);
-
-            if (buff1.st_atime < buff2.st_atime) {
-                swap_nodes(ptr1, ptr1->next);
-                swapped = 1;
-            }
-            ptr1 = ptr1->next;
-        }
-        lptr = ptr1;
-    }
+	while (swapped)
+	{
+		swapped = 0;
+		ptr1 = *output;
+		while (ptr1->next != lptr)
+		{
+			lstat(ft_strjoin(path, "/", ptr1->content), &buff1);
+			lstat(ft_strjoin(path, "/", ptr1->next->content), &buff2);
+			if (buff1.st_mtime < buff2.st_mtime)
+			{
+				swap_nodes(ptr1, ptr1->next);
+				swapped = 1;
+			}
+			ptr1 = ptr1->next;
+		}
+		lptr = ptr1;
+	}
 }
 
-void	reverse_order(t_list **output) {
-	t_list* prev = NULL;
-    t_list* current = *output;
-    t_list* next = NULL;
+void	sort_by_access_time(t_list	**output, const char	*path)
+{
+	int			swapped;
+	t_list		*ptr1;
+	t_list		*lptr;
+	struct stat	buff1;
+	struct stat	buff2;
 
-    while (current != NULL) {
-        next = current->next;
-        current->next = prev;
-        prev = current;
-        current = next;
-    }
-    *output = prev;
+	lptr = NULL;
+	swapped = 1;
+	while (swapped)
+	{
+		swapped = 0;
+		ptr1 = *output;
+		while (ptr1->next != lptr)
+		{
+			lstat(ft_strjoin(path, "/", ptr1->content), &buff1);
+			lstat(ft_strjoin(path, "/", ptr1->next->content), &buff2);
+			if (buff1.st_atime < buff2.st_atime)
+			{
+				swap_nodes(ptr1, ptr1->next);
+				swapped = 1;
+			}
+			ptr1 = ptr1->next;
+		}
+		lptr = ptr1;
+	}
 }

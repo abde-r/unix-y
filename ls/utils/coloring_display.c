@@ -6,77 +6,69 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:53:33 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/20 12:30:19 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/24 14:31:22 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ls.h"
 
+/*
+	Assigning each data type with spesific color
+		-Blue for Directory
+		-Cyan for Symbolic Link
+		-Green Executable
+		-regular files stay with no color 
+*/
 char	*get_file_color(const	char	*path)
 {
 	struct stat	file_stat;
 
 	if (lstat(path, &file_stat) == -1)
-		return (COLOR_RESET);// Return reset color if error
+		return (COLOR_RESET);
 	if (S_ISDIR(file_stat.st_mode))
-		return (COLOR_DIR);// Directory -> Blue
+		return (COLOR_DIR);
 	else if (S_ISLNK(file_stat.st_mode))
-		return (COLOR_LINK);// Symbolic Link -> Cyan
+		return (COLOR_LINK);
 	else if (file_stat.st_mode & S_IXUSR)
-		return (COLOR_EXEC);// Executable -> Green
+		return (COLOR_EXEC);
 	else
-		return (COLOR_RESET);// No color for regular files
+		return (COLOR_RESET);
 }
 
-char *manage_colors(t_list *head, char *joined_string) {
+void	ft_free(char	**items)
+{
+	int	i;
 
-    int count = 0;
-    char *s = malloc(9999);  // Allocate memory for the final string
-    if (s == NULL) {
-        perror("malloc");
-        return NULL;
-    }
-    s[0] = '\0';  // Initialize the string as empty
+	i = 0;
+	while (items[i])
+		free(items[i++]);
+	free(items);
+}
 
-    // Split the joined_string by newlines into `items`
-    char **items = ft_split(joined_string, '\n');
-    while (items[count]) {
-        count++;
-    }
+char	*manage_colors(t_list	*head, char	*joined_string)
+{
+	char		**items;
+	char		*s;
+	char		*temp;
+	int			count;
+	int			i;
 
-    if (count == 0) {
-        return "";
-    }
-
-    int i = 0;
-    char temp[1024];  // Temporary buffer for formatted output
-
-    // Iterate through the linked list and apply color only to the file/dir name
-    while (head != NULL && i < count) {
-        const char *color = get_file_color(head->content);  // Get the color for the file/dir name
-
-        // Get the length of the file/dir name to separate it from the rest of the string
-        // int name_len = strlen(head->content);
-
-        // Format the item: color the file name and leave the rest uncolored
-        snprintf(temp, sizeof(temp), "%s%s%s%s", COLOR_RESET, ft_substr(items[i], 0, ft_strlen(items[i]) -ft_strlen(head->content)), color, head->content);
-
-        // Append the formatted item to `s`
-        strcat(s, temp);
-
-        // Append a newline at the end of each row
-        strcat(s, "\n");
-
-        // Move to the next node in the linked list
-        head = head->next;
-        i++;
-    }
-
-    // Free the allocated memory for `items`
-    for (int i = 0; i < count; i++) {
-        free(items[i]);
-    }
-    free(items);
-
-    return s;  // Return the final string
+	i = 0;
+	count = 0;
+	s = ft_calloc(9999, 1);
+	items = ft_split(joined_string, '\n');
+	while (items[count])
+		count++;
+	while (head != NULL && i < count)
+	{
+		temp = ft_calloc(1024, 1);
+		snprintf(temp, 1024, "%s%s%s%s", COLOR_RESET, ft_substr(items[i], 0 \
+		, ft_strlen(items[i]) - ft_strlen(head->content)) \
+		, get_file_color(head->content), head->content);
+		ft_strcat(s, ft_strjoin(temp, "\n", ""));
+		head = head->next;
+		i++;
+	}
+	ft_free(items);
+	return (s);
 }

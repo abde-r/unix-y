@@ -6,86 +6,88 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 10:04:43 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/20 09:40:12 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/25 17:12:30 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ls.h"
 
-void ls_R(t_list **head, const char *path) {
-    DIR *dp = opendir(path);
-    struct dirent *entry;
-    struct stat statbuf;
+DIR	*get_current_dir(const char	*path)
+{
+	DIR	*dp;
 
-    if (dp == NULL) {
-        perror("opendir");
-        return;
-    }
-
-    // Add current directory to the list
-    while ((entry = readdir(dp)) != NULL) {
-        char full_path[1024];
-        snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
-
-        if (lstat(full_path, &statbuf) == -1) {
-            perror("lstat");
-            continue;
-        }
-
-        // Insert all files and directories, including `.` and `..`
-        insert_node(head, entry->d_name);
-
-        // Skip recursion for special directories "." and ".." to avoid infinite loop
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
-            continue;
-        }
-
-        // If it's a directory, recursively handle subdirectories
-        if (S_ISDIR(statbuf.st_mode)) {
-            t_list *subdir_head = NULL;
-            ls_R(&subdir_head, full_path);
-            
-            // Find the last node of the current directory and attach subdirectories
-            t_list *current = *head;
-            while (current->next != NULL) {
-                current = current->next;
-            }
-            current->subdirectory = subdir_head;
-        }
-    }
-
-    closedir(dp);
+	dp = opendir(path);
+	if (dp == NULL)
+	{
+		perror("opendir");
+		exit(1);
+	}
+	return (dp);
 }
 
-char	*ls_d(const char *path) {
-    if (is_directory(path)) {
-        // If it's a directory, just print the directory name
-        // printf("%s\n", path);
-        // insert_node(head, (char*)path);
+/*
+	list content and subdirectories recursively
+*/
+void	ls_recursive(t_list	**head, DIR	*dp, const char	*path)
+{
+	struct dirent	*entry;
+	struct stat		statbuf;
+	t_list			*current;
+	t_list			*subdir;
 
-        return (char*)path;
-    } else {
-        // If it's not a directory, also print the file name
-        // printf("%s\n", path);
-        // insert_node(head, (char*)path);
-
-        return (char*)path;
-    }
+	dp = get_current_dir(path);
+	while (1)
+	{
+		entry = readdir(dp);
+		if (!entry)
+			break ;
+		if (lstat(ft_strjoin(path, "/", entry->d_name), &statbuf) == -1)
+			continue ;
+		insert_node(head, entry->d_name);
+		if (!ft_strcmp(entry->d_name, ".") || !ft_strcmp(entry->d_name, ".."))
+			continue ;
+		if (S_ISDIR(statbuf.st_mode))
+		{
+			subdir = NULL;
+			ls_recursive(&subdir, dp, ft_strjoin(path, "/", entry->d_name));
+			current = *head;
+			while (current->next != NULL)
+				current = current->next;
+			current->subdirectory = subdir;
+		}
+	}
+	closedir(dp);
 }
 
-void	ls(t_list	**head, const char *path) {
-    
-	struct dirent *entry;
-    DIR *dp = opendir(path);
+/*
+	If it's a directory, just print the directory name
+	Otherwise if it's not a directory, also print the file name
+*/
+char	*ls_d(const char	*path)
+{
+	if (is_directory(path))
+		return ((char *)path);
+	else
+		return ((char *)path);
+}
 
-    if (dp == NULL) {
-        perror("opendir");
-        return;
-    }
+void	ls(t_list	**head, const char	*path)
+{
+	struct dirent	*entry;
+	DIR				*dp;
 
-    while ((entry = readdir(dp))) {
-        insert_node(head, entry->d_name);
-    }
-
-    closedir(dp);
+	dp = opendir(path);
+	if (dp == NULL)
+	{
+		perror("opendir");
+		exit(1);
+	}
+	while (1)
+	{
+		entry = readdir(dp);
+		if (!entry)
+			break ;
+		insert_node(head, entry->d_name);
+	}
+	closedir(dp);
 }

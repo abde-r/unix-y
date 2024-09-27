@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 10:04:43 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/25 17:12:30 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/26 20:35:33 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,17 @@ DIR	*get_current_dir(const char	*path)
 	return (dp);
 }
 
+void	recursive_subdirs(t_list	*current, DIR *dp, const char	*full_path)
+{
+	t_list	*subdir;
+
+	subdir = NULL;
+	ls_recursive(&subdir, dp, full_path);
+	while (current->next != NULL)
+		current = current->next;
+	current->subdirectory = subdir;
+}
+
 /*
 	list content and subdirectories recursively
 */
@@ -32,8 +43,6 @@ void	ls_recursive(t_list	**head, DIR	*dp, const char	*path)
 {
 	struct dirent	*entry;
 	struct stat		statbuf;
-	t_list			*current;
-	t_list			*subdir;
 
 	dp = get_current_dir(path);
 	while (1)
@@ -47,14 +56,7 @@ void	ls_recursive(t_list	**head, DIR	*dp, const char	*path)
 		if (!ft_strcmp(entry->d_name, ".") || !ft_strcmp(entry->d_name, ".."))
 			continue ;
 		if (S_ISDIR(statbuf.st_mode))
-		{
-			subdir = NULL;
-			ls_recursive(&subdir, dp, ft_strjoin(path, "/", entry->d_name));
-			current = *head;
-			while (current->next != NULL)
-				current = current->next;
-			current->subdirectory = subdir;
-		}
+			recursive_subdirs(*head, dp, ft_strjoin(path, "/", entry->d_name));
 	}
 	closedir(dp);
 }

@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 12:40:43 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/25 15:21:45 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/27 16:51:46 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ char	*get_total_dir(char	*s)
 {
 	char	*t;
 
-	t = ft_calloc(9999, 1);
-	ft_strcat(t, ft_strjoin("\n./", s, ":\n"));
+	t = ft_calloc(ft_strlen(s), 1);
+	t = ft_strjoin("\n./", s, ":\n");
 	ft_strcat(t, ft_strjoin("total ", ft_itoa(get_dir_total(s)), "\n"));
 	return (t);
 }

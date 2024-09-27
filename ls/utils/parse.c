@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:33:40 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/23 20:29:43 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/26 13:09:29 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ char	*parser(char	**av, char	*s, char	**path)
 			}
 		}
 		else
-			*path = av[i];
+			*path = ft_strdup(av[i]);
 		i++;
 	}
 	return (s);
@@ -73,7 +73,5 @@ char	*opts_parser(int ac, char	**av, char	**path)
 		count += (ft_strlen(av[i++]) - 1);
 	s = ft_calloc(count + 1, 1);
 	s = parser(av, s, path);
-	if (!ft_strlen(*path))
-		*path = ".";
 	return (s);
 }

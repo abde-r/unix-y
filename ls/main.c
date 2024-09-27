@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:32 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/25 14:44:26 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/25 20:09:33 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	main(int ac, char	**av)
 	char	*final_res;
 
 	head = 0;
-	path = ft_calloc(9999, 1);
+	path = ft_strdup(".");
 	opts = opts_parser(ac, av, &path);
 	final_res = ft_ls(&head, opts, path);
 	if (ft_strchr(opts, 'R'))

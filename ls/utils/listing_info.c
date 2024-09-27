@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:13:50 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/24 22:58:58 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/26 12:52:12 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	*owner_grp_info_, const char	*path)
 	struct stat	buff;
 	char		*t;
 
-	t = ft_calloc(9999, 1);
+	t = ft_strdup("");
 	while (head != NULL)
 	{
 		lstat(head->content, &buff);

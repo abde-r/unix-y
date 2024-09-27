@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 22:58:24 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/24 23:08:59 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/26 12:53:01 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	*list_simple_data(t_list	*current, const char	*t, char delim)
 {
 	char	*result;
 
-	result = ft_calloc(9999, 1);
+	result = ft_strdup("");
 	while (current != NULL)
 	{
 		if (current->subdirectory == NULL || ft_strcmp(t, current->content))

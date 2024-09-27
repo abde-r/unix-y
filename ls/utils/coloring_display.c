@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:53:33 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/24 14:31:22 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/27 16:51:49 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,23 +49,17 @@ char	*manage_colors(t_list	*head, char	*joined_string)
 {
 	char		**items;
 	char		*s;
-	char		*temp;
-	int			count;
-	int			i;
+	size_t		i;
 
 	i = 0;
-	count = 0;
-	s = ft_calloc(9999, 1);
+	s = ft_calloc(ft_strlen(joined_string), 1);
 	items = ft_split(joined_string, '\n');
-	while (items[count])
-		count++;
-	while (head != NULL && i < count)
+	while (head != NULL && i < ft_arrlen(items))
 	{
-		temp = ft_calloc(1024, 1);
-		snprintf(temp, 1024, "%s%s%s%s", COLOR_RESET, ft_substr(items[i], 0 \
-		, ft_strlen(items[i]) - ft_strlen(head->content)) \
-		, get_file_color(head->content), head->content);
-		ft_strcat(s, ft_strjoin(temp, "\n", ""));
+		s = ft_strjoin(s, COLOR_RESET, ft_substr(items[i], 0, \
+		ft_strlen(items[i]) - ft_strlen(head->content)));
+		s = ft_strjoin(s, get_file_color(head->content), head->content);
+		s = ft_strjoin(s, "\n", "");
 		head = head->next;
 		i++;
 	}

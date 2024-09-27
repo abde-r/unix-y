@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:15:00 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/24 14:37:50 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/25 19:29:58 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	has_acl(const char *path)
 		attr = list;
 		while (attr < list + len)
 		{
-			if (strcmp(attr, acl_attr_name) == 0)
+			if (ft_strcmp(attr, acl_attr_name) == 0)
 			{
 				free(list);
 				return (1);

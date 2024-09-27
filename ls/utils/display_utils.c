@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 11:58:25 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/25 17:07:12 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/27 16:52:33 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,3 +65,40 @@ char	*get_content_color(char	*s, int max_len, int index, int count)
 	}
 	return (t);
 }
+
+// void	append_padded_string(char	*s, const char *src, int max_len)
+// {
+// 	int	padding;
+// 	int	i;
+
+// 	i = 0;
+// 	ft_strcat(s, src);
+// 	padding = max_len - ft_strlen(src);
+// 	while (i++ < padding)
+// 		ft_strcat(s, " ");
+// }
+
+// char	*get_content_color(char *s, int max_len, int index, int count)
+// {
+// 	char	*t;
+// 	char	*temp;
+
+// 	// t = ft_strdup("");
+// 	t = ft_calloc(9999, 1);
+// 	temp = ft_calloc(9999, 1);
+// 	if (index < count)
+// 	{
+// 		ft_strcat(temp, get_file_color(s));
+// 		// t = ft_strjoin(t, get_file_color(s), "");
+// 		// append_padded_string(temp, s, max_len);
+// 		ft_strcat(temp, get_file_color(s));
+// 		int padding = max_len - ft_strlen(s);
+// 		int i=0;
+// 		while (i++ < padding)
+// 			ft_strcat(s, " ");
+// 		ft_strcat(temp, COLOR_RESET);
+// 		t = ft_strjoin(t, temp, "");
+// 	}
+// 	free(temp);
+// 	return (t);
+// }

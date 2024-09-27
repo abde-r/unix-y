@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   file_infos.c                                       :+:      :+:    :+:   */
+/*   file_info.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 21:06:39 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/24 21:07:09 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/26 11:32:21 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,9 @@ char	*print_file_info(char	*file, int	*ownrgrp_info, const char	*path)
 	char			*full_path;
 	char			*time_str;
 
-	full_path = ft_calloc(9999, 1);
+	// full_path = ft_calloc(9999, 1);
 	time_str = ft_calloc(999, 0);
-	ft_strcat(full_path, ft_strjoin(path, "/", file));
+	full_path = ft_strjoin(path, "/", file);
 	if (stat(full_path, &statbuf) == -1)
 	{
 		perror("stat");

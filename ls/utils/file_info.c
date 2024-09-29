@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 21:06:39 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/26 11:32:21 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/29 20:53:05 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,15 @@ char	*get_extra_info(struct stat statbuf, int	*ownrgrp_info)
 		if (grp)
 			s = ft_strjoin(s, grp->gr_name, " ");
 	}
+	free(st_size);
+	free(st_link);
 	return (s);
 }
 
 /*
 	file info such as permissions and last modification time
+	using the C library strftime() function to format the date 
+	and time as a string.
 */
 char	*print_file_info(char	*file, int	*ownrgrp_info, const char	*path)
 {
@@ -54,8 +58,7 @@ char	*print_file_info(char	*file, int	*ownrgrp_info, const char	*path)
 	char			*full_path;
 	char			*time_str;
 
-	// full_path = ft_calloc(9999, 1);
-	time_str = ft_calloc(999, 0);
+	time_str = ft_calloc(TIME_SIZE, 0);
 	full_path = ft_strjoin(path, "/", file);
 	if (stat(full_path, &statbuf) == -1)
 	{
@@ -64,8 +67,11 @@ char	*print_file_info(char	*file, int	*ownrgrp_info, const char	*path)
 	}
 	s = ft_strjoin(print_permissions(statbuf.st_mode, full_path), " ", "");
 	ft_strcat(s, get_extra_info(statbuf, ownrgrp_info));
-	strftime(time_str, 999, "%b %d %H:%M", localtime(&(statbuf.st_mtime)));
+	strftime(time_str, TIME_SIZE, "%b %d %H:%M", \
+	localtime(&(statbuf.st_mtime)));
 	s = ft_strjoin(s, time_str, " ");
 	s = ft_strjoin(s, file, "\0");
+	free(full_path);
+	free(time_str);
 	return (s);
 }

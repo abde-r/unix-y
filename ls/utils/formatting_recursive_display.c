@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 15:13:51 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/26 13:10:37 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/29 20:53:35 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,5 +57,6 @@ char	*manage_recursive_columns(const char	*joined_string)
 				s = ft_strjoin(s, manage_columns(items[i]), "\n");
 		i++;
 	}
+	ft_free(items);
 	return (s);
 }

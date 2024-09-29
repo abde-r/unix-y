@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:49:56 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/27 16:52:09 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/29 22:05:41 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	*get_num_col_rows(int max_len, int count)
 {
 	int		*_num_col_rows;
 
-	_num_col_rows = ft_calloc(2, 0);
+	_num_col_rows = ft_calloc(2, sizeof(int));
 	_num_col_rows[1] = get_terminal_width() / (max_len + 2);
 	_num_col_rows[0] = (count + _num_col_rows[1] - 1) / _num_col_rows[1];
 	if (_num_col_rows[1] == 0)
@@ -56,27 +56,22 @@ char	*print_in_columns(char **items, int count, int max_len)
 		ft_strcat(s, "\n");
 		row++;
 	}
+	free(_num_col_rows);
 	return (s);
 }
 
 char	*manage_columns(char	*joined_string)
 {
-	int		count;
 	char	**items;
 	int		max_len;
 	char	*s;
-	int		i;
+	size_t	i;
 
-	count = 0;
 	items = ft_split(joined_string, ' ');
-	while (items[count])
-		count++;
-	if (count == 0)
-		return ("");
-	max_len = calculate_max_len(items, count);
-	s = print_in_columns(items, count, max_len);
+	max_len = calculate_max_len(items, ft_arrlen(items));
+	s = print_in_columns(items, ft_arrlen(items), max_len);
 	i = 0;
-	while (i < count)
+	while (i < ft_arrlen(items))
 		free(items[i++]);
 	free(items);
 	return (s);

@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 12:38:08 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/23 19:20:18 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/29 19:48:10 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void	sort_recursive_by_time(t_list	**head, const char	*path, int __flag_)
 		sort_by_access_time(head, path);
 	while (current != NULL)
 	{
-		if (is_directory(current->content))
+		if (is_directory(current->content) && ft_strcmp(current->content, "."))
 		{
 			full_path = ft_strjoin(path, "/", current->content);
 			sort_recursive_by_time(&(current->subdirectory), \

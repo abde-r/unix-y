@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:32 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/25 20:09:33 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/29 21:57:17 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,12 @@ char	*ft_ls(t_list	**head, char	*opts, char	*path)
 	return (final_res);
 }
 
+int	char_finder(char	*s)
+{
+	return (ft_strchr(s, 'l') || \
+	ft_strchr(s, 'g') || ft_strchr(s, 'o'));
+}
+
 int	main(int ac, char	**av)
 {
 	t_list	*head;
@@ -44,17 +50,27 @@ int	main(int ac, char	**av)
 	final_res = ft_ls(&head, opts, path);
 	if (ft_strchr(opts, 'R'))
 	{
-		if (!ft_strchr(opts, 'l'))
+		if (!char_finder(opts))
 			printf("%s", manage_recursive_columns(final_res));
 		else
 			printf("%s", manage_recursive_colors(ft_split(final_res, '\n'), 0));
 	}
 	else
 	{
-		if (!ft_strchr(opts, 'l'))
+		if (!char_finder(opts))
 			printf("%s", manage_columns(final_res));
 		else
 			printf("%s", manage_colors(head, final_res));
 	}
+
+	// while (head != NULL)
+	// {
+	// 	free(head->content);
+	// 	head = head->next;
+	// }
+	// free(head);
+	free(opts);
+	free(path);
+	free(final_res);
 	return (0);
 }

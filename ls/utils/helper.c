@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:38:25 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/27 16:51:10 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/29 20:47:56 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,12 +134,12 @@ char	*executer(t_list	**head, const char	*opts, const char	*path)
 
 char	*opts_executer(t_list	**head, const char	*opts, const char	*path)
 {
-	char	*t;
+	// char	*t;
 
-	t = ft_strdup("");
+	// t = ft_strdup("");
 	if (ft_strchr(opts, 'R'))
-		t = recursive_executer(head, opts, path);
+		return(recursive_executer(head, opts, path));
 	else if (!ft_strchr(opts, 'R'))
-		t = executer(head, opts, path);
-	return (t);
+		return(executer(head, opts, path));
+	return ("");
 }

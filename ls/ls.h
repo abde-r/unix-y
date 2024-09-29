@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:23 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/25 16:45:34 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/09/29 21:52:52 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@
 #define COLOR_EXEC    "\033[1;32m"  // Green
 #define COLOR_RESET   "\033[0m"
 #define COLOR_LINK    "\033[1;36m"  // Cyan for symlinks
+
+#define TIME_SIZE	1024
 
 typedef struct s_list
 {
@@ -118,3 +120,5 @@ int		return_error(char	*err);
 // -u is not working for recursive mode
 // -g and -o are not working
 // -Ralt crashes!
+
+// 145,942 BLOCKS

@@ -1,4 +1,48 @@
-# Unix-y
-<h5>unix made home</h5>
-
+<div align="center">
+<h5>`unix-y</h5>
+<h5><ins>unix made home</ins></h5>
 <img src="https://media.tenor.com/X6oLkn9sBewAAAAi/sparklepandalana-penguin.gif">
+</div>
+
+---
+
+<h4><ins>ls</ins></h4>
+<h5><sup>STATUS: <i>finished</i></sup>✅</h5>
+<h5><sup>ABOUT:</sup></h5>
+<h6>
+Recoding the system's ls command to behave identically to the original, with the following variations: <br/> Implementing the options <code>-l</code>, <code>-R</code>, <code>-a</code>, <code>-r</code>, and <code>-t</code>, while ensuring that you consider the implications of the <code>-R</code> option from the beginning. The display must match the system command as closely as possible, with some leniency for padding and pagination, but no missing information. <br/><br/>As bonuses, exploring managing ACLs, columns without <code>-l</code>, additional options like <code>-u</code>, <code>-f</code>, <code>-g</code>, and <code>-d</code>, implementing colored views like <code>-G</code>, or optimizing performance for large recursive listings (ls -lR).
+</h6>
+
+---
+
+<h4><ins>malloc</ins></h4>
+<h5><sup>STATUS: <i>in progress</i></sup>⏳</h5>
+<h5><sup>ABOUT:</sup></h5>
+<h6>
+</h6>
+
+---
+
+<h4><ins>nm</ins></h4>
+<h5><sup>STATUS: <i>in progress</i></sup>⏳</h5>
+<h5><sup>ABOUT:</sup></h5>
+<h6>
+</h6>
+
+---
+
+<h4><ins>ping</ins></h4>
+<h5><sup>STATUS: <i>in progress</i></sup>⏳</h5>
+<h5><sup>ABOUT:</sup></h5>
+<h6>
+</h6>
+
+---
+
+<h4><ins>traceroute</ins></h4>
+<h5><sup>STATUS: <i>in progress</i></sup>⏳</h5>
+<h5><sup>ABOUT:</sup></h5>
+<h6>
+</h6>
+
+---

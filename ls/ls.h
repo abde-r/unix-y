@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:23 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/29 21:52:52 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/07 14:02:54 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,8 @@ char	*ls_d(const char	*path);
 char	*opts_executer(t_list	**head, const char *opts, const char *path);
 
 //--- list utils
-t_list	*create_node(const char	*content);
-void	insert_node(t_list	**head, const char	*content);
+t_list	*create_node(char	const *content);
+void	insert_node(t_list	**head, char	const *content);
 DIR		*get_current_dir(const char	*path);
 
 //--- listing info

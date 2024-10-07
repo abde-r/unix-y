@@ -6,17 +6,17 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 12:26:48 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/23 19:01:35 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/07 14:04:51 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ls.h"
 
-t_list	*create_node(const char *content)
+t_list	*create_node(char const *content)
 {
 	t_list	*new_node;
 
-	new_node = ft_calloc(sizeof(t_list), 1);
+	new_node = ft_calloc(1, sizeof(t_list));
 	if (!new_node)
 	{
 		perror("Failed to allocate memory");
@@ -28,7 +28,7 @@ t_list	*create_node(const char *content)
 	return (new_node);
 }
 
-void	insert_node(t_list	**head, const char	*content)
+void	insert_node(t_list	**head, char	const *content)
 {
 	t_list	*new_node;
 	t_list	*current;

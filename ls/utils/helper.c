@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:38:25 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/29 20:47:56 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/07 14:00:53 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,11 @@ char	*executer(t_list	**head, const char	*opts, const char	*path)
 	}
 	else if (!ft_strchr(opts, 'l') && !ft_strchr(opts, 'g') && \
 	!ft_strchr(opts, 'o'))
+	{
+		free(owner_grp_info_);
 		return (generate_result(*head, ' '));
+	}
+	free(owner_grp_info_);
 	return ("");
 }
 

@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 11:58:25 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/29 22:18:36 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/07 12:17:09 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,18 +55,15 @@ char	*get_content_color(char	*s, int max_len, int index, int count)
 {
 	char	*t;
 	char	*temp;
-	char	*color;
 
 	t = ft_calloc(9999, 1);
 	temp = ft_calloc(9999, 1);
-	color = ft_calloc(9999, 1);
 	if (index < count)
 	{
-		snprintf(temp, 9999, "%s%-*s%s", color, max_len + 2, s, COLOR_RESET);
+		snprintf(temp, 9999, "%s%-*s%s", get_file_color(s), max_len + 2, s, COLOR_RESET);
 		ft_strcat(t, temp);
 	}
 	free(temp);
-	free(color);
 	return (t);
 }
 

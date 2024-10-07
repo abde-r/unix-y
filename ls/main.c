@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:32 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/29 21:57:17 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/07 14:15:51 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ char	*ft_ls(t_list	**head, char	*opts, char	*path)
 		else if (!ft_strchr(opts, 'R'))
 			ls(head, path);
 		final_res = opts_executer(head, opts, path);
+		closedir(dp);
 	}
 	return (final_res);
 }
@@ -43,6 +44,7 @@ int	main(int ac, char	**av)
 	char	*opts;
 	char	*path;
 	char	*final_res;
+	char	*temp_s;
 
 	head = 0;
 	path = ft_strdup(".");
@@ -51,24 +53,33 @@ int	main(int ac, char	**av)
 	if (ft_strchr(opts, 'R'))
 	{
 		if (!char_finder(opts))
-			printf("%s", manage_recursive_columns(final_res));
+			temp_s = manage_recursive_columns(final_res);
+			// printf("%s", );
 		else
-			printf("%s", manage_recursive_colors(ft_split(final_res, '\n'), 0));
+			temp_s = manage_recursive_colors(ft_split(final_res, '\n'), 0);
+			// printf("%s", );
 	}
 	else
 	{
 		if (!char_finder(opts))
-			printf("%s", manage_columns(final_res));
+			temp_s = manage_columns(final_res);
+			// printf("%s", );
 		else
-			printf("%s", manage_colors(head, final_res));
+			temp_s = manage_colors(head, final_res);
 	}
+	printf("%s", temp_s);
+	free(temp_s);
 
-	// while (head != NULL)
-	// {
-	// 	free(head->content);
-	// 	head = head->next;
-	// }
-	// free(head);
+	t_list *temp;
+    
+    while (head != NULL)
+    {
+        temp = head;
+        head = head->next;
+        free(temp->content);
+        free(temp);
+    }
+	free(head);
 	free(opts);
 	free(path);
 	free(final_res);

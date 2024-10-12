@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:13:50 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/07 13:09:48 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/12 12:07:13 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ char	*generate_result(t_list	*head, char delim)
 			temp = ft_strchrjoin(t, head->content, delim);
 		else
 			temp = ft_strchrjoin(t, head->content, '\0');
-		free(t);
+		// free(t);
 		t = temp;
 		head = head->next;
 	}
@@ -34,7 +34,7 @@ char	*generate_result(t_list	*head, char delim)
 }
 
 char	*generate_listing_result(t_list	*head, char delim, \
-int	*owner_grp_info_, const char	*path)
+t_owner_group_info	info, char	*path)
 {
 	struct stat	buff;
 	char		*t;
@@ -44,15 +44,17 @@ int	*owner_grp_info_, const char	*path)
 	while (head != NULL)
 	{
 		lstat(head->content, &buff);
+		char *gg = print_file_info(head->content, \
+			info, path);
 		if (head->next != NULL)
-			temp = ft_strchrjoin(t, print_file_info(head->content, \
-			owner_grp_info_, path), delim);
+			temp = ft_strchrjoin(t, gg, delim);
 		else
-			temp = ft_strchrjoin(t, print_file_info(head->content, \
-			owner_grp_info_, path), '\0');
-		free(t);
+			temp = ft_strchrjoin(t, gg, '\0');
+		// free(t);
+		free(gg);
 		t = temp;
 		head = head->next;
 	}
+	// free(temp);
 	return (t);
 }

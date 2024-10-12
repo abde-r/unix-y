@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   coloring_recursive_display_tils.c                  :+:      :+:    :+:   */
+/*   coloring_recursive_display_utils.c                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 15:21:20 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/25 15:21:49 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/12 14:15:38 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,19 @@
 int	return_error(char	*err)
 {
 	perror(err);
-	return (0);
+	return (-1);
 }
 
 /*
 	Each block is 512 bytes, so print the total blocks
 */
-int	get_dir_total(const char	*path)
+int	get_dir_total(char	*path)
 {
 	DIR				*dir;
 	struct dirent	*entry;
 	struct stat		file_stat;
 	int				total_blocks;
+	char			*full_path;
 
 	total_blocks = 0;
 	dir = opendir(path);
@@ -37,13 +38,19 @@ int	get_dir_total(const char	*path)
 		entry = readdir(dir);
 		if (!entry)
 			break ;
+		full_path = ft_strjoin(path, "/", entry->d_name);
 		if (!ft_strcmp(entry->d_name, ".") || !ft_strcmp(entry->d_name, ".."))
-			continue ;
-		if (stat(ft_strjoin(path, "/", entry->d_name), &file_stat) == -1)
 		{
-			perror("stat");
+			free(full_path);
 			continue ;
 		}
+		if (stat(full_path, &file_stat) == -1)
+		{
+			perror("stat");
+			free(full_path);
+			continue ;
+		}
+		free(full_path);
 		total_blocks += file_stat.st_blocks;
 	}
 	closedir(dir);
@@ -56,9 +63,12 @@ char	*add_color(char	*s)
 	char		*data;
 
 	t = ft_split(s, ' ');
-	data = ft_strjoin(COLOR_RESET, ft_substr(s, 0, ft_strlen(s) - \
-	ft_strlen(t[ft_arrlen(t) - 1])), get_file_color(t[ft_arrlen(t) - 1]));
-	data = ft_strjoin(data, t[ft_arrlen(t) - 1], COLOR_RESET);
-	data = ft_strjoin(data, "\n", "");
+	char *temp = ft_substr(s, 0, ft_strlen(s) - \
+	ft_strlen(t[ft_arrlen(t) - 1]));
+	data = ft_strjoin(COLOR_RESET, temp, get_file_color(t[ft_arrlen(t) - 1]));
+	data = ft_custom_strjoin(data, t[ft_arrlen(t) - 1], COLOR_RESET);
+	data = ft_custom_strjoin(data, "\n", "");
+	free(temp);
+	ft_free(t);
 	return (data);
 }

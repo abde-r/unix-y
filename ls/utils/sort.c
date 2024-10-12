@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:34:46 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/29 21:55:44 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/09 13:36:18 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	swap_nodes(t_list	*a, t_list	*b)
 	return (1);
 }
 
-int	compare_case_sensitive(const char	*a, const char	*b)
+int	compare_case_sensitive(char	*a, char	*b)
 {
 	char	lower_a;
 	char	lower_b;
@@ -70,7 +70,7 @@ void	sort_list(t_list	**head)
 	}
 }
 
-void	sort_by_time(t_list	**output, const char	*path)
+void	sort_by_time(t_list	**output, char	*path)
 {
 	int			swapped;
 	t_list		*ptr1;
@@ -99,7 +99,7 @@ void	sort_by_time(t_list	**output, const char	*path)
 	}
 }
 
-void	sort_by_access_time(t_list	**output, const char	*path)
+void	sort_by_access_time(t_list	**output, char	*path)
 {
 	int			swapped;
 	t_list		*ptr1;

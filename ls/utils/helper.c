@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:38:25 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/07 14:00:53 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/12 15:14:10 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,11 @@ void	remove_recursive_hiddens(t_list	**head)
 	-o: Hide the group name.
 	-l, -g & -o doesn't exist: generate a string joined by space
 */
-char	*recursive_executer(t_list	**head, const char	*opts, \
-const char	*path)
+char	*recursive_executer(t_list	**head, char	*opts, char	*path)
 {
-	int		*ownrgrp_info;
+	t_owner_group_info	info;
 
-	ownrgrp_info = ft_calloc(2, 0);
+	// ownrgrp_info = ft_calloc(2, 0);
 	if (!ft_strchr(opts, 'a') && !ft_strchr(opts, 'f'))
 		remove_recursive_hiddens(head);
 	if (!ft_strchr(opts, 'f'))
@@ -85,13 +84,21 @@ const char	*path)
 		sort_recursive_by_time(head, path, 1);
 	if (ft_strchr(opts, 'l') || ft_strchr(opts, 'g') || ft_strchr(opts, 'o'))
 	{
-		ownrgrp_info[0] = ft_strchr(opts, 'g');
-		ownrgrp_info[1] = ft_strchr(opts, 'o');
-		return (get_recursive_listing_result(*head, '\n', ownrgrp_info, path));
+		info.owner_info = ft_strchr(opts, 'g');
+		info.group_info = ft_strchr(opts, 'o');
+		if (ft_strchr(opts, 'R'))
+			return (get_recursive_listing_result(*head, '\n', info, path));
+		else
+			return (generate_listing_result(*head, '\n', info, path));
 	}
 	else if (!ft_strchr(opts, 'l') && !ft_strchr(opts, 'g') && \
 	!ft_strchr(opts, 'o'))
-		return (generate_recursive_result(*head, ' '));
+	{
+		if (ft_strchr(opts, 'R'))
+			return (generate_recursive_result(*head, ' '));
+		else
+			return (generate_result(*head, ' '));
+	}
 	return ("");
 }
 
@@ -105,11 +112,10 @@ const char	*path)
 	-o: Hide the group name.
 	-l, -g & -o doesn't exist: generate a string joined by space
 */
-char	*executer(t_list	**head, const char	*opts, const char	*path)
+char	*executer(t_list	**head, char	*opts, char	*path)
 {
-	int		*owner_grp_info_;
+	t_owner_group_info	info;
 
-	owner_grp_info_ = ft_calloc(2, 0);
 	if (!ft_strchr(opts, 'a') && !ft_strchr(opts, 'f'))
 		remove_hiddens(head);
 	if (!ft_strchr(opts, 'f'))
@@ -122,28 +128,28 @@ char	*executer(t_list	**head, const char	*opts, const char	*path)
 		sort_by_access_time(head, path);
 	if (ft_strchr(opts, 'l') || ft_strchr(opts, 'g') || ft_strchr(opts, 'o'))
 	{
-		owner_grp_info_[0] = ft_strchr(opts, 'g');
-		owner_grp_info_[1] = ft_strchr(opts, 'o');
-		return (generate_listing_result(*head, '\n', owner_grp_info_, path));
+		info.owner_info = ft_strchr(opts, 'g');
+		info.group_info = ft_strchr(opts, 'o');
+		return (generate_listing_result(*head, '\n', info, path));
 	}
 	else if (!ft_strchr(opts, 'l') && !ft_strchr(opts, 'g') && \
 	!ft_strchr(opts, 'o'))
 	{
-		free(owner_grp_info_);
+		// free(owner_grp_info_);
 		return (generate_result(*head, ' '));
 	}
-	free(owner_grp_info_);
+	// free(owner_grp_info_);
 	return ("");
 }
 
-char	*opts_executer(t_list	**head, const char	*opts, const char	*path)
+char	*opts_executer(t_list	**head, char	*opts, char	*path)
 {
 	// char	*t;
 
 	// t = ft_strdup("");
-	if (ft_strchr(opts, 'R'))
+	// if (ft_strchr(opts, 'R'))
 		return(recursive_executer(head, opts, path));
-	else if (!ft_strchr(opts, 'R'))
-		return(executer(head, opts, path));
+	// else if (!ft_strchr(opts, 'R'))
+	// 	return(executer(head, opts, path));
 	return ("");
 }

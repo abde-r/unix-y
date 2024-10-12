@@ -6,13 +6,13 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 12:28:59 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/27 12:24:05 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/12 12:42:09 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ls.h"
 
-char	*ft_strjoin(const char *s1, const char *s2, const char *s3)
+char	*ft_custom_strjoin(char *s1, char *s2, char *s3)
 {
 	int		i;
 	int		j;
@@ -37,6 +37,56 @@ char	*ft_strjoin(const char *s1, const char *s2, const char *s3)
 	j = 0;
 	while (s3[j])
 		tab[i++] = s3[j++];
+	tab[i] = '\0';
+	free(s1);
+	return (tab);
+}
+
+char	*ft_strjoin(char *s1, char *s2, char *s3)
+{
+	int		i;
+	int		j;
+	char	*tab;
+
+	tab = ft_calloc((ft_strlen(s1) + ft_strlen(s2) + ft_strlen(s3) + 1), 1);
+	if (!tab)
+		return (0);
+	i = 0;
+	while (s1[i])
+	{
+		tab[i] = s1[i];
+		i++;
+	}
+	j = 0;
+	while (s2[j])
+	{
+		tab[i] = s2[j];
+		i++;
+		j++;
+	}
+	j = 0;
+	while (s3[j])
+		tab[i++] = s3[j++];
+	tab[i] = '\0';
+	return (tab);
+}
+
+char	*ft_str2join(char *s1)
+{
+	int		i;
+	char	*tab;
+
+	tab = ft_calloc((ft_strlen(s1) + 2), 1);
+	if (!tab)
+		return (0);
+	i = 0;
+	while (s1[i])
+	{
+		tab[i] = s1[i];
+		i++;
+	}
+	tab[i] = ' ';
+	i++;
 	tab[i] = '\0';
 	return (tab);
 }
@@ -66,6 +116,7 @@ char	*ft_strchrjoin(char *s1, char *s2, char delim)
 	tab[i] = delim;
 	i++;
 	tab[i] = '\0';
+	free(s1);
 	return (tab);
 }
 
@@ -93,7 +144,7 @@ int	ft_tolower(int c)
 	return (c);
 }
 
-int	ft_strcat(char *dst, const char *src)
+int	ft_strcat(char *dst, char *src)
 {
 	unsigned int	src_len;
 	unsigned int	dest_len;
@@ -111,4 +162,18 @@ int	ft_strcat(char *dst, const char *src)
 	}
 	dst[dest_len + i] = '\0';
 	return (src_len + dest_len);
+}
+
+size_t	ft_strncpy(char *dst, char *src, size_t	dstsize)
+{
+	size_t	i;
+
+	i = 0;
+	while (src[i] && i < dstsize - 1)
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	dst[i] = '\0';
+	return (ft_strlen(src));
 }

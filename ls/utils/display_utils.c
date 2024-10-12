@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 11:58:25 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/07 12:17:09 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/12 12:03:05 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,20 +51,48 @@ size_t	calculate_max_len(char	**items, int count)
 	return (max_len);
 }
 
+char	*pad_string(char *str, int max_len)
+{
+	char	*result;
+	size_t	len;
+	int		padding_len;
+	int		i;
+
+	len = ft_strlen(str);
+	padding_len = max_len - len;  // Calculate the amount of padding needed
+	if (padding_len < 0)
+		padding_len = 0;  // Ensure no negative padding
+	result = ft_calloc(max_len + 1, 1);  // Allocate space for the padded string (+1 for the null-terminator)
+	ft_strcat(result, str);  // Copy the original string into the result
+	i = len;
+	while (i < max_len)  // Add the padding (space characters) at the end
+		result[i++] = ' ';
+	result[i] = '\0';  // Null-terminate the result
+	return result;
+}
+
 char	*get_content_color(char	*s, int max_len, int index, int count)
 {
 	char	*t;
-	char	*temp;
+	// char	*temp;
 
-	t = ft_calloc(9999, 1);
-	temp = ft_calloc(9999, 1);
+	// t = ft_calloc(9999, 1);
+	// temp = ft_calloc(9999, 1);
 	if (index < count)
 	{
-		snprintf(temp, 9999, "%s%-*s%s", get_file_color(s), max_len + 2, s, COLOR_RESET);
-		ft_strcat(t, temp);
+		char *temp_pad = pad_string(s, max_len + 2);
+		// printf("temppad %s\n", temp_pad);
+		t = ft_strjoin(get_file_color(s), temp_pad, COLOR_RESET);
+		// t = ft_custom_strjoin(t, , "");
+		// snprintf(temp, 9999, "%s%-*s%s", get_file_color(s), max_len + 2, s, COLOR_RESET);
+		// t = temp;
+		// printf("t %s\n", t);
+		free(temp_pad);
+		return (t);
 	}
-	free(temp);
-	return (t);
+	return ("");
+	// free(temp);
+	// return t;
 }
 
 // void	append_padded_string(char	*s, const char *src, int max_len)

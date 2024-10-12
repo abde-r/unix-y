@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 10:04:43 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/07 14:14:35 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/12 11:51:15 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ DIR	*get_current_dir(const char	*path)
 	return (dp);
 }
 
-void	recursive_subdirs(t_list	*current, DIR *dp, const char	*full_path)
+void	recursive_subdirs(t_list	*current, DIR *dp, char	*full_path)
 {
 	t_list	*subdir;
 
@@ -39,10 +39,11 @@ void	recursive_subdirs(t_list	*current, DIR *dp, const char	*full_path)
 /*
 	list content and subdirectories recursively
 */
-void	ls_recursive(t_list	**head, DIR	*dp, const char	*path)
+void	ls_recursive(t_list	**head, DIR	*dp, char	*path)
 {
 	struct dirent	*entry;
 	struct stat		statbuf;
+	char			*full_path;
 
 	dp = get_current_dir(path);
 	while (1)
@@ -50,13 +51,21 @@ void	ls_recursive(t_list	**head, DIR	*dp, const char	*path)
 		entry = readdir(dp);
 		if (!entry)
 			break ;
-		if (lstat(ft_strjoin(path, "/", entry->d_name), &statbuf) == -1)
-			continue ;
+		full_path = ft_strjoin(path, "/", entry->d_name);
+		if (lstat(full_path, &statbuf) == -1)
+		{
+			free(full_path);
+			continue ;	
+		}
 		insert_node(head, entry->d_name);
 		if (!ft_strcmp(entry->d_name, ".") || !ft_strcmp(entry->d_name, ".."))
+		{
+			free(full_path);
 			continue ;
+		}
 		if (S_ISDIR(statbuf.st_mode))
-			recursive_subdirs(*head, dp, ft_strjoin(path, "/", entry->d_name));
+			recursive_subdirs(*head, dp, full_path);
+		free(full_path);
 	}
 	closedir(dp);
 }
@@ -73,7 +82,7 @@ char	*ls_d(const char	*path)
 		return ((char *)path);
 }
 
-void	ls(t_list	**head, const char	*path)
+void	ls(t_list	**head, char	*path)
 {
 	struct dirent	*entry;
 	DIR				*dp;

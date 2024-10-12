@@ -6,13 +6,13 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 12:26:48 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/07 14:04:51 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/09 22:32:42 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ls.h"
 
-t_list	*create_node(char const *content)
+t_list	*create_node(char *content)
 {
 	t_list	*new_node;
 
@@ -28,7 +28,7 @@ t_list	*create_node(char const *content)
 	return (new_node);
 }
 
-void	insert_node(t_list	**head, char	const *content)
+void	insert_node(t_list	**head, char	*content)
 {
 	t_list	*new_node;
 	t_list	*current;

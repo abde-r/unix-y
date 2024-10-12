@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 22:58:24 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/26 12:53:01 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/12 13:05:28 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,12 @@
 	list simple content like a file or simple 
 	directory without subdirectories.
 */
-char	*list_simple_data(t_list	*current, const char	*t, char delim)
+char	*list_simple_data(t_list	*current, char	*t, char delim)
 {
 	char	*result;
 
-	result = ft_strdup("");
+	// result = ft_strdup("");
+	result = ft_calloc(ft_strlen(t), 1);
 	while (current != NULL)
 	{
 		if (current->subdirectory == NULL || ft_strcmp(t, current->content))
@@ -44,75 +45,105 @@ char	*generate_recursive_result(t_list	*head, char delim)
 		{
 			if (current->subdirectory != NULL)
 			{
+				char *temp1 = ft_strjoin("\n./", current->content, ":\n");
+				char *temp2 = generate_recursive_result(current->subdirectory, delim);
 				result = ft_strchrjoin(result, \
-				ft_strjoin("\n./", current->content, ":\n"), '\0');
+				temp1, '\0');
 				result = ft_strchrjoin(result, \
-				generate_recursive_result(current->subdirectory, delim), '\0');
+				temp2, '\0');
+				free(temp1);
+				free(temp2);
 			}
 			else
-				result = ft_strchrjoin(result, ft_strjoin("\n./", \
-				current->content, ":\n"), '\0');
+			{
+				char *temp3 = ft_strjoin("\n./", \
+				current->content, ":\n");
+				result = ft_strchrjoin(result, temp3, '\0');
+				free(temp3);
+			}
 		}
 		current = current->next;
 	}
 	return (result);
 }
 
-char	*get_result(t_list	*current, const char	*path, \
-int	*owner_grp_info_, char delim)
+char	*get_result(t_list	*current, char	*path, \
+t_owner_group_info	info, char delim)
 {
 	char	*result;
 
-	result = ft_strjoin("", ft_strjoin("\n", print_file_info(\
-	current->content, owner_grp_info_, path), ""), ":\n");
-	result = ft_strchrjoin(result, get_recursive_listing_result(\
-	current->subdirectory, delim, owner_grp_info_, current->content), '\0');
+	char *file_info = print_file_info(\
+	current->content, info, path);
+	char *temp = ft_strjoin("\n", file_info, "");
+	result = ft_strjoin("", temp, ":\n");
+	char *temp2 = get_recursive_listing_result(\
+	current->subdirectory, delim, info, current->content);
+	result = ft_strchrjoin(result, temp2, '\0');
+	free(temp);
+	free(temp2);
+	free(file_info);
 	return (result);
 }
 
-char	*get_content_data(t_list	*current, const char	*path, \
-int	*owner_grp_info_, char delim)
+char	*get_content_data(t_list	*current, char	*path, \
+t_owner_group_info	info, char delim)
 {
 	struct stat	buff;
 	char		*result;
+	char		*full_path;
 
 	result = ft_strdup("");
 	while (current != NULL)
 	{
-		lstat(ft_strjoin(path, "/", current->content), &buff);
-		result = ft_strchrjoin(result, print_file_info(current->content, \
-		owner_grp_info_, path), delim);
+		full_path = ft_strjoin(path, "/", current->content);
+		lstat(full_path, &buff);
+		char *file_info = print_file_info(current->content, \
+		info, path);
+		result = ft_strchrjoin(result, file_info, delim);
 		current = current->next;
+		free(file_info);
+		free(full_path);
 	}
 	return (result);
 }
 
 char	*get_recursive_listing_result(t_list	*head, char delim, \
-int	*owner_grp_info_, const char	*path)
+t_owner_group_info	info, char	*path)
 {
 	struct stat	buff;
 	char		*result;
+	char		*full_path;
 	t_list		*current;
 
 	current = head;
-	result = get_content_data(current, path, owner_grp_info_, delim);
+	result = get_content_data(current, path, info, delim);
 	current = head;
+	full_path = ft_strjoin(path, "/", current->content);
 	while (current != NULL)
 	{
 		if (is_directory(current->content))
 		{
-			lstat(ft_strjoin(path, "/", current->content), &buff);
+			lstat(full_path, &buff);
 			if (current->subdirectory != NULL)
-				result = ft_strjoin(result, get_result(current, path, \
-owner_grp_info_, delim), "");
+			{
+				char *temp = get_result(current, path, \
+info, delim);
+				result = ft_custom_strjoin(result, temp, "");
+				free(temp);
+			}
 			else
 			{
-				result = ft_strjoin(result, ft_strjoin("\n", print_file_info(\
-				current->content, owner_grp_info_, path), ""), ":\n");
-				result = ft_strchrjoin(result, "\n", '\0');
+				char *file_infos = print_file_info(\
+				current->content, info, path);
+				char *temp2 = ft_strjoin("\n", file_infos, "");
+				result = ft_custom_strjoin(result, temp2, ":\n");
+				result = ft_custom_strjoin(result, "\n", "\0");
+				free(file_infos);
+				free(temp2);
 			}
 		}
 		current = current->next;
 	}
+	free(full_path);
 	return (result);
 }

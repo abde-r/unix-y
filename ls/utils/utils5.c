@@ -6,13 +6,13 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 12:37:09 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/25 16:12:53 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/09 22:31:11 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ls.h"
 
-size_t	ft_strlen(const char	*s)
+size_t	ft_strlen(char	*s)
 {
 	size_t	i;
 

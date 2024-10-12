@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 12:34:04 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/23 12:36:52 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/09 22:32:21 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int	ft_strchr(const char	*s, const char c)
 	return (0);
 }
 
-char	*ft_strdup(const char	*s1)
+char	*ft_strdup(char	*s1)
 {
 	int		i;
 	char	*p;

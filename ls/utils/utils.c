@@ -6,13 +6,13 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:55 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/24 11:08:30 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/09 22:31:56 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ls.h"
 
-static int	set_count(char const	*s, char c)
+static int	set_count(char	*s, char c)
 {
 	int	i;
 	int	count;
@@ -47,7 +47,7 @@ static char	**ft_del(char **t, int count)
 	return (NULL);
 }
 
-char	*ft_substr(const char *s, unsigned int start, size_t	len)
+char	*ft_substr(char *s, unsigned int start, size_t	len)
 {
 	char			*tab;
 	unsigned int	i;
@@ -74,7 +74,7 @@ char	*ft_substr(const char *s, unsigned int start, size_t	len)
 	return (tab);
 }
 
-static char	**chek_and_fill(char **t, const char *s, char c)
+static char	**chek_and_fill(char **t, char *s, char c)
 {
 	int	i;
 	int	count;
@@ -101,7 +101,7 @@ static char	**chek_and_fill(char **t, const char *s, char c)
 	return (t);
 }
 
-char	**ft_split(const char *s, char c)
+char	**ft_split(char *s, char c)
 {
 	char	**t;
 	int		count;

@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 12:38:08 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/29 19:48:10 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/09 13:36:56 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	sort_recursive_list(t_list	**head, int __reverse_flag_)
 
 // Recursive function to sort directories
 // and their contents by modification time
-void	sort_recursive_by_time(t_list	**head, const char	*path, int __flag_)
+void	sort_recursive_by_time(t_list	**head, char	*path, int __flag_)
 {
 	t_list	*current;
 	char	*full_path;

@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:15:00 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/25 19:29:58 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/10 08:30:59 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	has_acl(const char *path)
 	char	*list;
 	char	*attr;
 
-	acl_attr_name = ft_strdup("system.posix_acl_access");
+	acl_attr_name = "system.posix_acl_access";
 	len = has_extended_attributes(path);
 	list = ft_calloc(len, 1);
 	if (len > 0)
@@ -61,7 +61,7 @@ int	has_acl(const char *path)
 			}
 			attr += strlen(attr) + 1;
 		}
-		free(list);
 	}
+	free(list);
 	return (0);
 }

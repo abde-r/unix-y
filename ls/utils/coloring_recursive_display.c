@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 12:40:43 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/27 17:07:22 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/12 15:41:33 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,30 +20,39 @@ char	**get_dir(char	*s)
 {
 	char		*current_dir;
 
-	current_dir = ft_calloc(ft_strlen(s), 1);
-	strncpy(current_dir, s, strlen(s) - 1);
-	current_dir[ft_strlen(s) - 1] = '\0';
-	return (ft_split(current_dir, ' '));
+	// current_dir = ft_calloc(ft_strlen(s), 1);
+	current_dir = ft_substr(s, 0, ft_strlen(s) - 1); ////////////////////////////
+	// current_dir[ft_strlen(s) - 1] = '\0';
+	printf("current dir: -%s-\n", current_dir);
+	char **temps = ft_split(current_dir, ' ');
+	free(current_dir);
+	return (temps);
 }
 
 char	*get_total_dir(char	*s)
 {
 	char	*t;
 
-	t = ft_calloc(ft_strlen(s), 1);
+	// t = ft_calloc(ft_strlen(s), 1);
 	t = ft_strjoin("\n./", s, ":\n");
-	ft_strcat(t, ft_strjoin("total ", ft_itoa(get_dir_total(s)), "\n"));
+	int total_dir = get_dir_total(s);
+	if (total_dir != -1)
+	{
+		char *temp_itoa = ft_itoa(total_dir);
+		char *temp = ft_strjoin("total ", temp_itoa, "\n");
+		t = ft_custom_strjoin(t, temp, "");
+		free(temp_itoa);
+		free(temp);
+	}
 	return (t);
 }
 
 char	*total_dir(char	*dir)
 {
-	char	*s;
-
-	s = ft_strdup("");
+	// s = ft_strdup("");
 	if (ft_strcmp(dir, ".") && ft_strcmp(dir, ".."))
-		s = get_total_dir(dir);
-	return (s);
+		return (get_total_dir(dir));
+	return ("");
 }
 
 char	*manage_recursive_colors(char	**items, int in_directory)
@@ -59,14 +68,20 @@ char	*manage_recursive_colors(char	**items, int in_directory)
 		if (items[i][strlen(items[i]) - 1] == ':')
 		{
 			if (in_directory)
-				ft_strcat(s, "\n");
+				s = ft_custom_strjoin(s, "\n", "");
 			dir = get_dir(items[i]);
-			s = ft_strjoin(s, total_dir(dir[ft_arrlen(dir) - 1]), "");
+			char *total_dirs = total_dir(dir[ft_arrlen(dir) - 1]);
+			s = ft_custom_strjoin(s, total_dirs, "");
+			ft_free(dir);
 			in_directory = 1;
 			i++;
+			if (ft_strlen(total_dirs))
+				free(total_dirs);
 			continue ;
 		}
-		s = ft_strjoin(s, add_color(items[i]), "");
+		char *color = add_color(items[i]);
+		s = ft_custom_strjoin(s, color, "");
+		free(color);
 		i++;
 	}
 	i = 0;

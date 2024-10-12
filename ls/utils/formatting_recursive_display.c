@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 15:13:51 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/09/29 20:53:35 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/12 12:11:45 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,13 @@ int	is_current_or_parent_directory(const char	*name)
 	inside subdirectories, Otherwise if it's a file entry we 
 	print it but skip '.' and '..'
 */
-char	*manage_recursive_columns(const char	*joined_string)
+char	*manage_recursive_columns(char	*joined_string)
 {
 	char	*s;
 	int		in_directory;
 	char	**items;
 	int		i;
+	char	*temp;
 
 	s = ft_calloc(ft_strlen(joined_string), 1);
 	in_directory = 0;
@@ -47,14 +48,18 @@ char	*manage_recursive_columns(const char	*joined_string)
 		if (is_directory_header(items[i]))
 		{
 			if (in_directory)
-				ft_strcat(s, "\n");
+				s = ft_custom_strjoin(s, "\n", "");
 			if (!is_current_or_parent_directory(items[i]))
-				s = ft_strjoin(s, items[i], "\n");
+				s = ft_custom_strjoin(s, items[i], "\n");
 			in_directory = 1;
 		}
 		else
 			if (!is_current_or_parent_directory(items[i]))
-				s = ft_strjoin(s, manage_columns(items[i]), "\n");
+			{
+				temp = manage_columns(items[i]);
+				s = ft_custom_strjoin(s, temp, "\n");
+				free(temp);
+			}
 		i++;
 	}
 	ft_free(items);

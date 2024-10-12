@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:49:56 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/07 13:24:40 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/12 12:05:54 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,16 @@ char	*print_in_columns(char **items, int count, int max_len)
 		col = 0;
 		while (col < _num_col_rows[1])
 		{
-			color = get_content_color(items[row + col * _num_col_rows[0]], \
-			max_len, row + col * _num_col_rows[0], count);
-			ft_strcat(s, color);
-			free(color);
+			if ((row + col * _num_col_rows[0]) < count)
+			{
+				color = get_content_color(items[row + col * _num_col_rows[0]], \
+				max_len, row + col * _num_col_rows[0], count);
+				if (ft_strlen(color))
+				{
+					ft_strcat(s, color);
+					free(color);
+				}
+			}
 			col++;
 		}
 		ft_strcat(s, "\n");

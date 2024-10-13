@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 10:04:43 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/12 11:51:15 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/13 15:55:19 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	recursive_subdirs(t_list	*current, DIR *dp, char	*full_path)
 	t_list	*subdir;
 
 	subdir = NULL;
-	ls_recursive(&subdir, dp, full_path);
+	ls(&subdir, dp, full_path);
 	while (current->next != NULL)
 		current = current->next;
 	current->subdirectory = subdir;
@@ -39,7 +39,7 @@ void	recursive_subdirs(t_list	*current, DIR *dp, char	*full_path)
 /*
 	list content and subdirectories recursively
 */
-void	ls_recursive(t_list	**head, DIR	*dp, char	*path)
+void	ls(t_list	**head, DIR	*dp, char	*path)
 {
 	struct dirent	*entry;
 	struct stat		statbuf;
@@ -55,7 +55,7 @@ void	ls_recursive(t_list	**head, DIR	*dp, char	*path)
 		if (lstat(full_path, &statbuf) == -1)
 		{
 			free(full_path);
-			continue ;	
+			continue ;
 		}
 		insert_node(head, entry->d_name);
 		if (!ft_strcmp(entry->d_name, ".") || !ft_strcmp(entry->d_name, ".."))
@@ -80,25 +80,4 @@ char	*ls_d(const char	*path)
 		return ((char *)path);
 	else
 		return ((char *)path);
-}
-
-void	ls(t_list	**head, char	*path)
-{
-	struct dirent	*entry;
-	DIR				*dp;
-
-	dp = opendir(path);
-	if (dp == NULL)
-	{
-		perror("opendir");
-		exit(1);
-	}
-	while (1)
-	{
-		entry = readdir(dp);
-		if (!entry)
-			break ;
-		insert_node(head, entry->d_name);
-	}
-	closedir(dp);
 }

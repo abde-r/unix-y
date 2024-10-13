@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:13:50 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/12 12:07:13 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/13 15:56:34 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ char	*generate_result(t_list	*head, char delim)
 			temp = ft_strchrjoin(t, head->content, delim);
 		else
 			temp = ft_strchrjoin(t, head->content, '\0');
-		// free(t);
 		t = temp;
 		head = head->next;
 	}
@@ -39,22 +38,20 @@ t_owner_group_info	info, char	*path)
 	struct stat	buff;
 	char		*t;
 	char		*temp;
+	char		*temp2;
 
 	t = ft_strdup("");
 	while (head != NULL)
 	{
 		lstat(head->content, &buff);
-		char *gg = print_file_info(head->content, \
-			info, path);
+		temp2 = print_file_info(head->content, info, path);
 		if (head->next != NULL)
-			temp = ft_strchrjoin(t, gg, delim);
+			temp = ft_strchrjoin(t, temp2, delim);
 		else
-			temp = ft_strchrjoin(t, gg, '\0');
-		// free(t);
-		free(gg);
+			temp = ft_strchrjoin(t, temp2, '\0');
+		free(temp2);
 		t = temp;
 		head = head->next;
 	}
-	// free(temp);
 	return (t);
 }

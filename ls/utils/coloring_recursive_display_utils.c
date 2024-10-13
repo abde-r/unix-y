@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 15:21:20 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/12 14:15:38 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/13 15:46:43 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,12 @@ int	get_dir_total(char	*path)
 
 char	*add_color(char	*s)
 {
-	char		**t;
-	char		*data;
+	char	**t;
+	char	*data;
+	char	*temp;
 
 	t = ft_split(s, ' ');
-	char *temp = ft_substr(s, 0, ft_strlen(s) - \
+	temp = ft_substr(s, 0, ft_strlen(s) - \
 	ft_strlen(t[ft_arrlen(t) - 1]));
 	data = ft_strjoin(COLOR_RESET, temp, get_file_color(t[ft_arrlen(t) - 1]));
 	data = ft_custom_strjoin(data, t[ft_arrlen(t) - 1], COLOR_RESET);

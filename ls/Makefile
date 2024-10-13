@@ -6,7 +6,7 @@
 #    By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/30 09:45:24 by ael-asri          #+#    #+#              #
-#    Updated: 2024/10/12 13:12:41 by ael-asri         ###   ########.fr        #
+#    Updated: 2024/10/13 15:04:44 by ael-asri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,15 +14,15 @@ NAME = ft_ls
 
 SRC = main.c\
 	utils/ls.c\
-	utils/utils.c\
-	utils/utils2.c\
-	utils/utils3.c\
-	utils/utils4.c\
-	utils/utils5.c\
-	utils/linkedlist_utils.c\
-	utils/parse.c\
-	utils/sort.c\
-	utils/recursive_sort.c\
+	libft/utils.c\
+	libft/utils2.c\
+	libft/utils3.c\
+	libft/utils4.c\
+	libft/utils5.c\
+	libft/linkedlist_utils.c\
+	parse/parse.c\
+	sort/sort.c\
+	sort/time_sort.c\
 	utils/helper.c\
 	utils/acl_xattr.c\
 	utils/formatting_display.c\

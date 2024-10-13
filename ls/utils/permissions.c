@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 14:52:38 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/09 22:15:21 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/13 15:43:02 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,13 @@ char	*get_user_permissions(mode_t mode)
 
 	s = ft_strdup("----");
 	if (S_ISDIR(mode))
-		s[0] =  'd';
+		s[0] = 'd';
 	if (mode & S_IRUSR)
-		s[1] =  'r';
+		s[1] = 'r';
 	if (mode & S_IWUSR)
-		s[2] =  'w';
+		s[2] = 'w';
 	if (mode & S_IXUSR)
-		s[3] =  'x';
+		s[3] = 'x';
 	return (s);
 }
 
@@ -60,11 +60,6 @@ char	*get_others_permissions(mode_t mode, char	*path)
 	return (s);
 }
 
-// char	*get_acl_permissions(char	*path)
-// {
-	
-// }
-
 char	*print_permissions(mode_t mode, char	*path)
 {
 	char	*s;
@@ -75,9 +70,7 @@ char	*print_permissions(mode_t mode, char	*path)
 	user = get_user_permissions(mode);
 	group = get_group_permissions(mode);
 	other = get_others_permissions(mode, path);
-	// s = ft_calloc(ft_strlen(user) + ft_strlen(group) + ft_strlen(other)+2, 1);
 	s = ft_strjoin(user, group, other);
-	// s = ft_strjoin(get_acl_permissions(path), "", "");
 	free(user);
 	free(group);
 	free(other);

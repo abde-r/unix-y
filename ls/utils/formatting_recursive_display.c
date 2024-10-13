@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 15:13:51 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/12 12:11:45 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/13 15:57:28 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,11 @@ int	is_current_or_parent_directory(const char	*name)
 */
 char	*manage_recursive_columns(char	*joined_string)
 {
-	char	*s;
-	int		in_directory;
 	char	**items;
-	int		i;
+	char	*s;
 	char	*temp;
+	int		in_directory;
+	int		i;
 
 	s = ft_calloc(ft_strlen(joined_string), 1);
 	in_directory = 0;

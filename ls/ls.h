@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:23 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/12 12:41:02 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/13 15:59:12 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,22 +51,17 @@ char	*opts_parser(int ac, char **av, char **path);
 //--- sort
 void	sort_list(t_list **head);
 int		compare_case_sensitive(char *a, char *b);
-void	sort_by_time(t_list **output, char	*path);
 void	reverse_order(t_list **output);
-void	sort_by_access_time(t_list **output, char	*path);
-void	sort_recursive_list(t_list **head, int __reverse_flag_);
-// void	reverse_sort_recursive_list(t_list **head);
-void	sort_recursive_by_time(t_list **output, char *path, int __flag_);
-void	sort_recursive_by_access_time(t_list **head, char *parent_path);
+void	sort(t_list **head, int __reverse_flag_);
+void	sort_time(t_list **output, char *path, int __flag_);
 char	*get_recursive_listing_result(t_list *head, char delim, \
 t_owner_group_info	info, char *path);
 int		swap_nodes(t_list	*a, t_list	*b);
 
 //--- helper
-void	ls(t_list	**head, char	*path);
-void	ls_recursive(t_list	**head, DIR	*dp, char	*path);
+void	ls(t_list	**head, DIR	*dp, char	*path);
 char	*ls_d(const char	*path);
-char	*opts_executer(t_list	**head, char *opts, char *path);
+char	*executer(t_list	**head, char	*opts, char	*path);
 
 //--- list utils
 t_list	*create_node(char	*content);
@@ -96,12 +91,10 @@ char	*ft_strchrjoin(char *s1, char *s2, char delim);
 char	*ft_substr(char *s, unsigned int start, size_t	len);
 char	*ft_strdup(char *s1);
 size_t	ft_strncpy(char *dst, char *src, size_t	dstsize);
-// void	ft_lstadd(t_list **lst, char *content);
 void	*ft_calloc(size_t count, size_t size);
 int		ft_tolower(int c);
 int		ft_strcat(char *dst, char *src);
 int		ft_lstcontentsize(t_list *lst);
-// char	**split_string(const char *str, const char *delim);
 char	*ft_itoa(int n);
 void	ft_free(char	**items);
 
@@ -109,13 +102,11 @@ void	ft_free(char	**items);
 int		has_extended_attributes(const char *path);
 int		has_acl(const char *path);
 char	*manage_columns(char *joined_string);
-char	*manage_colors(t_list *head, char *joined_string);
 char	*get_file_color(const char	*path);
 char	*manage_recursive_columns(char *joined_string);
 char	*print_in_columns(char **items, int count, int max_len);
 size_t	calculate_max_len(char **items, int count);
 char	*print_permissions(mode_t mode, char	*path);
-// char	*list_directory(const char *dir_path);
 char	*manage_recursive_colors(char **items, int in_directory);
 int		get_terminal_width(void);
 size_t	calculate_max_len(char	**items, int count);

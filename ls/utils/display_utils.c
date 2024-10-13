@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 11:58:25 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/12 12:03:05 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/13 15:34:23 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,75 +59,29 @@ char	*pad_string(char *str, int max_len)
 	int		i;
 
 	len = ft_strlen(str);
-	padding_len = max_len - len;  // Calculate the amount of padding needed
+	padding_len = max_len - len;
 	if (padding_len < 0)
-		padding_len = 0;  // Ensure no negative padding
-	result = ft_calloc(max_len + 1, 1);  // Allocate space for the padded string (+1 for the null-terminator)
-	ft_strcat(result, str);  // Copy the original string into the result
+		padding_len = 0;
+	result = ft_calloc(max_len + 1, 1);
+	ft_strcat(result, str);
 	i = len;
-	while (i < max_len)  // Add the padding (space characters) at the end
+	while (i < max_len)
 		result[i++] = ' ';
-	result[i] = '\0';  // Null-terminate the result
-	return result;
+	result[i] = '\0';
+	return (result);
 }
 
 char	*get_content_color(char	*s, int max_len, int index, int count)
 {
 	char	*t;
-	// char	*temp;
+	char	*temp_pad;
 
-	// t = ft_calloc(9999, 1);
-	// temp = ft_calloc(9999, 1);
 	if (index < count)
 	{
-		char *temp_pad = pad_string(s, max_len + 2);
-		// printf("temppad %s\n", temp_pad);
+		temp_pad = pad_string(s, max_len + 2);
 		t = ft_strjoin(get_file_color(s), temp_pad, COLOR_RESET);
-		// t = ft_custom_strjoin(t, , "");
-		// snprintf(temp, 9999, "%s%-*s%s", get_file_color(s), max_len + 2, s, COLOR_RESET);
-		// t = temp;
-		// printf("t %s\n", t);
 		free(temp_pad);
 		return (t);
 	}
 	return ("");
-	// free(temp);
-	// return t;
 }
-
-// void	append_padded_string(char	*s, const char *src, int max_len)
-// {
-// 	int	padding;
-// 	int	i;
-
-// 	i = 0;
-// 	ft_strcat(s, src);
-// 	padding = max_len - ft_strlen(src);
-// 	while (i++ < padding)
-// 		ft_strcat(s, " ");
-// }
-
-// char	*get_content_color(char *s, int max_len, int index, int count)
-// {
-// 	char	*t;
-// 	char	*temp;
-
-// 	// t = ft_strdup("");
-// 	t = ft_calloc(9999, 1);
-// 	temp = ft_calloc(9999, 1);
-// 	if (index < count)
-// 	{
-// 		ft_strcat(temp, get_file_color(s));
-// 		// t = ft_strjoin(t, get_file_color(s), "");
-// 		// append_padded_string(temp, s, max_len);
-// 		ft_strcat(temp, get_file_color(s));
-// 		int padding = max_len - ft_strlen(s);
-// 		int i=0;
-// 		while (i++ < padding)
-// 			ft_strcat(s, " ");
-// 		ft_strcat(temp, COLOR_RESET);
-// 		t = ft_strjoin(t, temp, "");
-// 	}
-// 	free(temp);
-// 	return (t);
-// }

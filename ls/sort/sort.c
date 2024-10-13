@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:34:46 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/09 13:36:18 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/13 10:43:21 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,60 +70,66 @@ void	sort_list(t_list	**head)
 	}
 }
 
-void	sort_by_time(t_list	**output, char	*path)
-{
-	int			swapped;
-	t_list		*ptr1;
-	t_list		*lptr;
-	struct stat	buff1;
-	struct stat	buff2;
+// void	sort_by_time(t_list	**output, char	*path)
+// {
+// 	int			swapped;
+// 	t_list		*ptr1;
+// 	t_list		*lptr;
+// 	struct stat	buff1;
+// 	struct stat	buff2;
+// 	char		*full_path;
+// 	char		*full_path2;
 
-	lptr = NULL;
-	swapped = 1;
-	while (swapped)
-	{
-		swapped = 0;
-		ptr1 = *output;
-		while (ptr1->next != lptr)
-		{
-			lstat(ft_strjoin(path, "/", ptr1->content), &buff1);
-			lstat(ft_strjoin(path, "/", ptr1->next->content), &buff2);
-			if (buff1.st_mtime < buff2.st_mtime)
-			{
-				swap_nodes(ptr1, ptr1->next);
-				swapped = 1;
-			}
-			ptr1 = ptr1->next;
-		}
-		lptr = ptr1;
-	}
-}
+// 	lptr = NULL;
+// 	swapped = 1;
+// 	while (swapped)
+// 	{
+// 		swapped = 0;
+// 		ptr1 = *output;
+// 		while (ptr1->next != lptr)
+// 		{
+// 			full_path = ft_strjoin(path, "/", ptr1->content);
+// 			lstat(full_path, &buff1);
+// 			full_path2 = ft_strjoin(path, "/", ptr1->next->content);
+// 			lstat(full_path2, &buff2);
+// 			if (buff1.st_mtime < buff2.st_mtime)
+// 			{
+// 				swap_nodes(ptr1, ptr1->next);
+// 				swapped = 1;
+// 			}
+// 			ptr1 = ptr1->next;
+// 			free(full_path);
+// 			free(full_path2);
+// 		}
+// 		lptr = ptr1;
+// 	}
+// }
 
-void	sort_by_access_time(t_list	**output, char	*path)
-{
-	int			swapped;
-	t_list		*ptr1;
-	t_list		*lptr;
-	struct stat	buff1;
-	struct stat	buff2;
+// void	sort_by_access_time(t_list	**output, char	*path)
+// {
+// 	int			swapped;
+// 	t_list		*ptr1;
+// 	t_list		*lptr;
+// 	struct stat	buff1;
+// 	struct stat	buff2;
 
-	lptr = NULL;
-	swapped = 1;
-	while (swapped)
-	{
-		swapped = 0;
-		ptr1 = *output;
-		while (ptr1->next != lptr)
-		{
-			lstat(ft_strjoin(path, "/", ptr1->content), &buff1);
-			lstat(ft_strjoin(path, "/", ptr1->next->content), &buff2);
-			if (buff1.st_atime < buff2.st_atime)
-			{
-				swap_nodes(ptr1, ptr1->next);
-				swapped = 1;
-			}
-			ptr1 = ptr1->next;
-		}
-		lptr = ptr1;
-	}
-}
+// 	lptr = NULL;
+// 	swapped = 1;
+// 	while (swapped)
+// 	{
+// 		swapped = 0;
+// 		ptr1 = *output;
+// 		while (ptr1->next != lptr)
+// 		{
+// 			lstat(ft_strjoin(path, "/", ptr1->content), &buff1);
+// 			lstat(ft_strjoin(path, "/", ptr1->next->content), &buff2);
+// 			if (buff1.st_atime < buff2.st_atime)
+// 			{
+// 				swap_nodes(ptr1, ptr1->next);
+// 				swapped = 1;
+// 			}
+// 			ptr1 = ptr1->next;
+// 		}
+// 		lptr = ptr1;
+// 	}
+// }

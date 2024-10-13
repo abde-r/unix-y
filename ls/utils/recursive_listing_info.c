@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 22:58:24 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/12 13:05:28 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/13 15:52:15 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ char	*list_simple_data(t_list	*current, char	*t, char delim)
 {
 	char	*result;
 
-	// result = ft_strdup("");
 	result = ft_calloc(ft_strlen(t), 1);
 	while (current != NULL)
 	{
@@ -34,6 +33,9 @@ char	*list_simple_data(t_list	*current, char	*t, char delim)
 char	*generate_recursive_result(t_list	*head, char delim)
 {
 	char	*result;
+	char	*temp1;
+	char	*temp2;
+	char	*temp3;
 	t_list	*current;
 
 	current = head;
@@ -45,8 +47,8 @@ char	*generate_recursive_result(t_list	*head, char delim)
 		{
 			if (current->subdirectory != NULL)
 			{
-				char *temp1 = ft_strjoin("\n./", current->content, ":\n");
-				char *temp2 = generate_recursive_result(current->subdirectory, delim);
+				temp1 = ft_strjoin("\n./", current->content, ":\n");
+				temp2 = generate_recursive_result(current->subdirectory, delim);
 				result = ft_strchrjoin(result, \
 				temp1, '\0');
 				result = ft_strchrjoin(result, \
@@ -56,7 +58,7 @@ char	*generate_recursive_result(t_list	*head, char delim)
 			}
 			else
 			{
-				char *temp3 = ft_strjoin("\n./", \
+				temp3 = ft_strjoin("\n./", \
 				current->content, ":\n");
 				result = ft_strchrjoin(result, temp3, '\0');
 				free(temp3);
@@ -71,12 +73,15 @@ char	*get_result(t_list	*current, char	*path, \
 t_owner_group_info	info, char delim)
 {
 	char	*result;
+	char	*file_info;
+	char	*temp;
+	char	*temp2;
 
-	char *file_info = print_file_info(\
+	file_info = print_file_info(\
 	current->content, info, path);
-	char *temp = ft_strjoin("\n", file_info, "");
+	temp = ft_strjoin("\n", file_info, "");
 	result = ft_strjoin("", temp, ":\n");
-	char *temp2 = get_recursive_listing_result(\
+	temp2 = get_recursive_listing_result(\
 	current->subdirectory, delim, info, current->content);
 	result = ft_strchrjoin(result, temp2, '\0');
 	free(temp);
@@ -91,13 +96,14 @@ t_owner_group_info	info, char delim)
 	struct stat	buff;
 	char		*result;
 	char		*full_path;
+	char		*file_info;
 
 	result = ft_strdup("");
 	while (current != NULL)
 	{
 		full_path = ft_strjoin(path, "/", current->content);
 		lstat(full_path, &buff);
-		char *file_info = print_file_info(current->content, \
+		file_info = print_file_info(current->content, \
 		info, path);
 		result = ft_strchrjoin(result, file_info, delim);
 		current = current->next;
@@ -113,6 +119,8 @@ t_owner_group_info	info, char	*path)
 	struct stat	buff;
 	char		*result;
 	char		*full_path;
+	char		*file_infos;
+	char		*temp;
 	t_list		*current;
 
 	current = head;
@@ -126,20 +134,20 @@ t_owner_group_info	info, char	*path)
 			lstat(full_path, &buff);
 			if (current->subdirectory != NULL)
 			{
-				char *temp = get_result(current, path, \
+				temp = get_result(current, path, \
 info, delim);
 				result = ft_custom_strjoin(result, temp, "");
 				free(temp);
 			}
 			else
 			{
-				char *file_infos = print_file_info(\
+				file_infos = print_file_info(\
 				current->content, info, path);
-				char *temp2 = ft_strjoin("\n", file_infos, "");
-				result = ft_custom_strjoin(result, temp2, ":\n");
+				temp = ft_strjoin("\n", file_infos, "");
+				result = ft_custom_strjoin(result, temp, ":\n");
 				result = ft_custom_strjoin(result, "\n", "\0");
 				free(file_infos);
-				free(temp2);
+				free(temp);
 			}
 		}
 		current = current->next;

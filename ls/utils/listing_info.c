@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:13:50 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/13 15:56:34 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/16 12:25:15 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,18 +38,18 @@ t_owner_group_info	info, char	*path)
 	struct stat	buff;
 	char		*t;
 	char		*temp;
-	char		*temp2;
+	char		*file_info;
 
 	t = ft_strdup("");
 	while (head != NULL)
 	{
 		lstat(head->content, &buff);
-		temp2 = print_file_info(head->content, info, path);
+		file_info = print_file_info(head->content, info, path);
 		if (head->next != NULL)
-			temp = ft_strchrjoin(t, temp2, delim);
+			temp = ft_strchrjoin(t, file_info, delim);
 		else
-			temp = ft_strchrjoin(t, temp2, '\0');
-		free(temp2);
+			temp = ft_strchrjoin(t, file_info, '\0');
+		free(file_info);
 		t = temp;
 		head = head->next;
 	}

@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 12:38:08 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/13 15:30:15 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/15 22:40:38 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,8 @@ void	sort(t_list	**head, int __reverse_flag_)
 	t_list	*next;
 	int		swapped;
 
+	if (!*head)
+		return ;
 	swapped = 1;
 	while (swapped)
 	{

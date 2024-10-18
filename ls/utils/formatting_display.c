@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:49:56 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/13 15:52:52 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/15 18:55:30 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,13 +59,13 @@ char	*print_in_columns(char **items, int count, int max_len)
 				max_len, row + col * _num_col_rows[0], count);
 				if (ft_strlen(color))
 				{
-					ft_strcat(s, color);
+					s = ft_custom_strjoin(s, color, "");
 					free(color);
 				}
 			}
 			col++;
 		}
-		ft_strcat(s, "\n");
+		s = ft_custom_strjoin(s, "\n", "");
 		row++;
 	}
 	return (s);

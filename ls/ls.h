@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:23 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/13 15:59:12 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/15 21:44:53 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,14 +59,16 @@ t_owner_group_info	info, char *path);
 int		swap_nodes(t_list	*a, t_list	*b);
 
 //--- helper
-void	ls(t_list	**head, DIR	*dp, char	*path);
-char	*ls_d(const char	*path);
+char	*ft_ls(t_list	**head, char	*opts, char	*path);
+void	ls(t_list	**head, char	*path);
+void	ls_recursive(t_list	**head, char	*path);
+char	*ls_d(char	*path);
 char	*executer(t_list	**head, char	*opts, char	*path);
 
 //--- list utils
 t_list	*create_node(char	*content);
 void	insert_node(t_list	**head, char	*content);
-DIR		*get_current_dir(const char	*path);
+DIR		*get_current_dir(char	*path);
 
 //--- listing info
 char	*generate_result(t_list	*head, char delim);
@@ -77,7 +79,7 @@ char	*print_file_info(char	*filename, \
 t_owner_group_info	info, char *path);
 void	print_recursive_list(t_list *head, int depth);
 
-//--- utils
+//--- libft utils
 size_t	ft_strlen(char *s);
 size_t	ft_arrlen(char **s);
 int		ft_strcmp(const char *s1, const char *s2);
@@ -97,6 +99,7 @@ int		ft_strcat(char *dst, char *src);
 int		ft_lstcontentsize(t_list *lst);
 char	*ft_itoa(int n);
 void	ft_free(char	**items);
+void	ft_putchar(char	*s);
 
 //--- Bonus
 int		has_extended_attributes(const char *path);
@@ -116,9 +119,16 @@ int		get_dir_total(char	*path);
 int		return_error(char	*err);
 
 // NOT WORKING CASES
-// ./ft_ls -laRrt accures a segfault
-// -u is not working for recursive mode
-// -g and -o are not working
-// -Ralt crashes!
-
-// 145,942 BLOCKS
+/*
+10013  ./ft_ls d
+10014  ./ft_ls ft_ls 
+10015  ls ft_ls
+10016  ./ft_ls -la ft_ls 
+10017  ls -la ft_ls 
+10018  ./ft_ls .
+10018  ./ft_ls ..
+./ft_ls libft
+./ft_ls ...
+./ft_ls ....
+./ft_ls -d
+*/ 

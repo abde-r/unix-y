@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 15:21:20 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/13 15:46:43 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/16 13:09:25 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,10 @@ int	get_dir_total(char	*path)
 	total_blocks = 0;
 	dir = opendir(path);
 	if (dir == NULL)
-		return_error("opendir");
+	{
+		// perror("opendir: la yomlin a sat");
+		return (-1);
+	}
 	while (1)
 	{
 		entry = readdir(dir);

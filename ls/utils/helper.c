@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:38:25 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/13 15:46:12 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/15 22:43:48 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ char	*executer(t_list	**head, char	*opts, char	*path)
 		info.owner_info = ft_strchr(opts, 'g');
 		info.group_info = ft_strchr(opts, 'o');
 		if (ft_strchr(opts, 'R'))
-			return (get_recursive_listing_result(*head, '\n', info, path));
+			return (get_recursive_listing_result(*head, '\n', info, path)); // TO OPTIMIZE
 		else
 			return (generate_listing_result(*head, '\n', info, path));
 	}

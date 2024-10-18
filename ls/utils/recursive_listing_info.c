@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 22:58:24 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/13 15:52:15 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/15 22:33:36 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,7 @@ char	*generate_recursive_result(t_list	*head, char delim)
 			{
 				temp1 = ft_strjoin("\n./", current->content, ":\n");
 				temp2 = generate_recursive_result(current->subdirectory, delim);
-				result = ft_strchrjoin(result, \
-				temp1, '\0');
-				result = ft_strchrjoin(result, \
-				temp2, '\0');
+				result = ft_custom_strjoin(result, temp1, temp2);
 				free(temp1);
 				free(temp2);
 			}
@@ -60,7 +57,7 @@ char	*generate_recursive_result(t_list	*head, char delim)
 			{
 				temp3 = ft_strjoin("\n./", \
 				current->content, ":\n");
-				result = ft_strchrjoin(result, temp3, '\0');
+				result = ft_custom_strjoin(result, temp3, "");
 				free(temp3);
 			}
 		}

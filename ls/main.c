@@ -6,37 +6,11 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:32 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/13 11:55:47 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/15 22:55:19 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ls.h"
-
-char	*ft_ls(t_list	**head, char	*opts, char	*path)
-{
-	DIR		*dp;
-	char	*final_res;
-
-	if (ft_strchr(opts, 'd'))
-		final_res = ft_strjoin(ls_d(path), "\0", "");
-	else
-	{
-		dp = get_current_dir(path);
-		ls(head, dp, path);
-		final_res = executer(head, opts, path);
-		closedir(dp);
-	}
-	return (final_res);
-}
-
-void	ft_putchar(char	*s)
-{
-	int	i;
-
-	i = 0;
-	while (s[i])
-		write(2, &s[i++], 1);
-}
 
 int	char_finder(char	*s)
 {
@@ -60,7 +34,7 @@ void	free_subdirectory(t_list *subdir)
 }
 
 void	outer_free(t_list	*head, char	**opts, \
-char	**path, char	**final_res)
+char	**final_res)
 {
 	t_list	*temp;
 
@@ -75,7 +49,6 @@ char	**path, char	**final_res)
 	}
 	free(head);
 	free(*opts);
-	free(*path);
 	free(*final_res);
 }
 
@@ -88,7 +61,7 @@ int	main(int ac, char	**av)
 	char	*temp_s;
 
 	head = 0;
-	path = ft_strdup(".");
+	path = ".";
 	opts = opts_parser(ac, av, &path);
 	final_res = ft_ls(&head, opts, path);
 	if (!char_finder(opts))
@@ -97,6 +70,6 @@ int	main(int ac, char	**av)
 		temp_s = manage_recursive_colors(ft_split(final_res, '\n'), 0);
 	ft_putchar(temp_s);
 	free(temp_s);
-	outer_free(head, &opts, &path, &final_res);
+	outer_free(head, &opts, &final_res);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 12:40:43 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/13 15:49:08 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/16 13:05:53 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,8 @@ char	*manage_recursive_colors(char	**items, int in_directory)
 				s = ft_custom_strjoin(s, "\n", "");
 			dir = get_dir(items[i]);
 			total_dirs = total_dir(dir[ft_arrlen(dir) - 1]);
-			s = ft_custom_strjoin(s, total_dirs, "");
+			if (ft_strlen(total_dirs))
+				s = ft_custom_strjoin(s, total_dirs, "");
 			ft_free(dir);
 			in_directory = 1;
 			i++;

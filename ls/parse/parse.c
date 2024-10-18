@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:33:40 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/15 18:30:58 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/12 11:51:56 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ char	*parser(char	**av, char	*s, char	**path)
 			}
 		}
 		else
-			*path = av[i];
+			*path = ft_strdup(av[i]);
 		i++;
 	}
 	return (s);

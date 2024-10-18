@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:23 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/15 21:44:53 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/18 23:25:40 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,10 @@ typedef struct s_owner_group_info
 	int	group_info;
 }				t_owner_group_info;
 
-//---	parse
+//---	Parse
 char	*opts_parser(int ac, char **av, char **path);
 
-//--- sort
+//---	Sort
 void	sort_list(t_list **head);
 int		compare_case_sensitive(char *a, char *b);
 void	reverse_order(t_list **output);
@@ -58,19 +58,14 @@ char	*get_recursive_listing_result(t_list *head, char delim, \
 t_owner_group_info	info, char *path);
 int		swap_nodes(t_list	*a, t_list	*b);
 
-//--- helper
-char	*ft_ls(t_list	**head, char	*opts, char	*path);
+//---	Helpers
 void	ls(t_list	**head, char	*path);
 void	ls_recursive(t_list	**head, char	*path);
 char	*ls_d(char	*path);
 char	*executer(t_list	**head, char	*opts, char	*path);
+char	*ft_ls(t_list	**head, char	*opts, char	*path);
 
-//--- list utils
-t_list	*create_node(char	*content);
-void	insert_node(t_list	**head, char	*content);
-DIR		*get_current_dir(char	*path);
-
-//--- listing info
+//---	listing info
 char	*generate_result(t_list	*head, char delim);
 char	*generate_listing_result(t_list	*head, char delim, \
 t_owner_group_info	info, char	*path);
@@ -79,7 +74,7 @@ char	*print_file_info(char	*filename, \
 t_owner_group_info	info, char *path);
 void	print_recursive_list(t_list *head, int depth);
 
-//--- libft utils
+//---	libft utils
 size_t	ft_strlen(char *s);
 size_t	ft_arrlen(char **s);
 int		ft_strcmp(const char *s1, const char *s2);
@@ -100,8 +95,17 @@ int		ft_lstcontentsize(t_list *lst);
 char	*ft_itoa(int n);
 void	ft_free(char	**items);
 void	ft_putchar(char	*s);
+t_list	*create_node(char	*content);
+void	insert_node(t_list	**head, char	*content);
+DIR		*get_current_dir(const char	*path);
+int		char_finder(char	*s);
 
-//--- Bonus
+//---	Memory Free
+void	free_subdirectory(t_list *subdir);
+void	outer_free(t_list	*head, char	**opts, \
+char	**path, char	**final_res);
+
+//---	Bonus
 int		has_extended_attributes(const char *path);
 int		has_acl(const char *path);
 char	*manage_columns(char *joined_string);
@@ -119,6 +123,12 @@ int		get_dir_total(char	*path);
 int		return_error(char	*err);
 
 // NOT WORKING CASES
+// ./ft_ls -laRrt accures a segfault
+// -u is not working for recursive mode
+// -g and -o are not working
+// -Ralt crashes!
+// exit status
+//./ft_ls -d 
 /*
 10013  ./ft_ls d
 10014  ./ft_ls ft_ls 
@@ -131,4 +141,4 @@ int		return_error(char	*err);
 ./ft_ls ...
 ./ft_ls ....
 ./ft_ls -d
-*/ 
+*/

@@ -6,7 +6,7 @@
 #    By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/30 09:45:24 by ael-asri          #+#    #+#              #
-#    Updated: 2024/10/13 15:04:44 by ael-asri         ###   ########.fr        #
+#    Updated: 2024/10/18 10:49:37 by ael-asri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,6 +35,7 @@ SRC = main.c\
 	utils/listing_info.c\
 	utils/recursive_listing_info.c\
 	utils/file_info.c\
+	utils/memory_free.c\
 
 OBJ = $(SRC:.c=.o)
 

@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 12:38:08 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/13 15:30:15 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/19 15:58:41 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ int	reverse_compare_case_sensitive(const char	*a, const char	*b)
 
 	while (*a && *b)
 	{
-		lower_a = ft_tolower(*a);
-		lower_b = ft_tolower(*b);
+		lower_a = *a;
+		lower_b = *b;
 		if (lower_a != lower_b)
 			return (lower_b - lower_a);
 		a++;
@@ -28,137 +28,6 @@ int	reverse_compare_case_sensitive(const char	*a, const char	*b)
 	}
 	return (*b - *a);
 }
-
-int	sort_state(t_list	*current, t_list	*next, int __reverse_flag_)
-{
-	int	_sort_stat;
-
-	_sort_stat = -1;
-	if (!__reverse_flag_)
-		_sort_stat = compare_case_sensitive(current->content, \
-		next->content);
-	else if (__reverse_flag_ == 1)
-		_sort_stat = reverse_compare_case_sensitive(current->content, \
-		next->content);
-	return (_sort_stat);
-}
-
-// void split_list(t_list *source, t_list **front, t_list **back) {
-//     t_list *slow = source;
-//     t_list *fast = source->next;
-
-//     while (fast != NULL) {
-//         fast = fast->next;
-//         if (fast != NULL) {
-//             slow = slow->next;
-//             fast = fast->next;
-//         }
-//     }
-//     *front = source;
-//     *back = slow->next;
-//     slow->next = NULL;
-// }
-
-// // Merge two sorted lists based on sorting state
-// t_list *merge_sorted(t_list *a, t_list *b, int reverse_flag) {
-//     t_list *result = NULL;
-
-//     if (a == NULL) return b;
-//     if (b == NULL) return a;
-
-//     if (sort_state(a, b, reverse_flag) <= 0) {
-//         result = a;
-//         result->next = merge_sorted(a->next, b, reverse_flag);
-//     } else {
-//         result = b;
-//         result->next = merge_sorted(a, b->next, reverse_flag);
-//     }
-//     return result;
-// }
-
-// // Recursive merge sort for linked lists
-// void merge_sort(t_list **head, int reverse_flag) {
-//     if (*head == NULL || (*head)->next == NULL) return;
-
-//     t_list *a, *b;
-//     split_list(*head, &a, &b);
-
-//     // Recursively sort both halves
-//     merge_sort(&a, reverse_flag);
-//     merge_sort(&b, reverse_flag);
-
-//     // Merge the two sorted halves
-//     *head = merge_sorted(a, b, reverse_flag);
-// }
-
-// // Main sorting function with recursive subdirectory sorting
-// void sort(t_list **head, int reverse_flag) {
-//     // Sort the main list
-//     merge_sort(head, reverse_flag);
-
-//     // Sort each subdirectory recursively
-//     t_list *current = *head;
-//     while (current != NULL) {
-//         if (current->subdirectory != NULL) {
-//             sort(&current->subdirectory, reverse_flag);
-//         }
-//         current = current->next;
-//     }
-// }
-
-// Sorting the list using bubble sort
-void	sort(t_list	**head, int __reverse_flag_)
-{
-	t_list	*current;
-	t_list	*next;
-	int		swapped;
-
-	swapped = 1;
-	while (swapped)
-	{
-		swapped = 0;
-		current = *head;
-		while (current->next != NULL)
-		{
-			next = current->next;
-			if (sort_state(current, next, __reverse_flag_) > 0)
-				swapped = swap_nodes(current, next);
-			current = current->next;
-		}
-	}
-	current = *head;
-	while (current != NULL)
-	{
-		if (current->subdirectory != NULL)
-			sort(&current->subdirectory, __reverse_flag_);
-		current = current->next;
-	}
-}
-
-// Recursive function to sort directories
-// and their contents by modification time
-// void	sort_recursive_by_time(t_list	**head, char	*path, int __flag_)
-// {
-// 	t_list	*current;
-// 	char	*full_path;
-
-// 	current = *head;
-// 	if (!__flag_)
-// 		sort_by_time(head, path);
-// 	else if (__flag_ == 1)
-// 		sort_by_access_time(head, path);
-// 	while (current != NULL)
-// 	{
-// 		if (is_directory(current->content) && ft_strcmp(current->content, "."))
-// 		{
-// 			full_path = ft_strjoin(path, "/", current->content);
-// 			sort_recursive_by_time(&(current->subdirectory), \
-// 			full_path, __flag_);
-// 			free(full_path);
-// 		}
-// 		current = current->next;
-// 	}
-// }
 
 t_list	*merge_sorted(t_list	*left, t_list	*right, \
 char	*path, int (*compare)(struct stat, struct stat))

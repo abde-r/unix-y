@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:23 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/18 23:25:40 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/19 20:10:21 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void	sort_time(t_list **output, char *path, int __flag_);
 char	*get_recursive_listing_result(t_list *head, char delim, \
 t_owner_group_info	info, char *path);
 int		swap_nodes(t_list	*a, t_list	*b);
+int		reverse_compare_case_sensitive(const char	*a, const char	*b);
 
 //---	Helpers
 void	ls(t_list	**head, char	*path);
@@ -114,7 +115,7 @@ char	*manage_recursive_columns(char *joined_string);
 char	*print_in_columns(char **items, int count, int max_len);
 size_t	calculate_max_len(char **items, int count);
 char	*print_permissions(mode_t mode, char	*path);
-char	*manage_recursive_colors(char **items, int in_directory);
+char	*manage_recursive_colors(char **items, char	*path, int in_directory);
 int		get_terminal_width(void);
 size_t	calculate_max_len(char	**items, int count);
 char	*get_content_color(char	*s, int max_len, int index, int count);
@@ -130,15 +131,18 @@ int		return_error(char	*err);
 // exit status
 //./ft_ls -d 
 /*
-10013  ./ft_ls d
-10014  ./ft_ls ft_ls 
-10015  ls ft_ls
-10016  ./ft_ls -la ft_ls 
-10017  ls -la ft_ls 
-10018  ./ft_ls .
-10018  ./ft_ls ..
-./ft_ls libft
-./ft_ls ...
-./ft_ls ....
-./ft_ls -d
+10013  ./ft_ls d√
+10014  ./ft_ls ft_ls √
+10015  ls ft_ls√
+10016  ./ft_ls -la ft_ls √
+10017  ls -la ft_ls √
+10018  ./ft_ls .√
+10018  ./ft_ls ..√
+./ft_ls libft√
+./ft_ls ...√
+./ft_ls ....√
+./ft_ls -d √
+total dirs√
+./ft_ls -Rl global total√
+./ft_ls -l unath √
 */

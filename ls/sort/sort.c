@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:34:46 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/13 10:43:21 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/19 16:33:08 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,28 @@ int	compare_case_sensitive(char	*a, char	*b)
 
 	while (*a && *b)
 	{
-		lower_a = ft_tolower(*a);
-		lower_b = ft_tolower(*b);
+		lower_a = *a;
+		lower_b = *b;
 		if (lower_a != lower_b)
 			return (lower_a - lower_b);
 		a++;
 		b++;
 	}
 	return (*a - *b);
+}
+
+int	sort_state(t_list	*current, t_list	*next, int __reverse_flag_)
+{
+	int	_sort_stat;
+
+	_sort_stat = -1;
+	if (!__reverse_flag_)
+		_sort_stat = compare_case_sensitive(current->content, \
+		next->content);
+	else if (__reverse_flag_ == 1)
+		_sort_stat = reverse_compare_case_sensitive(current->content, \
+		next->content);
+	return (_sort_stat);
 }
 
 void	sort_list(t_list	**head)
@@ -70,66 +84,35 @@ void	sort_list(t_list	**head)
 	}
 }
 
-// void	sort_by_time(t_list	**output, char	*path)
-// {
-// 	int			swapped;
-// 	t_list		*ptr1;
-// 	t_list		*lptr;
-// 	struct stat	buff1;
-// 	struct stat	buff2;
-// 	char		*full_path;
-// 	char		*full_path2;
+/*
+	Sorting the list using bubble sort
+*/
+void	sort(t_list	**head, int __reverse_flag_)
+{
+	t_list	*current;
+	t_list	*next;
+	int		swapped;
 
-// 	lptr = NULL;
-// 	swapped = 1;
-// 	while (swapped)
-// 	{
-// 		swapped = 0;
-// 		ptr1 = *output;
-// 		while (ptr1->next != lptr)
-// 		{
-// 			full_path = ft_strjoin(path, "/", ptr1->content);
-// 			lstat(full_path, &buff1);
-// 			full_path2 = ft_strjoin(path, "/", ptr1->next->content);
-// 			lstat(full_path2, &buff2);
-// 			if (buff1.st_mtime < buff2.st_mtime)
-// 			{
-// 				swap_nodes(ptr1, ptr1->next);
-// 				swapped = 1;
-// 			}
-// 			ptr1 = ptr1->next;
-// 			free(full_path);
-// 			free(full_path2);
-// 		}
-// 		lptr = ptr1;
-// 	}
-// }
-
-// void	sort_by_access_time(t_list	**output, char	*path)
-// {
-// 	int			swapped;
-// 	t_list		*ptr1;
-// 	t_list		*lptr;
-// 	struct stat	buff1;
-// 	struct stat	buff2;
-
-// 	lptr = NULL;
-// 	swapped = 1;
-// 	while (swapped)
-// 	{
-// 		swapped = 0;
-// 		ptr1 = *output;
-// 		while (ptr1->next != lptr)
-// 		{
-// 			lstat(ft_strjoin(path, "/", ptr1->content), &buff1);
-// 			lstat(ft_strjoin(path, "/", ptr1->next->content), &buff2);
-// 			if (buff1.st_atime < buff2.st_atime)
-// 			{
-// 				swap_nodes(ptr1, ptr1->next);
-// 				swapped = 1;
-// 			}
-// 			ptr1 = ptr1->next;
-// 		}
-// 		lptr = ptr1;
-// 	}
-// }
+	if (!*head)
+		return ;
+	swapped = 1;
+	while (swapped)
+	{
+		swapped = 0;
+		current = *head;
+		while (current->next != NULL)
+		{
+			next = current->next;
+			if (sort_state(current, next, __reverse_flag_) > 0)
+				swapped = swap_nodes(current, next);
+			current = current->next;
+		}
+	}
+	current = *head;
+	while (current != NULL)
+	{
+		if (current->subdirectory != NULL)
+			sort(&current->subdirectory, __reverse_flag_);
+		current = current->next;
+	}
+}

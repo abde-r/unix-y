@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:49:56 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/18 11:18:25 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 17:21:50 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,45 +28,54 @@ int	*get_num_col_rows(int max_len, int count)
 	return (_num_col_rows);
 }
 
-/*
-	Printing each item in its column after 
-	getting a Rough estimate of total size (including color codes)
-*/
-char	*print_in_columns(char **items, int count, int max_len)
+void	get__num_col_rows(int	*_num_col_rows, int max_len, int count)
 {
-	char	*s;
-	char	*color;
-	int		_num_col_rows[2];
-	int		row;
-	int		col;
-	int		estimated_size;
-
 	_num_col_rows[1] = get_terminal_width() / (max_len + 2);
 	_num_col_rows[0] = (count + _num_col_rows[1] - 1) / _num_col_rows[1];
 	if (_num_col_rows[1] == 0)
 		_num_col_rows[1] = 1;
-	estimated_size = (max_len + 2 + 10) * count + _num_col_rows[0];
-	s = ft_calloc(estimated_size, 1);
-	row = 0;
-	while (row < _num_col_rows[0])
+}
+
+/*
+	just get_content_color func splitted due to the shitty norminette
+*/
+char	*_color(char	**items, int *col_row, \
+int	*_num_col_rows, int max_len)
+{
+	return (get_content_color(items[col_row[0] + col_row[1] * \
+	_num_col_rows[0]], max_len, col_row[0] + col_row[1] * \
+	_num_col_rows[0], ft_arrlen(items)));
+}
+
+/*
+	Printing each item in its column after 
+	getting a Rough estimate of total size (including color codes)
+*/
+char	*print_in_columns(char	**items, int count, int max_len)
+{
+	char	*s;
+	char	*color;
+	int		_num_col_rows[2];
+	int		col_row[2];
+
+	get__num_col_rows(_num_col_rows, max_len, count);
+	s = ft_calloc((max_len + 2 + 10) * count + _num_col_rows[0], 1);
+	col_row[0] = 0;
+	while (col_row[0] < _num_col_rows[0])
 	{
-		col = 0;
-		while (col < _num_col_rows[1])
+		col_row[1] = 0;
+		while (col_row[1] < _num_col_rows[1])
 		{
-			if ((row + col * _num_col_rows[0]) < count)
+			if ((col_row[0] + col_row[1] * _num_col_rows[0]) < count)
 			{
-				color = get_content_color(items[row + col * _num_col_rows[0]], \
-				max_len, row + col * _num_col_rows[0], count);
-				if (ft_strlen(color))
-				{
-					s = ft_custom_strjoin(s, color, "");
-					free(color);
-				}
+				color = _color(items, col_row, _num_col_rows, max_len);
+				s = ft_custom_strjoin(s, color, "");
+				free(color);
 			}
-			col++;
+			col_row[1]++;
 		}
 		s = ft_custom_strjoin(s, "\n", "");
-		row++;
+		col_row[0]++;
 	}
 	return (s);
 }

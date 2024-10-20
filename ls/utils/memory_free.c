@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 10:46:51 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/18 10:47:30 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 17:25:16 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,4 +45,31 @@ char	**path, char	**final_res)
 	free(*opts);
 	free(*path);
 	free(*final_res);
+}
+
+char	*get_file_info_temp(t_list	*current, t_owner_group_info \
+info, char	*path)
+{
+	char	*s;
+	char	*file_infos;
+	char	*temp;
+
+	file_infos = print_file_info(current->content, info, path);
+	temp = ft_strjoin("\n", file_infos, "");
+	s = ft_strjoin(file_infos, temp, ":\n\n");
+	return (s);
+}
+
+char	*get_temp(t_list	*current, char delim)
+{
+	char	*temp1;
+	char	*temp2;
+	char	*s;
+
+	temp1 = ft_strjoin("\n./", current->content, ":\n");
+	temp2 = generate_recursive_result(current->subdirectory, delim);
+	s = ft_strjoin(temp1, temp2, "");
+	free(temp1);
+	free(temp2);
+	return (s);
 }

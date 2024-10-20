@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:38:25 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/18 20:49:59 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 16:27:57 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@ void	remove_hiddens(t_list	**head)
 	prev = NULL;
 	while (current != NULL)
 	{
-		if (current->subdirectory != NULL)
-			remove_hiddens(&(current->subdirectory));
 		if (current->content[0] == '.')
 		{
 			to_free = current;
@@ -43,6 +41,34 @@ void	remove_hiddens(t_list	**head)
 	}
 }
 
+void	remove_recursive_hiddens(t_list	**head)
+{
+	t_list	*current;
+	t_list	*prev;
+
+	current = *head;
+	prev = NULL;
+	while (current != NULL)
+	{
+		if (current->subdirectory != NULL)
+			remove_recursive_hiddens(&(current->subdirectory));
+		current = current->next;
+	}
+	remove_hiddens(head);
+}
+
+char	*recursive_executer(t_list	**head, char	*opts, char	*path)
+{
+	t_owner_group_info	info;
+
+	info.owner_info = ft_strchr(opts, 'g');
+	info.group_info = ft_strchr(opts, 'o');
+	if (ft_strchr(opts, 'R'))
+		return (get_recursive_listing_result(*head, '\n', info, path));
+	else
+		return (generate_listing_result(*head, '\n', info, path));
+}
+
 /*
 	-a & -f doesn't exist: remove hidden files and dirs.
 	-f: No sorting and includes hidden files.
@@ -55,10 +81,8 @@ void	remove_hiddens(t_list	**head)
 */
 char	*executer(t_list	**head, char	*opts, char	*path)
 {
-	t_owner_group_info	info;
-
 	if (!ft_strchr(opts, 'a') && !ft_strchr(opts, 'f'))
-		remove_hiddens(head);
+		remove_recursive_hiddens(head);
 	if (!ft_strchr(opts, 'f'))
 		sort(head, 0);
 	if (ft_strchr(opts, 't'))
@@ -68,14 +92,7 @@ char	*executer(t_list	**head, char	*opts, char	*path)
 	if (ft_strchr(opts, 'u'))
 		sort_time(head, path, 1);
 	if (ft_strchr(opts, 'l') || ft_strchr(opts, 'g') || ft_strchr(opts, 'o'))
-	{
-		info.owner_info = ft_strchr(opts, 'g');
-		info.group_info = ft_strchr(opts, 'o');
-		if (ft_strchr(opts, 'R'))
-			return (get_recursive_listing_result(*head, '\n', info, path));
-		else
-			return (generate_listing_result(*head, '\n', info, path));
-	}
+		return (recursive_executer(head, opts, path));
 	else if (!ft_strchr(opts, 'l') && !ft_strchr(opts, 'g') && \
 	!ft_strchr(opts, 'o'))
 	{

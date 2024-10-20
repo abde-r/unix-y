@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 21:06:39 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/19 18:38:58 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/19 22:42:34 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,6 @@ char	*print_file_info(char	*file, t_owner_group_info	info, char	*path)
 	char			*s;
 	char			*full_path;
 	char			*time_str;
-	char			*extra_info;
-	char			*permissions;
 
 	if (!ft_strcmp(path, file))
 		full_path = ft_strdup(path);
@@ -105,14 +103,10 @@ char	*print_file_info(char	*file, t_owner_group_info	info, char	*path)
 		full_path = ft_strjoin(path, "/", file);
 	if (lstat(full_path, &statbuf) == -1)
 		return ("");
-	permissions = print_permissions(statbuf.st_mode, full_path);
-	extra_info = get_extra_info(statbuf, info);
-	s = ft_strjoin(permissions, "", extra_info);
+	s = print_permissions(statbuf, full_path, info);
 	time_str = format_time_string(statbuf.st_mtime);
 	s = ft_custom_strjoin(s, time_str, file);
 	free(full_path);
 	free(time_str);
-	free(extra_info);
-	free(permissions);
 	return (s);
 }

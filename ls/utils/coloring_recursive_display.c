@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 12:40:43 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/19 18:48:40 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 17:25:37 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,38 +47,47 @@ char	*get_total_dir(char	*s)
 	return (t);
 }
 
-char	*total_dir(char	*dir)
+char	*total_dir(char	*item, int	*in_directory)
 {
+	char	**dirs;
+	char	*dir;
+	char	*t;
+
+	dirs = get_dir(item);
+	dir = dirs[ft_arrlen(dirs) - 1];
+	t = ft_strdup("");
 	if (ft_strcmp(dir, ".") && ft_strcmp(dir, ".."))
-		return (get_total_dir(dir));
-	return ("");
+		t = get_total_dir(dir);
+	*in_directory = 1;
+	ft_free(dirs);
+	return (t);
+}
+
+char	*total_dir_norm(char	*path)
+{
+	if (is_directory(path) && get_dir_total(path) >= 0)
+		return (ft_strjoin("total ", ft_itoa(get_dir_total(path)), "\n"));
+	else
+		return (ft_strdup(""));
 }
 
 char	*manage_recursive_colors(char	**items, char	*path, int in_directory)
 {
-	char	**dir;
 	char	*s;
 	char	*total_dirs;
 	char	*color;
 	size_t	i;
 
-	if (is_directory(path) && get_dir_total(path) >= 0)
-		s = ft_strjoin("total ", ft_itoa(get_dir_total(path)), "\n");
-	else
-		s = ft_strdup("");
 	i = 0;
+	s = total_dir_norm(path);
 	while (i < ft_arrlen(items))
 	{
 		if (items[i][strlen(items[i]) - 1] == ':')
 		{
-			dir = get_dir(items[i]);
-			total_dirs = total_dir(dir[ft_arrlen(dir) - 1]);
+			total_dirs = total_dir(items[i], &in_directory);
 			s = ft_custom_strjoin(s, total_dirs, "");
-			ft_free(dir);
-			in_directory = 1;
 			i++;
-			if (ft_strlen(total_dirs))
-				free(total_dirs);
+			free(total_dirs);
 			continue ;
 		}
 		color = add_color(items[i]);

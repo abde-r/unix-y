@@ -6,28 +6,11 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 12:38:08 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/19 15:58:41 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/19 22:20:05 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ls.h"
-
-int	reverse_compare_case_sensitive(const char	*a, const char	*b)
-{
-	char	lower_a;
-	char	lower_b;
-
-	while (*a && *b)
-	{
-		lower_a = *a;
-		lower_b = *b;
-		if (lower_a != lower_b)
-			return (lower_b - lower_a);
-		a++;
-		b++;
-	}
-	return (*b - *a);
-}
 
 t_list	*merge_sorted(t_list	*left, t_list	*right, \
 char	*path, int (*compare)(struct stat, struct stat))

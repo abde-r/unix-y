@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:34:46 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/19 16:33:08 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 13:52:25 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,37 +24,6 @@ int	swap_nodes(t_list	*a, t_list	*b)
 	b->content = temp_content;
 	b->subdirectory = temp_subdir;
 	return (1);
-}
-
-int	compare_case_sensitive(char	*a, char	*b)
-{
-	char	lower_a;
-	char	lower_b;
-
-	while (*a && *b)
-	{
-		lower_a = *a;
-		lower_b = *b;
-		if (lower_a != lower_b)
-			return (lower_a - lower_b);
-		a++;
-		b++;
-	}
-	return (*a - *b);
-}
-
-int	sort_state(t_list	*current, t_list	*next, int __reverse_flag_)
-{
-	int	_sort_stat;
-
-	_sort_stat = -1;
-	if (!__reverse_flag_)
-		_sort_stat = compare_case_sensitive(current->content, \
-		next->content);
-	else if (__reverse_flag_ == 1)
-		_sort_stat = reverse_compare_case_sensitive(current->content, \
-		next->content);
-	return (_sort_stat);
 }
 
 void	sort_list(t_list	**head)
@@ -87,32 +56,41 @@ void	sort_list(t_list	**head)
 /*
 	Sorting the list using bubble sort
 */
-void	sort(t_list	**head, int __reverse_flag_)
+void	bubble_sort(t_list	**head, int reverse_flag)
 {
+	int		swapped;
 	t_list	*current;
 	t_list	*next;
-	int		swapped;
 
-	if (!*head)
-		return ;
 	swapped = 1;
 	while (swapped)
 	{
 		swapped = 0;
 		current = *head;
-		while (current->next != NULL)
+		while (current->next)
 		{
 			next = current->next;
-			if (sort_state(current, next, __reverse_flag_) > 0)
+			if (sort_state(current, next, reverse_flag) > 0)
 				swapped = swap_nodes(current, next);
 			current = current->next;
 		}
 	}
-	current = *head;
-	while (current != NULL)
+}
+
+void	sort_subdirectories(t_list	*head, int reverse_flag)
+{
+	while (head)
 	{
-		if (current->subdirectory != NULL)
-			sort(&current->subdirectory, __reverse_flag_);
-		current = current->next;
+		if (head->subdirectory)
+			sort(&head->subdirectory, reverse_flag);
+		head = head->next;
 	}
+}
+
+void	sort(t_list	**head, int reverse_flag)
+{
+	if (!head || !*head)
+		return ;
+	bubble_sort(head, reverse_flag);
+	sort_subdirectories(*head, reverse_flag);
 }

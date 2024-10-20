@@ -6,13 +6,13 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 15:13:51 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/19 17:42:23 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 18:36:50 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ls.h"
 
-int	is_directory_header(const char	*line)
+int	is_directory_header(char	*line)
 {
 	size_t	len;
 
@@ -20,9 +20,19 @@ int	is_directory_header(const char	*line)
 	return (len > 0 && line[len - 1] == ':');
 }
 
-int	is_current_or_parent_directory(const char	*name)
+int	is_current_or_parent_directory(char	*name)
 {
-	return (ft_strcmp(name, "./.:") == 0 || ft_strcmp(name, "./..:") == 0);
+	return (!ft_strcmp(name, "./.:") || \
+	!ft_strcmp(name, "./..:"));
+}
+
+char	*get_temp_normm(char	*item, int	*in_directory)
+{
+	char	*temp;
+
+	temp = ft_strjoin("\n", item, "\n");
+	*in_directory = 1;
+	return (temp);
 }
 
 /*
@@ -45,24 +55,15 @@ char	*manage_recursive_columns(char	*joined_string)
 	i = 0;
 	while (items[i] != NULL)
 	{
-		if (is_directory_header(items[i]))
+		if (!is_current_or_parent_directory(items[i]))
 		{
-			if (in_directory)
-				s = ft_custom_strjoin(s, "", "");
-			if (!is_current_or_parent_directory(items[i]))
-			{
-				s = ft_custom_strjoin(s, "\n", "");
-				s = ft_custom_strjoin(s, items[i], "\n");
-			}
-			in_directory = 1;
-		}
-		else
-			if (!is_current_or_parent_directory(items[i]))
-			{
+			if (is_directory_header(items[i]))
+				temp = get_temp_normm(items[i], &in_directory);
+			else
 				temp = manage_columns(items[i]);
-				s = ft_custom_strjoin(s, temp, "");
-				free(temp);
-			}
+			s = ft_custom_strjoin(s, temp, "");
+			free(temp);
+		}
 		i++;
 	}
 	ft_free(items);

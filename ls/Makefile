@@ -6,7 +6,7 @@
 #    By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/30 09:45:24 by ael-asri          #+#    #+#              #
-#    Updated: 2024/10/18 10:49:37 by ael-asri         ###   ########.fr        #
+#    Updated: 2024/10/19 22:20:30 by ael-asri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,10 +19,12 @@ SRC = main.c\
 	libft/utils3.c\
 	libft/utils4.c\
 	libft/utils5.c\
+	libft/utils6.c\
 	libft/linkedlist_utils.c\
 	parse/parse.c\
 	sort/sort.c\
 	sort/time_sort.c\
+	sort/sort_utils.c\
 	utils/helper.c\
 	utils/acl_xattr.c\
 	utils/formatting_display.c\

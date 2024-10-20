@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:13:50 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/19 18:38:36 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 17:23:56 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ t_owner_group_info	info, char	*path)
 	t = ft_strdup("");
 	while (head != NULL)
 	{
-		if (lstat(ft_strjoin(path, "/",head->content), &buff) != -1)
+		if (lstat(ft_strjoin(path, "/", head->content), &buff) != -1)
 			temp2 = print_file_info(head->content, info, path);
 		else
 			temp2 = ft_strdup(head->content);

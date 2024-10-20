@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 11:58:25 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/13 15:34:23 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 14:18:27 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,12 +76,12 @@ char	*get_content_color(char	*s, int max_len, int index, int count)
 	char	*t;
 	char	*temp_pad;
 
+	t = ft_strdup("");
 	if (index < count)
 	{
 		temp_pad = pad_string(s, max_len + 2);
 		t = ft_strjoin(get_file_color(s), temp_pad, COLOR_RESET);
 		free(temp_pad);
-		return (t);
 	}
-	return ("");
+	return (t);
 }

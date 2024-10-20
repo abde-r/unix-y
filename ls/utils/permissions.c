@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 14:52:38 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/13 15:43:02 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/19 22:43:23 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,17 +60,21 @@ char	*get_others_permissions(mode_t mode, char	*path)
 	return (s);
 }
 
-char	*print_permissions(mode_t mode, char	*path)
+char	*print_permissions(struct stat statbuf, char	*path, \
+t_owner_group_info info)
 {
 	char	*s;
 	char	*user;
 	char	*group;
 	char	*other;
+	char	*extra_info;
 
-	user = get_user_permissions(mode);
-	group = get_group_permissions(mode);
-	other = get_others_permissions(mode, path);
+	user = get_user_permissions(statbuf.st_mode);
+	group = get_group_permissions(statbuf.st_mode);
+	other = get_others_permissions(statbuf.st_mode, path);
+	extra_info = get_extra_info(statbuf, info);
 	s = ft_strjoin(user, group, other);
+	s = ft_strjoin(s, extra_info, "");
 	free(user);
 	free(group);
 	free(other);

@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 10:46:51 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/20 17:25:16 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 19:56:20 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	free_subdirectory(t_list *subdir)
 }
 
 void	outer_free(t_list	*head, char	**opts, \
-char	**path, char	**final_res)
+char	**final_res)
 {
 	t_list	*temp;
 
@@ -43,7 +43,6 @@ char	**path, char	**final_res)
 	}
 	free(head);
 	free(*opts);
-	free(*path);
 	free(*final_res);
 }
 
@@ -57,6 +56,8 @@ info, char	*path)
 	file_infos = print_file_info(current->content, info, path);
 	temp = ft_strjoin("\n", file_infos, "");
 	s = ft_strjoin(file_infos, temp, ":\n\n");
+	free(temp);
+	free(file_infos);
 	return (s);
 }
 

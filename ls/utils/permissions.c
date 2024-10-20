@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 14:52:38 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/19 22:43:23 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 19:11:36 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,10 @@ t_owner_group_info info)
 	other = get_others_permissions(statbuf.st_mode, path);
 	extra_info = get_extra_info(statbuf, info);
 	s = ft_strjoin(user, group, other);
-	s = ft_strjoin(s, extra_info, "");
+	s = ft_custom_strjoin(s, extra_info, "");
 	free(user);
 	free(group);
 	free(other);
+	free(extra_info);
 	return (s);
 }

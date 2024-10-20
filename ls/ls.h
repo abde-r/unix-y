@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:23 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/20 16:42:21 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 19:50:12 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,11 +100,14 @@ void	insert_node(t_list	**head, char	*content);
 DIR		*get_current_dir(const char	*path);
 int		char_finder(char	*s);
 void	unauth_message(t_list	**head, char	*path);
+void	lstat_norm(char	*path, char	*content, struct stat *buff);
+int		lstat_condition_norm(char	*name, char	*path, \
+struct stat *statbuf);
 
 //---	Memory Free
 void	free_subdirectory(t_list *subdir);
 void	outer_free(t_list	*head, char	**opts, \
-char	**path, char	**final_res);
+char	**final_res);
 
 //---	Bonus
 int		has_extended_attributes(const char *path);

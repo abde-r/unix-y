@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 10:04:43 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/19 22:02:17 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 19:56:47 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,19 @@ DIR	*get_current_dir(const char	*path)
 	return (dp);
 }
 
-void	recursive_subdirs(t_list	*current, char	*full_path)
+void	recursive_subdirs(t_list	*current, \
+char	*path, char	*name)
 {
 	t_list	*subdir;
+	char	*full_path;
 
+	full_path = ft_strjoin(path, "/", name);
 	subdir = NULL;
 	ls_recursive(&subdir, full_path);
 	while (current->next != NULL)
 		current = current->next;
 	current->subdirectory = subdir;
+	free(full_path);
 }
 
 /*
@@ -53,13 +57,13 @@ void	ls_recursive(t_list	**head, char	*path)
 		entry = readdir(dp);
 		if (!entry)
 			break ;
-		if (lstat(ft_strjoin(path, "/", entry->d_name), &statbuf) == -1)
+		if (lstat_condition_norm(entry->d_name, path, &statbuf))
 			continue ;
 		insert_node(head, entry->d_name);
 		if (!ft_strcmp(entry->d_name, ".") || !ft_strcmp(entry->d_name, ".."))
 			continue ;
 		if (S_ISDIR(statbuf.st_mode))
-			recursive_subdirs(*head, ft_strjoin(path, "/", entry->d_name));
+			recursive_subdirs(*head, path, entry->d_name);
 	}
 	closedir(dp);
 }

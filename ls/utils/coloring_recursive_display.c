@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 12:40:43 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/20 17:25:37 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 19:43:34 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,10 @@ char	*total_dir(char	*item, int	*in_directory)
 
 	dirs = get_dir(item);
 	dir = dirs[ft_arrlen(dirs) - 1];
-	t = ft_strdup("");
 	if (ft_strcmp(dir, ".") && ft_strcmp(dir, ".."))
 		t = get_total_dir(dir);
+	else
+		t = ft_strdup("");
 	*in_directory = 1;
 	ft_free(dirs);
 	return (t);
@@ -65,8 +66,16 @@ char	*total_dir(char	*item, int	*in_directory)
 
 char	*total_dir_norm(char	*path)
 {
+	char	*itoa_dir_total;
+	char	*_dir_total;
+
 	if (is_directory(path) && get_dir_total(path) >= 0)
-		return (ft_strjoin("total ", ft_itoa(get_dir_total(path)), "\n"));
+	{
+		_dir_total = ft_itoa(get_dir_total(path));
+		itoa_dir_total = ft_strjoin("total ", _dir_total, "\n");
+		free(_dir_total);
+		return (itoa_dir_total);
+	}
 	else
 		return (ft_strdup(""));
 }

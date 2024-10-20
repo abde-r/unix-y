@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 22:58:24 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/20 17:24:28 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 19:48:59 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ t_owner_group_info	info, char	*path)
 	{
 		if (is_directory(current->content))
 		{
-			lstat(ft_strjoin(path, "/", current->content), &buff);
+			lstat_norm(path, current->content, &buff);
 			if (current->subdirectory != NULL)
 				temp = get_result(current, path, info, delim);
 			else

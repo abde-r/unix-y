@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:15:00 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/10 08:30:59 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 18:57:57 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	has_extended_attributes(const char *path)
 {
 	ssize_t	len;
 
-	len = listxattr(path, NULL, 0, 0);
+	len = listxattr(path, NULL, 0);
 	if (len > 0)
 		return (len);
 	return (0);
@@ -49,7 +49,7 @@ int	has_acl(const char *path)
 	list = ft_calloc(len, 1);
 	if (len > 0)
 	{
-		if (listxattr(path, list, len, 0) == -1)
+		if (listxattr(path, list, len) == -1)
 			return (listxattr_err(&list));
 		attr = list;
 		while (attr < list + len)

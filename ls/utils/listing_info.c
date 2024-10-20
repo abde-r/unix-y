@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:13:50 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/20 17:23:56 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 19:31:46 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,21 @@ char	*generate_result(t_list	*head, char delim)
 	return (t);
 }
 
+char	*file_info_norm(t_list	*head, char	*path, \
+struct stat *buff, t_owner_group_info info)
+{
+	char	*full_path;
+	char	*s;
+
+	full_path = ft_strjoin(path, "/", head->content);
+	if (lstat(full_path, buff) != -1)
+		s = print_file_info(head->content, info, path);
+	else
+		s = ft_strdup(head->content);
+	free(full_path);
+	return (s);
+}
+
 char	*generate_listing_result(t_list	*head, char delim, \
 t_owner_group_info	info, char	*path)
 {
@@ -43,10 +58,7 @@ t_owner_group_info	info, char	*path)
 	t = ft_strdup("");
 	while (head != NULL)
 	{
-		if (lstat(ft_strjoin(path, "/", head->content), &buff) != -1)
-			temp2 = print_file_info(head->content, info, path);
-		else
-			temp2 = ft_strdup(head->content);
+		temp2 = file_info_norm(head, path, &buff, info);
 		if (ft_strlen(temp2))
 		{
 			if (head->next != NULL)

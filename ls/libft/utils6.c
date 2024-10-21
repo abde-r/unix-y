@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 22:16:56 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/19 22:17:19 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/21 18:28:02 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,23 @@ int	ft_strcat(char *dst, char *src)
 	}
 	dst[dest_len + i] = '\0';
 	return (src_len + dest_len);
+}
+
+int	is_content_valid(char	*s)
+{
+	char	*t;
+	int		i;
+
+	i = 0;
+	t = ft_strdup("Error	ft_ls:");
+	while (s[i] && t[i])
+	{
+		if (s[i] != t[i])
+		{
+			free(t);
+			return (0);
+		}
+		i++;
+	}
+	return (1);
 }

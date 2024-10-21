@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 15:21:20 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/20 19:25:38 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 21:19:29 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@ int	return_error(char	*err)
 	return (-1);
 }
 
-int	condition_norm(char	*name, char	*path, struct stat file_stat)
+int	condition_norm(char	*name, char	*path, struct stat *file_stat)
 {
 	char	*full_path;
 
 	full_path = ft_strjoin(path, "/", name);
 	if (!ft_strcmp(name, ".") || \
 	!ft_strcmp(name, "..") || \
-	stat(full_path, &file_stat) == -1)
+	stat(full_path, file_stat) == -1)
 	{
 		free(full_path);
 		return (1);
@@ -55,7 +55,7 @@ int	get_dir_total(char	*path)
 		entry = readdir(dir);
 		if (!entry)
 			break ;
-		if (condition_norm(entry->d_name, path, file_stat))
+		if (condition_norm(entry->d_name, path, &file_stat))
 			continue ;
 		total_blocks += file_stat.st_blocks;
 	}

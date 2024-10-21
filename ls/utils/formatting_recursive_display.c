@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 15:13:51 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/20 18:36:50 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/20 21:16:13 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	is_directory_header(char	*line)
 {
 	size_t	len;
 
-	len = strlen(line);
+	len = ft_strlen(line);
 	return (len > 0 && line[len - 1] == ':');
 }
 

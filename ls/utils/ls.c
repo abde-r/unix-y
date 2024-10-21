@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 10:04:43 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/20 20:38:51 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/21 15:40:05 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ void	ls(t_list	**head, char	*path)
 	closedir(dp);
 }
 
-char	*ft_ls(t_list	**head, char	*opts, char	*path)
+char	*ft_ls(t_list	**head, char	*opts, char *path)
 {
 	char	*final_res;
 

@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:33:40 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/20 19:09:03 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/21 16:50:41 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,11 @@ char	*parser(char	**av, char	*s, char	**path)
 	int		i;
 	int		j;
 	int		index;
+	int		x;
 
 	i = 1;
 	index = 0;
+	x = 0;
 	while (av[i] != NULL)
 	{
 		if (av[i][0] == '-')
@@ -54,24 +56,25 @@ char	*parser(char	**av, char	*s, char	**path)
 			}
 		}
 		else
-			*path = av[i];
+			path[x++] = ft_strdup(av[i]);
 		i++;
 	}
 	return (s);
 }
 
-char	*opts_parser(int ac, char	**av, char	**path)
+char	*opts_parser(char	**av, char	**paths)
 {
 	char	*s;
 	int		i;
 	int		count;
 
-	(void)ac;
 	i = 0;
 	count = 0;
 	while (av[i])
 		count += (ft_strlen(av[i++]) - 1);
 	s = ft_calloc(count + 1, 1);
-	s = parser(av, s, path);
+	s = parser(av, s, paths);
+	if (!ft_arrlen(paths))
+		paths[0] = ft_strdup(".");
 	return (s);
 }

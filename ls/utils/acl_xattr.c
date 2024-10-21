@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:15:00 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/20 18:57:57 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/21 18:00:31 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,21 +15,14 @@
 /*
 	Return 1 if xattr exists, otherwise 0
 */
-int	has_extended_attributes(const char *path)
+int	has_extended_attributes(char	*path)
 {
 	ssize_t	len;
 
-	len = listxattr(path, NULL, 0);
+	len = listxattr(path, NULL, 0, XATTR_NOFOLLOW);
 	if (len > 0)
 		return (len);
 	return (0);
-}
-
-int	listxattr_err(char	**list)
-{
-	perror("listxattr");
-	free(*list);
-	return (-1);
 }
 
 /*
@@ -37,31 +30,13 @@ int	listxattr_err(char	**list)
 	over the list to check for the ACL attribute
 	it returns 1 if the file has ACL (system.posix_acl_access)
 */
-int	has_acl(const char *path)
+int has_acl(char	*path)
 {
-	ssize_t	len;
-	char	*acl_attr_name;
-	char	*list;
-	char	*attr;
+	acl_t acl;
 
-	acl_attr_name = "system.posix_acl_access";
-	len = has_extended_attributes(path);
-	list = ft_calloc(len, 1);
-	if (len > 0)
-	{
-		if (listxattr(path, list, len) == -1)
-			return (listxattr_err(&list));
-		attr = list;
-		while (attr < list + len)
-		{
-			if (ft_strcmp(attr, acl_attr_name) == 0)
-			{
-				free(list);
-				return (1);
-			}
-			attr += strlen(attr) + 1;
-		}
-	}
-	free(list);
-	return (0);
+	acl = acl_get_file(path, ACL_TYPE_EXTENDED);
+	if (!acl && errno == ENOENT)
+		return (0);
+	acl_free(acl);
+	return (1);
 }

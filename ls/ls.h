@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:23 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/20 19:50:12 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/21 18:24:43 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 #include <pwd.h>
 #include <grp.h>
 #include <unistd.h>
+#include <sys/acl.h>
+#include <errno.h>
 
 #include <sys/ioctl.h>
 
@@ -31,6 +33,7 @@
 #define COLOR_LINK    "\033[1;36m"  // Cyan for symlinks
 
 #define TIME_SIZE	1024
+#define PATH_SIZE	1024
 
 typedef struct s_list
 {
@@ -46,7 +49,7 @@ typedef struct s_owner_group_info
 }				t_owner_group_info;
 
 //---	Parse
-char	*opts_parser(int ac, char **av, char **path);
+char	*opts_parser(char **av, char **path);
 
 //---	Sort
 void	sort_list(t_list **head);
@@ -94,7 +97,7 @@ int		ft_strcat(char *dst, char *src);
 int		ft_lstcontentsize(t_list *lst);
 char	*ft_itoa(int n);
 void	ft_free(char	**items);
-void	ft_putchar(char	*s);
+void	ft_putchar(char	**paths, char	*s, size_t index);
 t_list	*create_node(char	*content);
 void	insert_node(t_list	**head, char	*content);
 DIR		*get_current_dir(const char	*path);
@@ -103,15 +106,15 @@ void	unauth_message(t_list	**head, char	*path);
 void	lstat_norm(char	*path, char	*content, struct stat *buff);
 int		lstat_condition_norm(char	*name, char	*path, \
 struct stat *statbuf);
-
+int		is_content_valid(char	*s);
 //---	Memory Free
 void	free_subdirectory(t_list *subdir);
-void	outer_free(t_list	*head, char	**opts, \
-char	**final_res);
+void	outer_free(t_list	*head, char	*temp_s);
+void	outer_free2(char	**paths, char	**opts, char	**final_res);
 
 //---	Bonus
-int		has_extended_attributes(const char *path);
-int		has_acl(const char *path);
+int		has_extended_attributes(char	*path);
+int		has_acl(char	*path);
 char	*manage_columns(char *joined_string);
 char	*get_file_color(const char	*path);
 char	*manage_recursive_columns(char *joined_string);

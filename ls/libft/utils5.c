@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 12:37:09 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/19 22:15:23 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/21 18:31:16 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,22 @@ size_t	ft_strlen(char	*s)
 	return (i);
 }
 
-void	ft_putchar(char	*s)
+void	ft_putchar(char	**paths, char	*s, size_t index)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
+	if (is_directory(paths[index]) && ft_arrlen(paths) > 1)
+	{
+		while (paths[index][i])
+			write(2, &paths[index][i++], 1);
+		write(2, &":\n", 2);
+		i = 0;
+	}
 	while (s[i])
 		write(2, &s[i++], 1);
+	if (index < ft_arrlen(paths) - 1)
+		write(2, &"\n", 1);
 }
 
 int	char_finder(char	*s)
@@ -41,8 +50,8 @@ void	unauth_message(t_list	**head, char	*path)
 {
 	char	*err_message;
 
-	err_message = ft_strjoin("Error-Encountered!:'", path, "'\
-	ft_ls-cant-operate!");
+	err_message = ft_strjoin("Error	ft_ls:'", path, "'\
+	cant-operate!");
 	insert_node(head, err_message);
 	free(err_message);
 }

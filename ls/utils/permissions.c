@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 14:52:38 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/20 19:11:36 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/21 18:00:03 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,9 @@ char	*get_user_permissions(mode_t mode)
 		s[1] = 'r';
 	if (mode & S_IWUSR)
 		s[2] = 'w';
-	if (mode & S_IXUSR)
+	if (mode & S_ISUID)
+		s[3] = 'S';
+	else if (mode & S_IXUSR)
 		s[3] = 'x';
 	return (s);
 }
@@ -37,7 +39,9 @@ char	*get_group_permissions(mode_t mode)
 		s[0] = 'r';
 	if (mode & S_IWGRP)
 		s[1] = 'w';
-	if (mode & S_IXGRP)
+	if (mode & S_ISGID)
+		s[2] = 'S';
+	else if (mode & S_IXGRP)
 		s[2] = 'x';
 	return (s);
 }
@@ -51,11 +55,13 @@ char	*get_others_permissions(mode_t mode, char	*path)
 		s[0] = 'r';
 	if (mode & S_IWOTH)
 		s[1] = 'w';
-	if (mode & S_IXOTH)
+	if (mode & S_ISVTX)
+		s[2] = 'T';
+	else if (mode & S_IXOTH)
 		s[2] = 'x';
 	if (has_acl(path))
-		s[3] = 'x';
-	else if (has_extended_attributes(path))
+		s[3] = '+';
+	if (has_extended_attributes(path))
 		s[3] = '@';
 	return (s);
 }

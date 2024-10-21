@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 10:46:51 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/20 19:56:20 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/21 16:41:27 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,11 @@ void	free_subdirectory(t_list *subdir)
 	}
 }
 
-void	outer_free(t_list	*head, char	**opts, \
-char	**final_res)
+void	outer_free(t_list	*head, char	*temp_s)
 {
 	t_list	*temp;
 
+	free(temp_s);
 	while (head != NULL)
 	{
 		temp = head;
@@ -42,6 +42,19 @@ char	**final_res)
 		free(temp);
 	}
 	free(head);
+}
+
+void	outer_free2(char	**paths, char	**opts, char	**final_res)
+{
+	int	i;
+
+	i = 0;
+	while (paths[i])
+	{
+		free(paths[i]);
+		i++;
+	}
+	free(paths);
 	free(*opts);
 	free(*final_res);
 }
@@ -49,16 +62,13 @@ char	**final_res)
 char	*get_file_info_temp(t_list	*current, t_owner_group_info \
 info, char	*path)
 {
-	char	*s;
 	char	*file_infos;
 	char	*temp;
 
 	file_infos = print_file_info(current->content, info, path);
-	temp = ft_strjoin("\n", file_infos, "");
-	s = ft_strjoin(file_infos, temp, ":\n\n");
-	free(temp);
+	temp = ft_strjoin("\n", file_infos, ":\n\n");
 	free(file_infos);
-	return (s);
+	return (temp);
 }
 
 char	*get_temp(t_list	*current, char delim)

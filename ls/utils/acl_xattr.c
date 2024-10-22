@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:15:00 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/21 18:00:31 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/21 18:53:13 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ int	has_extended_attributes(char	*path)
 	over the list to check for the ACL attribute
 	it returns 1 if the file has ACL (system.posix_acl_access)
 */
-int has_acl(char	*path)
+int	has_acl(char	*path)
 {
-	acl_t acl;
+	acl_t	acl;
 
 	acl = acl_get_file(path, ACL_TYPE_EXTENDED);
 	if (!acl && errno == ENOENT)

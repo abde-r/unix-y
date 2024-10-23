@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:23 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/21 18:24:43 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/23 14:37:16 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,10 +107,18 @@ void	lstat_norm(char	*path, char	*content, struct stat *buff);
 int		lstat_condition_norm(char	*name, char	*path, \
 struct stat *statbuf);
 int		is_content_valid(char	*s);
+void	lstadd_front(t_list **lst, t_list *new);
+void	delete_null_nodes(t_list	**head);
+int		custom_compare(char	*a, char	*b);
+t_list	*create_nnode(char	*path, char	*content);
+void	insert_nnode(t_list	**head, char	*path, char	*content);
+t_list	*get_final_list(t_list	*head, char	**paths, char	*options);
+void	print_final_list(t_list	*head, char	*options);
+
 //---	Memory Free
 void	free_subdirectory(t_list *subdir);
 void	outer_free(t_list	*head, char	*temp_s);
-void	outer_free2(char	**paths, char	**opts, char	**final_res);
+void	outer_free2(char	**paths);
 
 //---	Bonus
 int		has_extended_attributes(char	*path);

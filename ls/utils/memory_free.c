@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 10:46:51 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/21 16:41:27 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/23 14:29:04 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	outer_free(t_list	*head, char	*temp_s)
 	free(head);
 }
 
-void	outer_free2(char	**paths, char	**opts, char	**final_res)
+void	outer_free2(char	**paths)
 {
 	int	i;
 
@@ -55,8 +55,6 @@ void	outer_free2(char	**paths, char	**opts, char	**final_res)
 		i++;
 	}
 	free(paths);
-	free(*opts);
-	free(*final_res);
 }
 
 char	*get_file_info_temp(t_list	*current, t_owner_group_info \

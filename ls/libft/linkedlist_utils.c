@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 12:26:48 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/09 22:32:42 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/23 12:03:03 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,4 +75,10 @@ int	ft_lstcontentsize(t_list	*lst)
 		lst = lst->next;
 	}
 	return (count);
+}
+
+void	lstadd_front(t_list **lst, t_list *new)
+{
+	new->next = *lst;
+	*lst = new;
 }

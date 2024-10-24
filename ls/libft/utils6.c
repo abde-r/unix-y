@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 22:16:56 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/21 18:28:02 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/24 09:32:38 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,27 @@ int	is_content_valid(char	*s)
 		i++;
 	}
 	return (1);
+}
+
+void	swap_list_nodes(t_list	*current, t_list	*next, int	*swapped)
+{
+	char	*temp_content;
+	t_list	*temp_subdirectory;
+
+	temp_content = current->content;
+	current->content = next->content;
+	next->content = temp_content;
+	temp_subdirectory = current->subdirectory;
+	current->subdirectory = next->subdirectory;
+	next->subdirectory = temp_subdirectory;
+	*swapped = 1;
+}
+
+void	handle_failure(t_list	**head, char	*path, \
+DIR	*dp, struct stat statbuf)
+{
+	if (S_ISREG(statbuf.st_mode))
+		insert_node(head, path);
+	else if (!dp)
+		unauth_message(head, path);
 }

@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 10:04:43 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/23 14:07:00 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/24 09:32:09 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,15 +47,10 @@ void	ls_recursive(t_list	**head, char	*path)
 	struct stat		statbuf;
 
 	lstat(path, &statbuf);
-	if (S_ISREG(statbuf.st_mode))
-	{
-		insert_node(head, path);
-		return ;
-	}
 	dp = get_current_dir(path);
-	if (!dp)
+	if (S_ISREG(statbuf.st_mode) || !dp)
 	{
-		unauth_message(head, path);
+		handle_failure(head, path, dp, statbuf);
 		return ;
 	}
 	while (1)

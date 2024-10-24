@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 14:36:20 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/23 14:39:32 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/24 09:25:43 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@ void	sort_final_list(t_list **head)
 {
 	t_list	*current;
 	t_list	*next;
-	char	*temp_content;
-	t_list	*temp_subdirectory;
 	int		swapped;
 
 	swapped = 1;
@@ -30,15 +28,7 @@ void	sort_final_list(t_list **head)
 			next = current->next;
 			if (is_directory(current->content) \
 			&& custom_compare(current->content, next->content) > 0)
-			{
-				temp_content = current->content;
-				current->content = next->content;
-				next->content = temp_content;
-				temp_subdirectory = current->subdirectory;
-				current->subdirectory = next->subdirectory;
-				next->subdirectory = temp_subdirectory;
-				swapped = 1;
-			}
+				swap_list_nodes(current, next, &swapped);
 			current = current->next;
 		}
 	}

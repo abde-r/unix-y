@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 14:36:20 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/24 09:25:43 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/25 22:08:16 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,10 @@ char	*get_files_result(t_list	**head, char	*delim)
 				t = ft_custom_strjoin(t, current->subdirectory->content, delim);
 			else
 				t = ft_custom_strjoin(t, current->subdirectory->content, "");
+			free(current->content);
 			current->content = NULL;
+			free(current->subdirectory->content);
+			free(current->subdirectory);
 			current->subdirectory = NULL;
 		}
 		current = current->next;
@@ -77,30 +80,33 @@ void	_some_magic(t_list	**head, char	*options)
 	delete_null_nodes(head);
 }
 
-void	print_final_list(t_list	*head, char	*options) // MUST REMOVE THE PRINTFS
+void	print_final_list(t_list	*head, char	*options)
 {
-	char	c;
+	char	*t;
 
+	t = ft_strdup("");
 	_some_magic(&head, options);
 	while (head)
 	{
 		if (head->content)
 		{
-			c = '\0';
-			if (head->next)
-				c = '\n';
 			if (!is_directory(head->content))
-				printf("%s\n", head->content);
+				t = ft_custom_strjoin(t, head->content, "\n");
 			else
 			{
-				printf("%s:\n", head->content);
+				t = ft_custom_strjoin(t, head->content, ":\n");
 				if (head->subdirectory)
-					printf("%s\n", head->subdirectory->content);
+					t = ft_custom_strjoin(t, head->subdirectory->content, "\n");
 			}
-			printf("%c", c);
+			if (head->next)
+				t = ft_custom_strjoin(t, "\n", "");
+			freee(&head);
 		}
-		head = head->next;
+		else
+			head = head->next;
 	}
+	ft_putchr(t);
+	ft_free2(&head, &t);
 }
 
 t_list	*get_final_list(t_list	*head, char	**paths, char	*options)
@@ -126,7 +132,7 @@ ft_split(final_res, '\n'), paths[i], 0);
 		insert_nnode(&list, paths[i], temp_s);
 		outer_free(head, temp_s);
 		i++;
+		free(final_res);
 	}
-	free(final_res);
 	return (list);
 }

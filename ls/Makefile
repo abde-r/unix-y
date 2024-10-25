@@ -6,7 +6,7 @@
 #    By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/30 09:45:24 by ael-asri          #+#    #+#              #
-#    Updated: 2024/10/23 14:37:52 by ael-asri         ###   ########.fr        #
+#    Updated: 2024/10/25 22:05:06 by ael-asri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,7 @@ SRC = main.c\
 	libft/utils4.c\
 	libft/utils5.c\
 	libft/utils6.c\
+	libft/utils7.c\
 	libft/norm_utils.c\
 	libft/linkedlist_utils.c\
 	libft/linkedlist_utils2.c\

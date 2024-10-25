@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:23 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/24 09:32:52 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/25 22:10:13 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,12 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <sys/xattr.h>
-
 #include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>
 #include <unistd.h>
 #include <sys/acl.h>
 #include <errno.h>
-
 #include <sys/ioctl.h>
 
 #define COLOR_DIR     "\033[1;34m"  // Blue
@@ -117,11 +115,14 @@ void	print_final_list(t_list	*head, char	*options);
 void	swap_list_nodes(t_list	*current, t_list	*next, int	*swapped);
 void	handle_failure(t_list	**head, char	*path, DIR	*dp, \
 struct stat statbuf);
+void	ft_putchr(char	*s);
 
 //---	Memory Free
 void	free_subdirectory(t_list *subdir);
 void	outer_free(t_list	*head, char	*temp_s);
 void	outer_free2(char	**paths);
+void	freee(t_list	**head);
+void	ft_free2(t_list	**head, char	**t);
 
 //---	Bonus
 int		has_extended_attributes(char	*path);

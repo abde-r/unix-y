@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 18:48:07 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/25 20:48:06 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/26 19:01:20 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,9 @@ void	insert_nnode(t_list	**head, char	*path, char	*content)
 	t_list	*current;
 	char	*temp;
 
-	temp = ft_substr(content, 0, ft_strlen(content) - 1);
+	temp = ft_substr(content, 0, ft_strlen(content));
+	if (temp[ft_strlen(temp) - 1] == '\n')
+		temp = ft_substr(content, 0, ft_strlen(content) - 1);
 	new_node = create_nnode(path, temp);
 	if (*head == NULL)
 		*head = new_node;

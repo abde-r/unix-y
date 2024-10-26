@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:23 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/26 17:36:29 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/26 22:38:03 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,33 +147,3 @@ char	*get_extra_info(struct stat statbuf, t_owner_group_info	info);
 char	*get_file_info_temp(t_list	*current, t_owner_group_info \
 info, char	*path);
 char	*get_temp(t_list	*current, char delim);
-
-// NOT WORKING CASES
-// ./ft_ls -laRrt accures a segfault
-// -u is not working for recursive mode
-// -g and -o are not working
-// -Ralt crashes!
-// exit status
-//./ft_ls -d 
-/*
-10013  ./ft_ls d√
-10014  ./ft_ls ft_ls √
-10015  ls ft_ls√
-10016  ./ft_ls -la ft_ls √
-10017  ls -la ft_ls √
-10018  ./ft_ls .√
-10018  ./ft_ls ..√
-./ft_ls libft√
-./ft_ls ...√
-./ft_ls ....√
-./ft_ls -d √
-total dirs√
-./ft_ls -Rl global total√
-./ft_ls -l unath √
-
-
-
-./ft_ls -Rl √
-./ft_ls -u
-./ft_ls -t √
-*/

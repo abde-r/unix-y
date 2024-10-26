@@ -6,7 +6,7 @@
 #    By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/30 09:45:24 by ael-asri          #+#    #+#              #
-#    Updated: 2024/10/25 22:05:06 by ael-asri         ###   ########.fr        #
+#    Updated: 2024/10/26 17:36:45 by ael-asri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,6 +27,7 @@ SRC = main.c\
 	parse/parse.c\
 	sort/sort.c\
 	sort/time_sort.c\
+	sort/time_sort_utils.c\
 	sort/sort_utils.c\
 	utils/helper.c\
 	utils/acl_xattr.c\

@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:38:25 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/21 18:04:03 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/26 17:30:30 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,11 +86,11 @@ char	*executer(t_list	**head, char	*opts, char	*path)
 	if (!ft_strchr(opts, 'f'))
 		sort(head, 0);
 	if (ft_strchr(opts, 't'))
-		sort_time(head, path, 0);
+		sort_by_time(head, path);
 	if (ft_strchr(opts, 'r'))
 		sort(head, 1);
 	if (ft_strchr(opts, 'u'))
-		sort_time(head, path, 1);
+		sort_by_access_time(head, path);
 	if (ft_strchr(opts, 'l') || ft_strchr(opts, 'g') || ft_strchr(opts, 'o'))
 		return (listing_executer(head, opts, path));
 	else if (!ft_strchr(opts, 'l') && !ft_strchr(opts, 'g') && \

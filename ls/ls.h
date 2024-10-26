@@ -6,7 +6,7 @@
 /*   By: ael-asri <ael-asri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 17:45:23 by ael-asri          #+#    #+#             */
-/*   Updated: 2024/10/25 22:10:13 by ael-asri         ###   ########.fr       */
+/*   Updated: 2024/10/26 17:36:29 by ael-asri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ t_owner_group_info	info, char *path);
 int		swap_nodes(t_list	*a, t_list	*b);
 int		reverse_compare_case_sensitive(const char	*a, const char	*b);
 int		sort_state(t_list	*current, t_list	*next, int __reverse_flag_);
+void	sort_by_access_time(t_list	**output, char	*path);
+void	sort_by_time(t_list	**output, char	*path);
 
 //---	Helpers
 void	ls(t_list	**head, char	*path);
@@ -168,4 +170,10 @@ char	*get_temp(t_list	*current, char delim);
 total dirs√
 ./ft_ls -Rl global total√
 ./ft_ls -l unath √
+
+
+
+./ft_ls -Rl √
+./ft_ls -u
+./ft_ls -t √
 */

@@ -1,6 +1,6 @@
 NAME = ft_ping
 
-SRC = main.c
+SRC = main.c ping.c
 
 OBJ = $(SRC:.c=.o)
 

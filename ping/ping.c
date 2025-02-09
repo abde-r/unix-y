@@ -3,7 +3,7 @@
 int	create_socket() {
     int socket_fd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
     if (socket_fd < 0) {
-        perror("Error creating socket.");
+        perror("socket");
         return 0;
     }
     return socket_fd;
@@ -44,24 +44,34 @@ void    send_pings(int sockfd, struct sockaddr_in *addr) {
 /*
     Receive ICMP Echo Reply
 */
-void    recv_pings(int sockfd, struct sockaddr_in *addr) {
-    char		packet[PACKET_SIZE];
-    struct		icmphdr *icmp = (struct icmphdr*)(packet+20); // skip ip header
-    struct		sockaddr_in from;
-    socklen_t	fromlen = sizeof(from);
-	(void)addr;
+void recv_pings(int sockfd) {
+    char packet[PACKET_SIZE];
 
-	if (recvfrom(sockfd, packet, sizeof(packet), 0, (struct sockaddr*)&from, &fromlen) < 0) {
-        perror("recvfrom");
+    // Set a timeout of 2 seconds
+    struct timeval timeout;
+    timeout.tv_sec = 2;
+    timeout.tv_usec = 0;
+    if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) < 0) {
+        perror("setsockopt");
         exit(EXIT_FAILURE);
     }
 
-	if (icmp->type == ICMP_ECHOREPLY)
-		printf("reply from ");
+    // Receive data from the socket
+    ssize_t bytes_received = recv(sockfd, packet, sizeof(packet), 0);
+    if (bytes_received <= 0) {
+        if (errno == EAGAIN || errno == EWOULDBLOCK) {
+            printf("Timeout: No data received\n");
+        } else {
+            perror("recv");
+        }
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Received %zd bytes\n", bytes_received);
 }
 
 int ft_ping(char *ip_addr) {
-    printf("%s", ip_addr);
+    printf("%s\n", ip_addr);
 
     int sockfd = create_socket();
 
@@ -77,7 +87,7 @@ int ft_ping(char *ip_addr) {
     // Send & receive packets
     while (1) {
         send_pings(sockfd, &addr);
-        recv_pings(sockfd, &addr);
+        recv_pings(sockfd);
         sleep(1);
     }
 

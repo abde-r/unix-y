@@ -13,7 +13,7 @@ unsigned short	checksum(void *icmp, int len) {
 	unsigned short	*buff = icmp;
 	unsigned int	sum = 0;
 
-	for (sum = 0; len > 1; len -= 2)
+	for (sum = 0; len > 1; len -= 2) 
 		sum += *buff++;
 	if (len == 1)
 		sum += *(unsigned char*)buff++;
@@ -25,17 +25,18 @@ unsigned short	checksum(void *icmp, int len) {
 /*
     Send ICMP Echo Request
 */
-void    send_pings(int sockfd, struct sockaddr_in *addr) {
-    char    packet[PACKET_SIZE];
+void    send_pings(int sockfd, struct sockaddr_in *addr, struct timeval *start, int seq) {
+    char    packet[sizeof(struct icmphdr) + PACKET_SIZE];
     struct  icmphdr *icmp = (struct icmphdr *)packet;
 
+    memset(packet, 0, sizeof(packet));
     icmp->type = ICMP_ECHO;
     icmp->code = 0;
     icmp->un.echo.id = getpid();
-    icmp->un.echo.sequence = 0;
-    icmp->checksum = 0;
-    icmp->checksum = checksum(icmp, sizeof(struct icmphdr));
-    if (sendto(sockfd, packet, sizeof(packet), 0, (struct sockaddr*)addr, sizeof(*addr)) < 0) {
+    icmp->un.echo.sequence = seq;
+    icmp->checksum = checksum(packet, sizeof(packet));
+    gettimeofday(start, NULL);
+    if (sendto(sockfd, packet, sizeof(packet), 0, (struct sockaddr *)addr, sizeof(* addr)) < 0) {
         perror("sendto");
         exit(EXIT_FAILURE);
     }
@@ -44,8 +45,9 @@ void    send_pings(int sockfd, struct sockaddr_in *addr) {
 /*
     Receive ICMP Echo Reply
 */
-void recv_pings(int sockfd) {
+void recv_pings(int sockfd, char *addrip, struct timeval *start) {
     char packet[PACKET_SIZE];
+    struct timeval end;
 
     // Set a timeout of 2 seconds
     struct timeval timeout;
@@ -60,34 +62,45 @@ void recv_pings(int sockfd) {
     ssize_t bytes_received = recv(sockfd, packet, sizeof(packet), 0);
     if (bytes_received <= 0) {
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
-            printf("Timeout: No data received\n");
+            printf("Error: %s\n", strerror(errno));
         } else {
             perror("recv");
         }
         exit(EXIT_FAILURE);
     }
+    
+    struct iphdr *ip_hdr = (struct iphdr *) packet;
+    struct icmphdr *icmp_hdr = (struct icmphdr *) (packet + (ip_hdr->ihl * 4));
 
-    printf("Received %zd bytes\n", bytes_received);
+    gettimeofday(&end, NULL);
+
+    if (icmp_hdr->type == ICMP_ECHOREPLY) {
+        double rtt = (end.tv_sec - start->tv_sec) * 1000.0 + (end.tv_usec - start->tv_usec) / 1000.0;
+        printf("64 bytes from %s: icmp_seq=%d ttl=%d time=%.3f ms\n",
+               addrip, icmp_hdr->un.echo.sequence, ip_hdr->ttl, rtt);
+    }
 }
 
-int ft_ping(char *ip_addr) {
-    printf("%s\n", ip_addr);
+int ft_ping(char *addrip) {
+    printf("%s\n", addrip);
+    struct timeval start;
+    int seq = 0;
 
-    int sockfd = create_socket();
+    int sockfd = create_socket(); 
 
     // setup destination address
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
-    if (inet_pton(AF_INET, ip_addr, &addr.sin_addr) <= 0) {
+    if (inet_pton(AF_INET, addrip, &addr.sin_addr) <= 0) {
         perror("inet pton");
         exit(EXIT_FAILURE);
     }
 
     // Send & receive packets
     while (1) {
-        send_pings(sockfd, &addr);
-        recv_pings(sockfd);
+        send_pings(sockfd, &addr, &start, seq++);
+        recv_pings(sockfd, addrip, &start);
         sleep(1);
     }
 

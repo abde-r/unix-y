@@ -8,10 +8,13 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <errno.h>
+#include <signal.h>
 #include <sys/time.h>
+#include <netdb.h>
+
 
 #define PACKET_SIZE 64
-#define PAYLOAD_SIZE 64
+#define DEFAULT_PAYLOAD_SIZE 56
 
 struct icmphdr {
     uint8_t  type;     // ICMP type
@@ -43,5 +46,15 @@ struct iphdr {
     uint32_t saddr;          // Source IP address
     uint32_t daddr;          // Destination IP address
 };
+
+typedef	struct
+{
+	int		packets_sent;
+	int		packets_received;
+	float	rtt_total;
+	float	rtt_min;
+	float	rtt_max;
+}		s_statistics;
+
 
 int ft_ping(char *ip_addr);

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
@@ -12,7 +13,12 @@
 #include <sys/time.h>
 #include <netdb.h>
 
-
+#ifndef ICMP_TIME_EXCEEDED
+#define ICMP_TIME_EXCEEDED 11
+#endif
+#ifndef ICMP_DEST_UNREACH
+#define ICMP_DEST_UNREACH 3
+#endif
 #define PACKET_SIZE 64
 #define DEFAULT_PAYLOAD_SIZE 56
 
@@ -57,4 +63,4 @@ typedef	struct
 }		s_statistics;
 
 
-int ft_ping(char *ip_addr);
+int ft_ping(char *ip_addr, bool v_mode);

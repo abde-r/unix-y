@@ -48,7 +48,7 @@ void    send_pings(int sockfd, struct sockaddr_in *addr, struct timeval *start, 
 /*
     Receive ICMP Echo Reply
 */
-void recv_pings(int sockfd, char *addrip, struct timeval *start) {
+void recv_pings(int sockfd, char *addrip, struct timeval *start, bool v_mode) {
     char packet[PACKET_SIZE];
     struct timeval end;
 
@@ -56,19 +56,23 @@ void recv_pings(int sockfd, char *addrip, struct timeval *start) {
     struct timeval timeout;
     timeout.tv_sec = 2;
     timeout.tv_usec = 0;
-    if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) < 0) {
-        perror("setsockopt");
-        exit(EXIT_FAILURE);
-    }
+
+	int ttl = 1; // THIS JUST TO TEST -v
+	setsockopt(sockfd, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl));
+    // if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) < 0) {
+    //     perror("setsockopt");
+    //     exit(EXIT_FAILURE);
+    // }
 
     // Receive data from the socket
     ssize_t bytes_received = recv(sockfd, packet, sizeof(packet), 0);
     if (bytes_received <= 0) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK) {
-            printf("Error: %s\n", strerror(errno));
-        } else {
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+			printf("Error: %s\n", strerror(errno));
+		else
             perror("recv");
-        }
+        if (v_mode)
+            fprintf(stderr, "Error receiving packet: Possible network issue or timeout.\n");
         exit(EXIT_FAILURE);
     }
     
@@ -83,7 +87,15 @@ void recv_pings(int sockfd, char *addrip, struct timeval *start) {
 		statistics.rtt_total += rtt;
 		printf("64 bytes from %s: icmp_seq=%d ttl=%d time=%.3f ms\n",
                addrip, ntohs(icmp_hdr->un.echo.sequence), ip_hdr->ttl, rtt);
-    }
+    } else if (icmp_hdr->type == ICMP_TIME_EXCEEDED) {
+		fprintf(stderr, "TTL expired.\n");
+		if (v_mode)
+			fprintf(stderr, "Packet reached an intermediate router but did not reach the destination.\n");
+	} else if (icmp_hdr->type == ICMP_DEST_UNREACH) {
+		fprintf(stderr, "Destination unreachable.\n");
+		if (v_mode)
+			fprintf(stderr, "Possible reasons: Host down, network issue, or firewall blocking the request.\n");
+	}
 }
 
 void	resolve_hostname(char	*hostname, char	*ip) {
@@ -120,7 +132,7 @@ void	handle_sigint(int sig) {
 	exit(EXIT_SUCCESS);
 }
 
-int ft_ping(char *address) {
+int ft_ping(char *address, bool v_mode) {
 	char	ip[INET_ADDRSTRLEN];
 	int		sockfd, seq, payload_size;
     struct timeval	start;
@@ -144,7 +156,7 @@ int ft_ping(char *address) {
 	signal(SIGINT, handle_sigint);
     while (1) {
         send_pings(sockfd, &addr, &start, seq++);
-        recv_pings(sockfd, ip, &start);
+        recv_pings(sockfd, ip, &start, v_mode);
         sleep(1);
     }
     close(sockfd);

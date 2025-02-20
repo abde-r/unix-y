@@ -1,6 +1,6 @@
 NAME = ft_traceroute
 
-SRC = main.c
+SRC = main.c traceroute.c errors.c
 
 OBJ = $(SRC:.c=.o)
 

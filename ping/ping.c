@@ -1,18 +1,43 @@
 #include "ping.h"
 
-s_statistics statistics = {0, 0, 0.0, 0.0, 0.0};
+s_data	data;
 
-int	create_socket() {
-    int socket_fd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
-    if (socket_fd < 0) {
-        perror("socket");
-        exit(EXIT_FAILURE);
-    }
-    return socket_fd;
+/*
+	Initialization of data struct
+*/
+void	struct_init(char	*address, bool	v_mode) {
+	data.address = strdup(address);
+	data.v_mode = v_mode;
+
+	data.statistics.packets_sent = 0;
+	data.statistics.packets_received = 0;
+	data.statistics.rtt_total = 0;
+	data.statistics.rtt_min = 9999;
+	data.statistics.rtt_max = 0;
 }
 
-unsigned short	checksum(void *icmp, int len) {
-	unsigned short	*buff = icmp;
+/*
+	Socket Creation
+*/
+int	create_socket() {
+	int sockfd;
+
+	sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
+	if (sockfd < 0) {
+		perror("socket");
+		exit(EXIT_FAILURE);
+	}
+	return sockfd;
+}
+
+/*
+	Calculating checksum to ensure packet errors free.
+	By adding the packet's content together --iterating two because checksum size is 2 bytes.
+	In case of overflowing the sum is splited into two parts and added together to get exactly 16 bits format.
+	Returning bitwise NOT of the sum as the receiver's algorithm expecting it inverted.
+*/
+unsigned short	checksum(void *packet, int len) {
+	unsigned short	*buff = packet;
 	unsigned int	sum = 0;
 
 	for (sum = 0; len > 1; len -= 2)
@@ -27,7 +52,7 @@ unsigned short	checksum(void *icmp, int len) {
 /*
     Send ICMP Echo Request
 */
-void    send_pings(int sockfd, struct sockaddr_in *addr, struct timeval *start, int seq) {
+void    send_pings(struct sockaddr_in *addr, struct timeval *start) {
     char    packet[PACKET_SIZE];
     struct  icmphdr *icmp = (struct icmphdr *)packet;
 
@@ -35,130 +60,152 @@ void    send_pings(int sockfd, struct sockaddr_in *addr, struct timeval *start, 
     icmp->type = ICMP_ECHO;
     icmp->code = 0;
     icmp->un.echo.id = htons(getpid());
-    icmp->un.echo.sequence = htons(seq);
+    icmp->un.echo.sequence = htons(data.seq++);
     icmp->checksum = checksum(packet, PACKET_SIZE);
     gettimeofday(start, NULL);
-    if (sendto(sockfd, packet, sizeof(packet), 0, (struct sockaddr *)addr, sizeof(* addr)) < 0) {
+    if (sendto(data.sockfd, packet, sizeof(packet), 0, (struct sockaddr *)addr, sizeof(* addr)) < 0) {
         perror("sendto");
         exit(EXIT_FAILURE);
     }
-	statistics.packets_sent++;
+	data.statistics.packets_sent++;
 }
 
 /*
     Receive ICMP Echo Reply
 */
-void recv_pings(int sockfd, char *addrip, struct timeval *start, bool v_mode) {
-    char packet[PACKET_SIZE];
-    struct timeval end;
+void	recv_pings(struct timeval *start) {
+    char	packet[PACKET_SIZE];
+    struct	timeval end;
+    struct	timeval timeout;
 
-    // Set a timeout of 2 seconds
-    struct timeval timeout;
-    timeout.tv_sec = 2;
+	/*
+		THIS JUST TO TEST -v
+		int ttl = 1;
+		if	(setsockopt(data.sockfd, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl)) < 0) {
+	*/
+
+	// setting timeout so recv() function doesn't block forever.
+    timeout.tv_sec = 1;
     timeout.tv_usec = 0;
-
-	int ttl = 1; // THIS JUST TO TEST -v
-	setsockopt(sockfd, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl));
-    // if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) < 0) {
-    //     perror("setsockopt");
-    //     exit(EXIT_FAILURE);
-    // }
+	if (setsockopt(data.sockfd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) < 0) {
+		perror("setsockopt");
+		exit(EXIT_FAILURE);
+	}
 
     // Receive data from the socket
-    ssize_t bytes_received = recv(sockfd, packet, sizeof(packet), 0);
-    if (bytes_received <= 0) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK)
-			printf("Error: %s\n", strerror(errno));
+	if (recv(data.sockfd, packet, sizeof(packet), 0) <= 0) {
+		if (errno == EAGAIN || errno == EWOULDBLOCK) {
+			if (data.v_mode) {
+				fprintf(stderr, "ft_ping: sock4.fd: %d (socktype: SOCK_RAW)\nai->ai_family: AF_INET, ai->ai_canonname: '%s'\n", data.sockfd, data.address);
+				data.v_mode = false;
+			}
+			return ;
+		}
 		else
-            perror("recv");
-        if (v_mode)
-            fprintf(stderr, "Error receiving packet: Possible network issue or timeout.\n");
-        exit(EXIT_FAILURE);
-    }
+			perror("recv");
+		if (data.v_mode)
+			fprintf(stderr, "Error receiving packet: Possible network issue or timeout.\n");
+		exit(EXIT_FAILURE);
+	}
     
     struct iphdr *ip_hdr = (struct iphdr *) packet;
     struct icmphdr *icmp_hdr = (struct icmphdr *) (packet + (ip_hdr->ihl * 4));
-
     gettimeofday(&end, NULL);
 
     if (icmp_hdr->type == ICMP_ECHOREPLY) {
         double rtt = (end.tv_sec - start->tv_sec) * 1000.0 + (end.tv_usec - start->tv_usec) / 1000.0;
-		statistics.packets_received++;
-		statistics.rtt_total += rtt;
+		data.statistics.packets_received++;
+		data.statistics.rtt_total += rtt;
+		if (rtt < data.statistics.rtt_min)
+			data.statistics.rtt_min = rtt;
+		if (rtt > data.statistics.rtt_max)
+			data.statistics.rtt_max = rtt;
 		printf("64 bytes from %s: icmp_seq=%d ttl=%d time=%.3f ms\n",
-               addrip, ntohs(icmp_hdr->un.echo.sequence), ip_hdr->ttl, rtt);
+               data.ip, ntohs(icmp_hdr->un.echo.sequence), ip_hdr->ttl, rtt);
     } else if (icmp_hdr->type == ICMP_TIME_EXCEEDED) {
 		fprintf(stderr, "TTL expired.\n");
-		if (v_mode)
+		if (data.v_mode)
 			fprintf(stderr, "Packet reached an intermediate router but did not reach the destination.\n");
 	} else if (icmp_hdr->type == ICMP_DEST_UNREACH) {
 		fprintf(stderr, "Destination unreachable.\n");
-		if (v_mode)
+		if (data.v_mode)
 			fprintf(stderr, "Possible reasons: Host down, network issue, or firewall blocking the request.\n");
 	}
 }
 
-void	resolve_hostname(char	*hostname, char	*ip) {
+/*
+	Retrieving hostname from given IP address
+*/
+void	getIP() {
+	struct	sockaddr_in	sa;
 	struct addrinfo hints, *res;
 	struct sockaddr_in	*addr;
 
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM;
-
-	if (getaddrinfo(hostname, NULL, &hints, &res) != 0) {
-		fprintf(stderr, "Error: Could not resolve hostname %s\n", hostname);
-		exit(EXIT_FAILURE);
+	if (inet_pton(AF_INET, data.address, &sa.sin_addr) != 0)
+		strcpy(data.ip, data.address);
+	else {
+		memset(&hints, 0, sizeof(hints));
+		hints.ai_family = AF_INET;
+		if (data.v_mode) {
+			fprintf(stderr, "ft_ping: sock4.fd: %d (socktype: SOCK_RAW)\n", data.sockfd);
+		}
+		if (getaddrinfo(data.address, NULL, &hints, &res) != 0) {
+			fprintf(stderr, "Error: Could not resolve hostname %s\n", data.address);
+			// free(data.address);
+			freeaddrinfo(res);
+			exit(EXIT_FAILURE);
+		}
+		if (data.v_mode) {
+			fprintf(stderr, "ai->ai_family: AF_INET, ai->ai_canonname: '%s'\n", data.address);
+		}
+		addr = (struct sockaddr_in*)res->ai_addr;
+		strcpy(data.ip, inet_ntoa(addr->sin_addr));
+		freeaddrinfo(res);
 	}
-	addr = (struct sockaddr_in*)res->ai_addr;
-	strcpy(ip, inet_ntoa(addr->sin_addr));
-	freeaddrinfo(res);
 }
 
-void	getIP(char	*address, char	*ip) {
-	struct sockaddr_in	sa;
-
-	if (inet_pton(AF_INET, address, &sa.sin_addr) != 0)
-		strcpy(ip, address);
-	else
-		resolve_hostname(address, ip);
-}
-
+/*
+	Handling Ctr+C Signal to display statistics
+*/
 void	handle_sigint(int sig) {
 	(void)sig;
-	printf("--- google.com ping statistics ---\n");
-	printf("%d packets transmitted, %d packets received, %.2f%% packet loss\n", statistics.packets_sent, statistics.packets_sent, 100.0);
-	printf("round-trip min/avg/max/stddev = %.2f/%.2f/%.2f/%.2f ms\n", statistics.rtt_total, statistics.rtt_total, statistics.rtt_total, statistics.rtt_total);
+
+	printf("\n--- %s ping statistics ---\n", data.address);
+	printf("%d packets transmitted, %d packets received, %.2f%% packet loss\n", data.statistics.packets_sent, data.statistics.packets_sent, (data.statistics.packets_sent > 0) 
+        ? (100.0 * (data.statistics.packets_sent - data.statistics.packets_received) / data.statistics.packets_sent) 
+        : 0.0);
+	printf("rtt min/avg/max/mdev = %.2f/%.2f/%.2f/%.2f ms\n", data.statistics.rtt_min, data.statistics.rtt_total/data.seq, data.statistics.rtt_max, sqrt(data.statistics.rtt_total / data.seq));
 	exit(EXIT_SUCCESS);
 }
 
-int ft_ping(char *address, bool v_mode) {
-	char	ip[INET_ADDRSTRLEN];
-	int		sockfd, seq, payload_size;
-    struct timeval	start;
+int ft_ping(char	*address, bool v_mode) {
+	int		payload_size;
+	struct  timeval	start;
 
-    sockfd = create_socket();
-	getIP(address, ip);
+	// struct init & socket creation
+	struct_init(address, v_mode);
+	data.sockfd = create_socket();
+	getIP();
 	payload_size = sizeof(struct icmphdr) + DEFAULT_PAYLOAD_SIZE - sizeof(struct icmphdr);
-	printf("PING %s (%s): %d data bytes\n", address, ip, payload_size);
+	printf("PING %s (%s): %d(%d) bytes of data\n", data.address, data.ip, payload_size, TOTAL_PACKET_SIZE);
 
 	// setup destination address
-    struct sockaddr_in addr;
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    if (inet_pton(AF_INET, ip, &addr.sin_addr) <= 0) {
-        perror("inet pton");
-        exit(EXIT_FAILURE);
-    }
+	memset(&data.addr, 0, sizeof(data.addr));
+	data.addr.sin_family = AF_INET;
+	if (inet_pton(AF_INET, data.ip, &data.addr.sin_addr) <= 0) {
+		perror("inet pton");
+		exit(EXIT_FAILURE);
+	}
 
-    // Send & receive packets
-    seq = 0;
+	// packets send & receive
+	data.seq = 0;
 	signal(SIGINT, handle_sigint);
-    while (1) {
-        send_pings(sockfd, &addr, &start, seq++);
-        recv_pings(sockfd, ip, &start, v_mode);
-        sleep(1);
-    }
-    close(sockfd);
-    return 0;
+	while (1) {
+		send_pings(&data.addr, &start);
+		recv_pings(&start);
+		sleep(1);
+	}
+	close(data.sockfd);
+	free(data.address);
+	return 0;
 }

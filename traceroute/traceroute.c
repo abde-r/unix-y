@@ -5,9 +5,8 @@ s_data	data;
 /*
 	Initialization of data struct
 */
-void	struct_init(char	*address, bool	v_mode) {
+void	struct_init(char	*address) {
 	data.address = strdup(address);
-	data.v_mode = v_mode;
 
 	data.statistics.packets_sent = 0;
 	data.statistics.packets_received = 0;
@@ -52,7 +51,7 @@ unsigned short	checksum(void *packet, int len) {
 /*
     Send ICMP Echo Request
 */
-void    send_pings(struct sockaddr_in *addr, struct timeval *start) {
+void    send_pings(struct sockaddr_in *addr, struct timeval *start, int ttl) {
     char    packet[PACKET_SIZE];
     struct  icmphdr *icmp = (struct icmphdr *)packet;
 
@@ -60,20 +59,20 @@ void    send_pings(struct sockaddr_in *addr, struct timeval *start) {
     icmp->type = ICMP_ECHO;
     icmp->code = 0;
     icmp->un.echo.id = htons(getpid());
-    icmp->un.echo.sequence = htons(data.seq++);
+    icmp->un.echo.sequence = htons(ttl);
     icmp->checksum = checksum(packet, PACKET_SIZE);
     gettimeofday(start, NULL);
     if (sendto(data.sockfd, packet, sizeof(packet), 0, (struct sockaddr *)addr, sizeof(* addr)) < 0) {
         perror("sendto");
         exit(EXIT_FAILURE);
     }
-	data.statistics.packets_sent++;
+	// data.statistics.packets_sent++;
 }
 
 /*
     Receive ICMP Echo Reply
 */
-void	recv_pings(struct timeval *start) {
+void	recv_pings(struct timeval *start, int ttl) {
     char	packet[PACKET_SIZE];
     struct	timeval end;
     struct	timeval timeout;
@@ -87,13 +86,17 @@ void	recv_pings(struct timeval *start) {
 	// setting timeout so recv() function doesn't block forever.
     timeout.tv_sec = 1;
     timeout.tv_usec = 0;
+	socklen_t addr_len = sizeof(data.addr);
 	if (setsockopt(data.sockfd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) < 0) {
 		perror("setsockopt");
 		exit(EXIT_FAILURE);
 	}
 
     // Receive data from the socket
-	if (recv(data.sockfd, packet, sizeof(packet), 0) <= 0) {
+	if (recvfrom(data.sockfd, packet, sizeof(packet), 0, (struct sockaddr *)&data.addr, &addr_len) > 0) {
+		printf("%2d %s \n", ttl, inet_ntoa(data.addr.sin_addr));
+        double rtt = (end.tv_sec - start->tv_sec) * 1000.0 + (end.tv_usec - start->tv_usec) / 1000.0;
+		printf("%3f ms\n", rtt);
 		if (errno == EAGAIN || errno == EWOULDBLOCK) {
 			if (data.v_mode) {
 				fprintf(stderr, "ft_ping: sock4.fd: %d (socktype: SOCK_RAW)\nai->ai_family: AF_INET, ai->ai_canonname: '%s'\n", data.sockfd, data.address);
@@ -107,30 +110,33 @@ void	recv_pings(struct timeval *start) {
 			fprintf(stderr, "Error receiving packet: Possible network issue or timeout.\n");
 		exit(EXIT_FAILURE);
 	}
+	else {
+		printf("%2d *\n", ttl);
+	}
     
-    struct iphdr *ip_hdr = (struct iphdr *) packet;
-    struct icmphdr *icmp_hdr = (struct icmphdr *) (packet + (ip_hdr->ihl * 4));
+    // struct iphdr *ip_hdr = (struct iphdr *) packet;
+    // struct icmphdr *icmp_hdr = (struct icmphdr *) (packet + (ip_hdr->ihl * 4));
     gettimeofday(&end, NULL);
 
-    if (icmp_hdr->type == ICMP_ECHOREPLY) {
-        double rtt = (end.tv_sec - start->tv_sec) * 1000.0 + (end.tv_usec - start->tv_usec) / 1000.0;
-		data.statistics.packets_received++;
-		data.statistics.rtt_total += rtt;
-		if (rtt < data.statistics.rtt_min)
-			data.statistics.rtt_min = rtt;
-		if (rtt > data.statistics.rtt_max)
-			data.statistics.rtt_max = rtt;
-		printf("64 bytes from %s: icmp_seq=%d ttl=%d time=%.3f ms\n",
-               data.ip, ntohs(icmp_hdr->un.echo.sequence), ip_hdr->ttl, rtt);
-    } else if (icmp_hdr->type == ICMP_TIME_EXCEEDED) {
-		fprintf(stderr, "TTL expired.\n");
-		if (data.v_mode)
-			fprintf(stderr, "Packet reached an intermediate router but did not reach the destination.\n");
-	} else if (icmp_hdr->type == ICMP_DEST_UNREACH) {
-		fprintf(stderr, "Destination unreachable.\n");
-		if (data.v_mode)
-			fprintf(stderr, "Possible reasons: Host down, network issue, or firewall blocking the request.\n");
-	}
+    // if (icmp_hdr->type == ICMP_ECHOREPLY) {
+	// 	data.statistics.packets_received++;
+	// 	data.statistics.rtt_total += rtt;
+	// 	if (rtt < data.statistics.rtt_min)
+	// 		data.statistics.rtt_min = rtt;
+	// 	if (rtt > data.statistics.rtt_max)
+	// 		data.statistics.rtt_max = rtt;
+	// 	printf("64 bytes from %s: icmp_seq=%d ttl=%d time=%.3f ms\n",
+    //            data.ip, ntohs(icmp_hdr->un.echo.sequence), ip_hdr->ttl, rtt);
+    // }
+	// else if (icmp_hdr->type == ICMP_TIME_EXCEEDED) {
+	// 	fprintf(stderr, "TTL expired.\n");
+	// 	if (data.v_mode)
+	// 		fprintf(stderr, "Packet reached an intermediate router but did not reach the destination.\n");
+	// } else if (icmp_hdr->type == ICMP_DEST_UNREACH) {
+	// 	fprintf(stderr, "Destination unreachable.\n");
+	// 	if (data.v_mode)
+	// 		fprintf(stderr, "Possible reasons: Host down, network issue, or firewall blocking the request.\n");
+	// }
 }
 
 /*
@@ -164,27 +170,31 @@ void	getIP() {
 	}
 }
 
-/*
-	Handling Ctr+C Signal to display statistics
-*/
-void	handle_sigint(int sig) {
-	(void)sig;
-
-	printf("\n--- %s ping statistics ---\n", data.address);
-	printf("%d packets transmitted, %d packets received, %.2f%% packet loss\n", data.statistics.packets_sent, data.statistics.packets_sent, (data.statistics.packets_sent > 0) 
-        ? (100.0 * (data.statistics.packets_sent - data.statistics.packets_received) / data.statistics.packets_sent) 
-        : 0.0);
-	printf("rtt min/avg/max/mdev = %.2f/%.2f/%.2f/%.2f ms\n", data.statistics.rtt_min, data.statistics.rtt_total/data.seq, data.statistics.rtt_max, sqrt(data.statistics.rtt_total / data.seq));
-	exit(EXIT_SUCCESS);
-}
-
 void	ft_traceroute(char	*address) {
-	printf("address %s\n", address);
+	// struct init & socket creation
+	// int		payload_size;
+	struct  timeval	start;
+	struct_init(address);
+	data.sockfd = create_socket();
+	getIP();
+	// payload_size = sizeof(struct icmphdr) + DEFAULT_PAYLOAD_SIZE - sizeof(struct icmphdr);
+	printf("traceroute to %s (%s), %d hops max, %d byte packets\n", data.address, data.ip, MAX_HOPS, PACKET_SIZE);
+	// setup destination address
+	memset(&data.addr, 0, sizeof(data.addr));
+	data.addr.sin_family = AF_INET;
+	if (inet_pton(AF_INET, data.ip, &data.addr.sin_addr) <= 0) {
+		perror("inet pton");
+		exit(EXIT_FAILURE);
+	}
+
+	// packets send & receive
+	// data.seq = 0;
 
 	for (int ttl=0; ttl < MAX_HOPS; ttl++) {
 		// send packets
-		send_pings(&data.addr, &start);
+		send_pings(&data.addr, &start, ttl);
 		// receive packets
-		recv_pings(&start);
+		recv_pings(&start, ttl);
 	}
+	close(data.sockfd);
 }

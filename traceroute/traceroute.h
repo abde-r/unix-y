@@ -17,7 +17,7 @@
 #define PACKET_SIZE 40
 #define TOTAL_PACKET_SIZE 84
 #define DEFAULT_PAYLOAD_SIZE 56
-#define MAX_HOPS 30
+#define MAX_HOPS 64
 
 struct icmphdr {
     uint8_t  type;     // ICMP type
@@ -50,24 +50,23 @@ struct iphdr {
     uint32_t daddr;          // Destination IP address
 };
 
-typedef	struct
-{
-	int		packets_sent;
-	int		packets_received;
-	float	rtt_total;
-	float	rtt_min;
-	float	rtt_max;
-}		s_statistics;
+// typedef	struct
+// {
+// 	int		packets_sent;
+// 	int		packets_received;
+// 	float	rtt_total;
+// 	float	rtt_min;
+// 	float	rtt_max;
+// }		s_statistics;
 
 typedef	struct
 {
 	int				sockfd;
 	int				seq;
-	bool			v_mode;
 	char			*address;
 	char			ip[INET_ADDRSTRLEN];
 	struct  		sockaddr_in addr;
-	s_statistics	statistics;
+	// s_statistics	statistics;
 }		s_data;
 
 void	ft_traceroute(char	*address);

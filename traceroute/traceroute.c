@@ -99,10 +99,10 @@ int	recv_packets(struct timeval *start, int ttl) {
 /*
 	Retrieving hostname from given IP address
 */
-void	getIP() {
+void	resolveIP() {
 	struct	sockaddr_in	sa;
-	struct addrinfo hints, *res;
-	struct sockaddr_in	*addr;
+	struct	addrinfo	hints, *res;
+	struct	sockaddr_in	*addr;
 
 	if (inet_pton(AF_INET, data.address, &sa.sin_addr) != 0)
 		strcpy(data.ip, data.address);
@@ -121,11 +121,13 @@ void	getIP() {
 }
 
 void	ft_traceroute(char	*address) {
-	struct  timeval	start;
+	char	replyIP[INET_ADDRSTRLEN];
+	struct	sockaddr_in	recvAddr;
+	bool	destinationReached = false;
 
 	struct_init(address);
+	resolveIP();
 	data.sockfd = create_socket();
-	getIP();
 	printf("traceroute to %s (%s), %d hops max, %d byte packets\n", data.address, data.ip, MAX_HOPS, PACKET_SIZE);
 
 	// setup destination address
@@ -136,11 +138,78 @@ void	ft_traceroute(char	*address) {
 		exit(EXIT_FAILURE);
 	}
 
-	for (int ttl=1; ttl <= MAX_HOPS; ttl++) {
-		if (!send_packets(&data.addr, &start, ttl))
-			continue ;
-		if (!recv_packets(&start, ttl))
-			break ;
-	}
+	for (int ttl = 1; ttl <= MAX_HOPS && !destinationReached; ttl++) {
+        // Set TTL for the current hop
+        if (setsockopt(data.sockfd, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl)) < 0) {
+            perror("setsockopt TTL");
+            exit(EXIT_FAILURE);
+        }
+        
+        double rtts[PROBES_PER_HOP] = { -1, -1, -1 };
+        memset(replyIP, 0, sizeof(replyIP));
+        
+        // Send PROBES_PER_HOP probes for the current TTL
+        for (int probe = 0; probe < PROBES_PER_HOP; probe++) {
+			
+			// Packets sending
+            char sendPacket[PACKET_SIZE];
+            memset(sendPacket, 0, sizeof(sendPacket));
+            
+            struct icmphdr icmpHeader;
+            memset(&icmpHeader, 0, sizeof(icmpHeader));
+            icmpHeader.type = ICMP_ECHO;
+            icmpHeader.code = 0;
+            icmpHeader.un.echo.id = getpid();
+            icmpHeader.un.echo.sequence = ttl * PROBES_PER_HOP + probe;
+            icmpHeader.checksum = 0;
+            icmpHeader.checksum = checksum(&icmpHeader, sizeof(icmpHeader));
+            memcpy(sendPacket, &icmpHeader, sizeof(icmpHeader));
+            
+            struct timeval start, end;
+            gettimeofday(&start, NULL);
+            if (sendto(data.sockfd, sendPacket, sizeof(icmpHeader), 0,
+                       (struct sockaddr *)&data.addr, sizeof(data.addr)) < 0) {
+                perror("sendto");
+                continue;
+            }
+            
+			// Packets receiving
+            char recvPacket[512];
+            socklen_t addrLen = sizeof(recvAddr);
+            int bytes = recvfrom(data.sockfd, recvPacket, sizeof(recvPacket), 0, (struct sockaddr *)&recvAddr, &addrLen);
+            gettimeofday(&end, NULL);
+            
+            double rtt = (end.tv_sec - start.tv_sec) * 1000.0 + (end.tv_usec - start.tv_usec) / 1000.0;
+            if (bytes >= 0) {
+                rtts[probe] = rtt;
+                if (replyIP[0] == '\0') {
+                    inet_ntop(AF_INET, &recvAddr.sin_addr, replyIP, sizeof(replyIP));
+                }
+                if (recvAddr.sin_addr.s_addr == data.addr.sin_addr.s_addr) {
+                    destinationReached = 1;
+                }
+            }
+        }
+        
+        // Print results for this hop
+        printf("%2d  ", ttl);
+        if (replyIP[0] != '\0') {
+			char host[NI_MAXHOST];
+			if (getnameinfo((struct sockaddr *)&recvAddr, sizeof(recvAddr), host, sizeof(host), NULL, 0, NI_NAMEREQD) == 0) {
+				printf("%s (%s)  ", host, replyIP);
+			} else {
+				printf("%s (%s)  ", replyIP, replyIP);
+			}
+        } else {
+            printf("*  ");
+        }
+        for (int probe = 0; probe < PROBES_PER_HOP; probe++) {
+            if (rtts[probe] < 0)
+                printf("*  ");
+            else
+                printf("%.3f ms  ", rtts[probe]);
+        }
+        printf("\n");
+    }
 	close(data.sockfd);
 }

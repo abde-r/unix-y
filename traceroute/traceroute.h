@@ -18,6 +18,7 @@
 #define TOTAL_PACKET_SIZE 84
 #define DEFAULT_PAYLOAD_SIZE 56
 #define MAX_HOPS 64
+#define PROBES_PER_HOP 3
 
 struct icmphdr {
     uint8_t  type;     // ICMP type

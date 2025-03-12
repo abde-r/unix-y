@@ -19,13 +19,20 @@ Recoding the system's ls command to behave identically to the original, with the
 <h5><sup>STATUS: <i>finished</i></sup>✅</h5>
 <h5><sup>ABOUT:</sup></h5>
 <h6>
-Redcofing of Ping; the command that allows to test the accessibility of another machine through the IP network. The command measures also the time taken to receive a response, called round-trip time.
+Recoding of Ping; the command that allows to test the accessibility of another machine through the IP network. The command measures also the time taken to receive a response, called round-trip time.<br/>
 Managing the <code>-v</code> & <code>-h</code> options is mandatory, <code>-h</code> similar to --help or how to use the program, and <code>-v</code> displays the results in case of a problem or an error linked to the packets, which logically shouldn’t force the program to stop (the modification of the TTL value can help to force an error).
 </h6>
 
 ---
 
 <h4><ins>malloc</ins></h4>
+<h5><sup>STATUS: <i>in progress</i></sup>⏳</h5>
+<h5><sup>ABOUT:</sup></h5>
+<h6>
+</h6>
+
+---
+<h4><ins>nmap</ins></h4>
 <h5><sup>STATUS: <i>in progress</i></sup>⏳</h5>
 <h5><sup>ABOUT:</sup></h5>
 <h6>
@@ -41,9 +48,11 @@ Managing the <code>-v</code> & <code>-h</code> options is mandatory, <code>-h</c
 ---
 
 <h4><ins>traceroute</ins></h4>
-<h5><sup>STATUS: <i>in progress</i></sup>⏳</h5>
+<h5><sup>STATUS: <i>finished</i></sup>✅</h5>
 <h5><sup>ABOUT:</sup></h5>
 <h6>
+Recoding of Traceroute; The network diagnostic command tool that is used to trace the route taken by packets from a source to a destination over an IP network. It provides valuable insights into the network path, including the number of hops (routers) between the source and destination and the round-trip time (RTT) for each hop. <br/>
+Managing the <code>-h</code> options is mandatory, <code>-h</code> similar to --help or how to use the program.
 </h6>
 
 ---

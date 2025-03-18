@@ -5,11 +5,10 @@ void	usage_error() {
 }
 
 void	valide_scan_type(s_data	*data, char	*scan_type) {
-	if (!scan_type){
-		data->scan_type = strdup("ALL");}
+	if (!scan_type)
+		data->scan_type = strdup("ALL");
 	else if (!strcmp(scan_type, "SYN") || !strcmp(scan_type, "NULL") || !strcmp(scan_type, "ACK") || !strcmp(scan_type, "FIN") || !strcmp(scan_type, "XMAS") || !strcmp(scan_type, "UDP"))
-	{
-			data->scan_type = strdup(scan_type);}
+		data->scan_type = strdup(scan_type);
 	else {
 		fprintf(stderr, "Invalide scan type!");
 		exit(EXIT_FAILURE);

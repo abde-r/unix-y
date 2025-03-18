@@ -10,9 +10,10 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <errno.h>
 
 #define PACKET_SIZE 4096
-
+#define PACKET_RECV_SIZE 65535
 struct pseudo_header {
 	uint32_t	src_address;
 	uint32_t	dest_address;
@@ -42,6 +43,7 @@ typedef	struct
 	char			*hostname;
 	char			*port;
 	char			*ip;
+	int				threads;
 	char			*scan_type;
 	struct sockaddr_in	dest;
 }		s_data;

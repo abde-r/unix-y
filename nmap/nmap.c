@@ -3,145 +3,202 @@
 /*
 	Socket Creation
 */
-int	create_socket() {
-	int sockfd;
-
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd < 0) {
+void	create_socket(s_data	*data) {
+	data->sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
+	if (data->sockfd < 0) {
 		perror("socket");
-		return -1;
+		exit(EXIT_FAILURE);
 	}
-	return sockfd;
 }
 
 /*
 	Retrieving hostname from given IP address
 */
-struct hostent	*resolveIP(char	*hostname) {
-	struct	hostent	*he;
+void	ip_resolver(s_data	*data) {
+	struct	sockaddr_in	sa;
+	struct	addrinfo	hints, *res;
+	struct	sockaddr_in	*addr;
 
-	if ((he = gethostbyname(hostname)) == NULL) {
-		perror("gethostbyname");
-		exit(EXIT_FAILURE);
+	if (inet_pton(AF_INET, data->hostname, &sa.sin_addr) != 0)
+		strcpy(data->ip, data->hostname);
+	else {
+		memset(&hints, 0, sizeof(hints));
+		hints.ai_family = AF_INET;
+		if (getaddrinfo(data->hostname, NULL, &hints, &res) != 0) {
+			fprintf(stderr, "Error: Could not resolve hostname %s\n", data->hostname);
+			exit(EXIT_FAILURE);
+		}
+		addr = (struct sockaddr_in*)res->ai_addr;
+		strcpy(data->ip, inet_ntoa(addr->sin_addr));
+		freeaddrinfo(res);
 	}
-	return he;
 }
 
 /*
 	Send TCP Packets
 */
-void	send_tcp_packet(s_data	*data, int flag) {
-	char	*packet[PACKET_SIZE];
-	struct ip	*ip_header = (struct ip *)packet;
-	struct tcphdr	*tcp_header = (struct tcphdr *) (packet + sizeof(struct ip));
+void send_tcp_packet(s_data *data, int flag) {
+    char packet[PACKET_SIZE];
+    memset(packet, 0, sizeof(packet));
 
-	data->sockfd = create_socket();
-	data->dest.sin_family = AF_INET;
-	data->dest.sin_port = htons(data->port);
-	inet_pton(AF_INET, data->ip, &data->dest.sin_addr);
-	memset(packet, 0, sizeof(packet));
+    struct ip *ip_header = (struct ip *)packet;
+    struct tcphdr *tcp_header = (struct tcphdr *)(packet + sizeof(struct ip));
 
-	// Fill IP header
-	ip_header->ip_hl = 5;
-	ip_header->ip_v = 4;
-	ip_header->ip_tos = 0;
-	ip_header->ip_len = htons(sizeof(struct ip) + sizeof(struct tcphdr));
-	ip_header->ip_id = htonl(getpid());
-	ip_header->ip_off = 0;
-	ip_header->ip_ttl = 64;
-	ip_header->ip_p = IPPROTO_TCP;
-	ip_header->ip_sum = 0;
-	ip_header->ip_src.s_addr = inet_addr(data->ip);
-	ip_header->ip_dst.s_addr = data->dest.sin_addr.s_addr;
+    // Create socket
+    create_socket(data);
+    data->dest.sin_family = AF_INET;
+    data->dest.sin_port = htons(atoi(data->port));
+    inet_pton(AF_INET, data->ip, &data->dest.sin_addr);
 
-	// Fill TCP header
-	tcp_header->source = htons(getpid());
-	tcp_header->dest = htons(data->port);
-	tcp_header->seq = htonl(rand());
-	tcp_header->ack_seq = 0;
-	tcp_header->doff = 5;
-	tcp_header->res1 = 0;
-	tcp_header->res2 = 0;
+    // Fill IP Header
+    ip_header->ip_hl = 5;
+    ip_header->ip_v = 4;
+    ip_header->ip_tos = 0;
+    ip_header->ip_len = htons(sizeof(struct ip) + sizeof(struct tcphdr));
+    ip_header->ip_id = htonl(getpid());
+    ip_header->ip_off = 0;
+    ip_header->ip_ttl = 64;
+    ip_header->ip_p = IPPROTO_TCP;
+    ip_header->ip_src.s_addr = inet_addr(data->ip);
+    ip_header->ip_dst.s_addr = data->dest.sin_addr.s_addr;
 
-	// Set TCP flags based on SCAN TYPE
-	tcp_header->syn = (flag == 1);
-	tcp_header->fin = (flag == 2);
-	tcp_header->ack = (flag == 3);
-	tcp_header->psh = (flag == 4);
-	tcp_header->urg = (flag == 5);
-	tcp_header->window = htons(65535);
-	tcp_header->check = 0;
-	tcp_header->urg_ptr = 0;
+    // Fill TCP Header
+    tcp_header->th_sport = htons(getpid());
+    tcp_header->th_dport = htons(atoi(data->port));
+    tcp_header->th_seq = htonl(rand());
+    tcp_header->th_ack = 0;
+    tcp_header->th_off = 5;
+    tcp_header->th_flags = TH_SYN; // SYN scan
+    tcp_header->th_win = htons(65535);
+    tcp_header->th_sum = 0;
+    tcp_header->th_urp = 0;
 
-	struct pseudo_header	ps_header;
-	ps_header.src_address = ip_header->ip_src.s_addr;
-	ps_header.dest_address = ip_header->ip_dst.s_addr;
-	ps_header.placeholder = 0;
-	ps_header.protocol = IPPROTO_TCP;
-	ps_header.tcp_length = htons(sizeof(struct tcphdr));
+    // Set TCP Flags based on scan type
+    switch (flag) {
+		case 1: tcp_header->th_flags = TH_SYN; break;   // SYN Scan
+		case 2: tcp_header->th_flags = TH_FIN; break;   // FIN Scan
+		case 3: tcp_header->th_flags = TH_ACK; break;   // ACK Scan
+		case 4: tcp_header->th_flags = TH_PUSH; break;  // Xmas Scan (Push+Urg+Fin)
+		case 5: tcp_header->th_flags = TH_URG; break;   // URG Scan
+		case 6: tcp_header->th_flags = 0; break;        // NULL Scan (No flags)
+	}
 
-	char	pseudogram[sizeof(struct pseudo_header) + sizeof(struct tcphdr)];
-	memcpy(pseudogram, (char *) &ps_header, sizeof(struct pseudo_header));
-	memcpy(pseudogram + sizeof(struct pseudo_header), tcp_header, sizeof(struct tcphdr));
-	tcp_header->check = checksum(pseudogram, sizeof(struct pseudo_header), tcp_header, sizeof(struct tcphdr));
-
-	if (sendto(data->sockfd, packet, ip_header->ip_len, 0, (struct sockaddr *) &data->dest, sizeof(data->dest)) < 0)
-		fprintf(stderr, "sendto failed!");
-	close(data->sockfd);
+    // Send packet
+    if (sendto(data->sockfd, packet, ntohs(ip_header->ip_len), 0, (struct sockaddr *)&data->dest, sizeof(data->dest)) < 0)
+        perror("sendto");
+    // close(data->sockfd);
 }
 
 /*
 	Send UDP Packets
 */
-void	send_udp_packets(s_data	*data) {
-	char	packet[10] = {0};
+void send_udp_packet(s_data *data) {
+    char packet[10] = {0};
 
-	data->sockfd = create_socket();
-	data->dest.sin_family = AF_INET;
-	data->dest.sin_family = htons(data->port);
-	inet_pton(AF_INET, data->ip, &data->dest.sin_addr);
+    create_socket(data);
+    data->dest.sin_family = AF_INET;
+    data->dest.sin_port = htons(atoi(data->port));
+    inet_pton(AF_INET, data->ip, &data->dest.sin_addr);
 
-	if (sendto(data->sockfd, packet, sizeof(packet), 0, (struct sockaddr *)&data->dest, sizeof(data->dest)) < 0) {
-		fprintf(stderr, "UDP packet send failed");
-	}
-	else {
-		printf("UDP packet sent to %s:%d\n", data->ip, data->port);
-	}
-	close(data->sockfd);
+    if (sendto(data->sockfd, packet, sizeof(packet), 0, (struct sockaddr *)&data->dest, sizeof(data->dest)) < 0)
+        perror("sendto");
+
+    // close(data->sockfd);
 }
 
+void receive_tcp_packet(s_data	*data) {
+    char packet[PACKET_RECV_SIZE];
+    struct sockaddr_in sender;
+    socklen_t sender_len = sizeof(sender);
+
+	// Set a timeout for recvfrom()
+    struct timeval timeout;
+    timeout.tv_sec = 2;  // 2 seconds timeout
+    timeout.tv_usec = 0;
+    
+	setsockopt(data->sockfd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+    if (recvfrom(data->sockfd, packet, sizeof(packet), 0, (struct sockaddr *)&sender, &sender_len) >= 0) {
+        struct ip *ip_header = (struct ip *)packet;
+        struct tcphdr *tcp_header = (struct tcphdr *)(packet + (ip_header->ip_hl * 4));
+
+        printf("Received TCP packet from %s\n", inet_ntoa(ip_header->ip_src));
+
+        if (tcp_header->th_flags & TH_RST) {
+            printf("Port %d is closed.\n", ntohs(tcp_header->th_dport));
+        } else if (tcp_header->th_flags & TH_SYN && tcp_header->th_flags & TH_ACK) {
+            printf("Port %d is open.\n", ntohs(tcp_header->th_dport));
+        } else {
+            printf("Port %d has an unknown response.\n", ntohs(tcp_header->th_dport));
+        }
+    }
+	else {
+		if (errno == EWOULDBLOCK || errno == EAGAIN) {
+            printf("Timeout: No response received for port %d.\n", atoi(data->port));
+        } else {
+            perror("recvfrom");
+        }
+	}
+
+	printf("...\n");	
+    close(data->sockfd);
+}
+
+void receive_udp_packet(s_data	*data) {
+    char packet[PACKET_RECV_SIZE];
+    struct sockaddr_in sender;
+    socklen_t sender_len = sizeof(sender);
+
+    if (recvfrom(data->sockfd, packet, sizeof(packet), 0, (struct sockaddr *)&sender, &sender_len) >= 0) {
+        struct ip *ip_header = (struct ip *)packet;
+        struct icmp *icmp_header = (struct icmp *)(packet + (ip_header->ip_hl * 4));
+
+        printf("Received ICMP response from %s\n", inet_ntoa(ip_header->ip_src));
+
+        if (icmp_header->icmp_type == 3 && icmp_header->icmp_code == 3) {
+            printf("Port is closed (ICMP Port Unreachable).\n");
+        } else {
+            printf("Port is open or filtered (no ICMP error).\n");
+        }
+    }
+	else
+		perror("recvfrom (UDP)");
+
+    close(data->sockfd);
+}
+
+/*
+	namp function
+*/
 void	ft_nmap(s_data	*data) {
-	char	*ip = "127.0.0.1";
-	int		ports = 20;
-	char	*scan_type = "SYN";
-	int		threads = 70;
-	int		sockfd;
 	int		start_port = 1;
 	int		end_port = 9;
-	struct	hostent	*he;
 
-	printf("Scan Configurations\nTarget Ip-Address : %s\nNo of Ports to scan : %d\nScans to be performed : %s\nNo of threads : %d\nScanning..\n........\n", ip, ports, scan_type, threads);
+	ip_resolver(data);
+	printf("Scan Configurations\nTarget Ip-Address : %s\nNo of Ports to scan : %s\nScans to be performed : %s\nNo of threads : %d\nScanning..\n........\n", data->ip, data->port, data->scan_type, data->threads);
 	for (int port=start_port; port<end_port; port++) {
-		if (!strcmp(data->scan_type, "SYN"))
-			send_tcp_packet(data, 1);
-		else if (!strcmp(data->scan_type, "FIN"))
-			send_tcp_packet(data, 2);
-		else if (!strcmp(data->scan_type, "ACK"))
-			send_tcp_packet(data, 3);
-		else if (!strcmp(data->scan_type, "XMAS"))
-			send_tcp_packet(data, 4);
-		else if (!strcmp(data->scan_type, "NULL"))
-			send_tcp_packet(data, 0);
+		if (!strcmp(data->scan_type, "SYN") || !strcmp(data->scan_type, "NULL") || !strcmp(data->scan_type, "ACK") || !strcmp(data->scan_type, "FIN") || !strcmp(data->scan_type, "XMAS")) {
+			if (!strcmp(data->scan_type, "SYN"))
+				send_tcp_packet(data, 1);
+			else if (!strcmp(data->scan_type, "FIN"))
+				send_tcp_packet(data, 2);
+			else if (!strcmp(data->scan_type, "ACK"))
+				send_tcp_packet(data, 3);
+			else if (!strcmp(data->scan_type, "XMAS"))
+				send_tcp_packet(data, 4);
+			else if (!strcmp(data->scan_type, "NULL"))
+				send_tcp_packet(data, 0);
+			receive_tcp_packet(data);
+		}
 		else if (!strcmp(data->scan_type, "UDP"))
+		{
 			send_udp_packet(data);
+			receive_udp_packet(data);
+		}
 		else
 			printf("MUST APPLY THEM ALL");
 	}
-	// printf("Scan took 8.32132 secs
-	// IP address: x.x.x.x
-	// Open ports:
-	// Port Service Name (if applicable) Results Conclusion
-	// ----------------------------------------------------------------------------------------
+	printf("Scan took %f secs\nIP address: %s\n", 8.32132, data->ip);
+	printf("Open ports:\nPort Service Name (if applicable) Results Conclusion\n----------------------------------------------------------------------------------------\n");
 	// 80 http SYN(Open) Open
 	// Closed/Filtered/Unfiltered ports:
 	// Port Service Name (if applicable) Results Conclusion

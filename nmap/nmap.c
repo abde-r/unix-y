@@ -140,7 +140,7 @@ void receive_tcp_packet(s_data	*data) {
 	}
 
 	printf("...\n");	
-    close(data->sockfd);
+    // close(data->sockfd);
 }
 
 void receive_udp_packet(s_data	*data) {
@@ -170,8 +170,8 @@ void receive_udp_packet(s_data	*data) {
 	namp function
 */
 void	ft_nmap(s_data	*data) {
-	int		start_port = 1;
-	int		end_port = 9;
+	int		start_port = 80;
+	int		end_port = 90;
 
 	ip_resolver(data);
 	printf("Scan Configurations\nTarget Ip-Address : %s\nNo of Ports to scan : %s\nScans to be performed : %s\nNo of threads : %d\nScanning..\n........\n", data->ip, data->port, data->scan_type, data->threads);

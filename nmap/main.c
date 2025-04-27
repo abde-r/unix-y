@@ -7,9 +7,9 @@ int	main(int ac, char	**av) {
 		usage_error();
 	else if (ac>1 && ac<=5) {
 		valide_scan_type(&data, av[4]);
-		data.port = strdup(av[1]);
-		data.hostname = strdup(av[2]);
-		data.threads = atoi(av[3]);
+		data.port = strdup(av[3]);
+		data.hostname = strdup(av[1]);
+		data.threads = atoi(av[2]);
 		data.ip = strdup("x.x.x.x");
 		// printf("User input: %s %s %s %s\n", av[1], av[2], av[3], av[4]);
 		// data.scan_type = strdup(av[5]);

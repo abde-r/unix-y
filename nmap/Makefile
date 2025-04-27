@@ -9,7 +9,7 @@ FLAGS = -Wall -Wextra -Werror
 all : $(NAME)
 
 $(NAME): $(OBJ)
-	cc $(FLAGS) $(OBJ) -o $(NAME)
+	cc $(FLAGS) $(OBJ) -o $(NAME) -lpcap
 
 %.o: %.c
 	cc $(FLAGS) -c $< -o $@

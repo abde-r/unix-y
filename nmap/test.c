@@ -18,7 +18,7 @@ int main() {
     pcap_if_t *dev;
 
     // Example: Listen on hostname and port range
-    const char *hostname = "example.com"; // Replace with your hostname
+    const char *hostname = "google.com"; // Replace with your hostname
     int start_port = 80;  // Start of the port range (inclusive)
     int end_port = 100;   // End of the port range (inclusive)
 

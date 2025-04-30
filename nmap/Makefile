@@ -1,6 +1,6 @@
 NAME = ft_nmap
 
-SRC = main.c nmap.c errors.c
+SRC = main.c nmap.c errors.c scan_types/syn.c
 
 OBJ = $(SRC:.c=.o)
 

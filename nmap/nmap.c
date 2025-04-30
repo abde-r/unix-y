@@ -47,7 +47,7 @@ void send_tcp_packet(s_data *data, int flag) {
     // Create socket
     create_socket(data);
     data->dest.sin_family = AF_INET;
-    data->dest.sin_port = htons(atoi(data->port));
+    data->dest.sin_port = htons(data->port);
     inet_pton(AF_INET, data->ip, &data->dest.sin_addr);
 
     // Fill IP Header
@@ -64,7 +64,7 @@ void send_tcp_packet(s_data *data, int flag) {
 
     // Fill TCP Header
     tcp_header->th_sport = htons(getpid());
-    tcp_header->th_dport = htons(atoi(data->port));
+    tcp_header->th_dport = htons(data->port);
     tcp_header->th_seq = htonl(rand());
     tcp_header->th_ack = 0;
     tcp_header->th_off = 5;
@@ -97,7 +97,7 @@ void send_udp_packet(s_data *data) {
 
     create_socket(data);
     data->dest.sin_family = AF_INET;
-    data->dest.sin_port = htons(atoi(data->port));
+    data->dest.sin_port = htons(data->port);
     inet_pton(AF_INET, data->ip, &data->dest.sin_addr);
 
     if (sendto(data->sockfd, packet, sizeof(packet), 0, (struct sockaddr *)&data->dest, sizeof(data->dest)) < 0)
@@ -133,7 +133,7 @@ void receive_tcp_packet(s_data	*data) {
     }
 	else {
 		if (errno == EWOULDBLOCK || errno == EAGAIN) {
-            printf("Timeout: No response received for port %d.\n", atoi(data->port));
+            printf("Timeout: No response received for port %d.\n", data->port);
         } else {
             perror("recvfrom");
         }
@@ -166,19 +166,30 @@ void receive_udp_packet(s_data	*data) {
     close(data->sockfd);
 }
 
+
 /*
 	namp function
 */
 void	ft_nmap(s_data	*data) {
-	int		start_port = 80;
-	int		end_port = 90;
+	int		start_port = data->port-1;
+	int		end_port = data->port;
+	// pcap_t		*handle = NULL;
+    // pcap_if_t	*alldevs = NULL;
+    // pcap_if_t   *dev = NULL;
+
 
 	ip_resolver(data);
-	printf("Scan Configurations\nTarget Ip-Address : %s\nNo of Ports to scan : %s\nScans to be performed : %s\nNo of threads : %d\nScanning..\n........\n", data->ip, data->port, data->scan_type, data->threads);
-	for (int port=start_port; port<end_port; port++) {
+    data->opened_ports = 0;
+    data->closed_ports = 0;
+	// pcap_init_(handle, alldevs, dev);
+	printf("Scan Configurations\nTarget Ip-Address : %s\nNo of Ports to scan : %d\nScans to be performed : %s\nNo of threads : %d\nScanning..\n........\n", data->ip, data->port, data->scan_type, data->threads);
+	for (int port=start_port; port<=end_port; port++) {
+        // printf("holaaa %d\n", port);
 		if (!strcmp(data->scan_type, "SYN") || !strcmp(data->scan_type, "NULL") || !strcmp(data->scan_type, "ACK") || !strcmp(data->scan_type, "FIN") || !strcmp(data->scan_type, "XMAS")) {
-			if (!strcmp(data->scan_type, "SYN"))
-				send_tcp_packet(data, 1);
+			if (!strcmp(data->scan_type, "SYN")) {
+				// send_tcp_packet(data, 1);
+				syn(data, port);
+			}
 			else if (!strcmp(data->scan_type, "FIN"))
 				send_tcp_packet(data, 2);
 			else if (!strcmp(data->scan_type, "ACK"))
@@ -187,7 +198,7 @@ void	ft_nmap(s_data	*data) {
 				send_tcp_packet(data, 4);
 			else if (!strcmp(data->scan_type, "NULL"))
 				send_tcp_packet(data, 0);
-			receive_tcp_packet(data);
+			// receive_tcp_packet(data);
 		}
 		else if (!strcmp(data->scan_type, "UDP"))
 		{
@@ -198,21 +209,7 @@ void	ft_nmap(s_data	*data) {
 			printf("MUST APPLY THEM ALL");
 	}
 	printf("Scan took %f secs\nIP address: %s\n", 8.32132, data->ip);
-	printf("Open ports:\nPort Service Name (if applicable) Results Conclusion\n----------------------------------------------------------------------------------------\n");
+	printf("Open ports:%d\nPort Service Name (if applicable) Results Conclusion\n----------------------------------------------------------------------------------------\n", data->opened_ports);
 	// 80 http SYN(Open) Open
-	// Closed/Filtered/Unfiltered ports:
-	// Port Service Name (if applicable) Results Conclusion
-	// ----------------------------------------------------------------------------------------
-	// 90 Unassigned SYN(Filtered) Filtered
-	// 89 Unassigned SYN(Filtered) Filtered
-	// 88 kerberos SYN(Filtered) Filtered
-	// 87 link SYN(Filtered) Filtered
-	// 86 Unassigned SYN(Filtered) Filtered
-	// 85 Unassigned SYN(Filtered) Filtered
-	// 84 Unassigned SYN(Filtered) Filtered
-	// 83 Unassigned SYN(Filtered) Filtered
-	// 82 Unassigned SYN(Filtered) Filtered
-	// 81 Unassigned SYN(Filtered) Filtered
-	// 79 finger SYN(Filtered) Filtered
-	// 78 Unassigned SYN(Filtered) Filtered");
+	printf("Closed/Filtered/Unfiltered ports: %d\nPort Service Name (if applicable) Results Conclusion\n----------------------------------------------------------------------------------------\n", data->closed_ports);
 }

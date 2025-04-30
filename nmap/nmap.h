@@ -11,6 +11,8 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <errno.h>
+#include <pcap.h>
+
 
 #define PACKET_SIZE 4096
 #define PACKET_RECV_SIZE 65535
@@ -41,9 +43,11 @@ typedef	struct
 {
 	int				sockfd;
 	char			*hostname;
-	char			*port;
 	char			*ip;
 	int				threads;
+	int				port;
+	int				opened_ports;
+	int				closed_ports;
 	char			*scan_type;
 	struct sockaddr_in	dest;
 }		s_data;
@@ -51,3 +55,6 @@ typedef	struct
 void	ft_nmap(s_data	*data);
 void	usage_error();
 void	valide_scan_type(s_data *data, char	*scan_type);
+
+// Scan Types
+int    syn(s_data *data, int port);

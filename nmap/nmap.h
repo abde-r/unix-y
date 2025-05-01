@@ -13,7 +13,6 @@
 #include <errno.h>
 #include <pcap.h>
 
-
 #define PACKET_SIZE 4096
 #define PACKET_RECV_SIZE 65535
 struct pseudo_header {
@@ -23,21 +22,6 @@ struct pseudo_header {
 	uint32_t	protocol;
 	uint32_t	tcp_length;
 };
-
-// struct tcphdr {
-//     uint16_t source;   // Source port
-//     uint16_t dest;     // Destination port
-//     uint32_t seq;      // Sequence number
-//     uint32_t ack_seq;  // Acknowledgment number
-// #if __BYTE_ORDER == __LITTLE_ENDIAN
-//     uint16_t res1:4, doff:4, fin:1, syn:1, rst:1, psh:1, ack:1, urg:1, res2:2;
-// #elif __BYTE_ORDER == __BIG_ENDIAN
-//     uint16_t doff:4, res1:4, res2:2, urg:1, ack:1, psh:1, rst:1, syn:1, fin:1;
-// #endif
-//     uint16_t window;   // Window size
-//     uint16_t check;    // Checksum
-//     uint16_t urg_ptr;  // Urgent pointer
-// };
 
 typedef	struct
 {
@@ -57,4 +41,14 @@ void	usage_error();
 void	valide_scan_type(s_data *data, char	*scan_type);
 
 // Scan Types
-int    syn(s_data *data, int port);
+char  *syn(s_data *data, int port);
+char *fin(s_data *data, int port);
+char *ack(s_data *data, int port);
+char *xmas(s_data *data, int port);
+char *nullscan(s_data *data, int port);
+char *udp(s_data *data, int port);
+
+void packet_handler(u_char *user_data, const struct pcap_pkthdr *header, const u_char *packet);
+
+// Utils
+char	*ft_strjoin(char *s1, char *s2);

@@ -171,8 +171,8 @@ void receive_udp_packet(s_data	*data) {
 	namp function
 */
 void	ft_nmap(s_data	*data) {
-	int		start_port = data->port-1;
-	int		end_port = data->port;
+	int		start_port = data->port;
+	int		end_port = data->port+10;
 	// pcap_t		*handle = NULL;
     // pcap_if_t	*alldevs = NULL;
     // pcap_if_t   *dev = NULL;
@@ -181,6 +181,7 @@ void	ft_nmap(s_data	*data) {
 	ip_resolver(data);
     data->opened_ports = 0;
     data->closed_ports = 0;
+    char *res = calloc(999, 1);
 	// pcap_init_(handle, alldevs, dev);
 	printf("Scan Configurations\nTarget Ip-Address : %s\nNo of Ports to scan : %d\nScans to be performed : %s\nNo of threads : %d\nScanning..\n........\n", data->ip, data->port, data->scan_type, data->threads);
 	for (int port=start_port; port<=end_port; port++) {
@@ -188,28 +189,33 @@ void	ft_nmap(s_data	*data) {
 		if (!strcmp(data->scan_type, "SYN") || !strcmp(data->scan_type, "NULL") || !strcmp(data->scan_type, "ACK") || !strcmp(data->scan_type, "FIN") || !strcmp(data->scan_type, "XMAS")) {
 			if (!strcmp(data->scan_type, "SYN")) {
 				// send_tcp_packet(data, 1);
-				syn(data, port);
+				res = syn(data, port);
 			}
 			else if (!strcmp(data->scan_type, "FIN"))
-				send_tcp_packet(data, 2);
-			else if (!strcmp(data->scan_type, "ACK"))
-				send_tcp_packet(data, 3);
+				// send_tcp_packet(data, 2);
+                res = fin(data, port);
+            else if (!strcmp(data->scan_type, "ACK"))
+				// send_tcp_packet(data, 3);
+                res = ack(data, port);
 			else if (!strcmp(data->scan_type, "XMAS"))
-				send_tcp_packet(data, 4);
+				// send_tcp_packet(data, 4);
+                res = xmas(data, port);
 			else if (!strcmp(data->scan_type, "NULL"))
-				send_tcp_packet(data, 0);
+				// send_tcp_packet(data, 0);
+                res = nullscan(data, port);
 			// receive_tcp_packet(data);
 		}
 		else if (!strcmp(data->scan_type, "UDP"))
-		{
-			send_udp_packet(data);
-			receive_udp_packet(data);
-		}
+		// {
+			// send_udp_packet(data);
+			// receive_udp_packet(data);
+            res = udp(data, port);
+		// }
 		else
 			printf("MUST APPLY THEM ALL");
 	}
-	printf("Scan took %f secs\nIP address: %s\n", 8.32132, data->ip);
-	printf("Open ports:%d\nPort Service Name (if applicable) Results Conclusion\n----------------------------------------------------------------------------------------\n", data->opened_ports);
-	// 80 http SYN(Open) Open
-	printf("Closed/Filtered/Unfiltered ports: %d\nPort Service Name (if applicable) Results Conclusion\n----------------------------------------------------------------------------------------\n", data->closed_ports);
+	printf("Scan took ? secs\nIP address: %s\n", data->ip);
+	printf("Open ports:%d\nPort Service Name (if applicable) Results Conclusion\n-------------------------------------------------\n", data->opened_ports);
+    printf("%s\n", res);
+	printf("Closed/Filtered/Unfiltered ports: %d\nPort Service Name (if applicable) Results Conclusion\n-------------------------------------------------\n", data->closed_ports);
 }
